@@ -258,6 +258,17 @@ model UserBid {
   @@index([bidId])
 }
 
+model Role {
+  id                 String  @id @default(cuid())
+  name               String  @default("")
+  canCreateEvents    Boolean @default(false)
+  canManageAllTodos  Boolean @default(false)
+  canSeeOtherPeople  Boolean @default(false)
+  canEditOtherPeople Boolean @default(false)
+  canManagePeople    Boolean @default(false)
+  canManageRoles     Boolean @default(false)
+}
+
 enum UserIdProofTypeType {
   aadhar
   drivingLicense

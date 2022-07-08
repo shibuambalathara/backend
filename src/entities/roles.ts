@@ -23,15 +23,15 @@ export const Role = list({
     */
   access: {
     operation: {
-      create: permissions.canManageRoles,
+      create: isSignedIn, //permissions.canManageRoles,
       query: isSignedIn,
-      update: permissions.canManageRoles,
-      delete: permissions.canManageRoles,
+      update: isSignedIn, //permissions.canManageRoles,
+      delete: isSignedIn, //permissions.canManageRoles,
     },
   },
   ui: {
-    hideCreate: (args) => !permissions.canManageRoles(args),
-    hideDelete: (args) => !permissions.canManageRoles(args),
+    // hideCreate: (args) => !permissions.canManageRoles(args),
+    // hideDelete: (args) => !permissions.canManageRoles(args),
     listView: {
       initialColumns: ["name"],
     },
