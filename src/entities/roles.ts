@@ -33,7 +33,7 @@ export const Role = list({
     hideCreate: (args) => !permissions.canManageRoles(args),
     hideDelete: (args) => !permissions.canManageRoles(args),
     listView: {
-      initialColumns: ["name", "assignedTo"],
+      initialColumns: ["name"],
     },
     itemView: {
       defaultFieldMode: (args) =>
@@ -64,12 +64,12 @@ export const Role = list({
          - create, edit, and delete roles */
     canManageRoles: checkbox({ defaultValue: false }),
     /* This list of People assigned to this role */
-    assignedTo: relationship({
-      ref: "Person.role",
-      many: true,
-      ui: {
-        itemView: { fieldMode: "read" },
-      },
-    }),
+    // assignedTo: relationship({
+    //   ref: "Person.role",
+    //   many: true,
+    //   ui: {
+    //     itemView: { fieldMode: "read" },
+    //   },
+    // }),
   },
 });
