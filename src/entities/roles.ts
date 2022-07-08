@@ -45,7 +45,7 @@ export const Role = list({
     name: text({ validation: { isRequired: true } }),
     /* Create Todos means:
          - create todos (can only assign them to others with canManageAllTodos) */
-    canCreateTodos: checkbox({ defaultValue: false }),
+    canCreateEvents: checkbox({ defaultValue: false }),
     /* Manage All Todos means:
          - create new Todo items and assign them to someone else (with canCreateTodos)
          - update and delete Todo items not assigned to the current user */
