@@ -49,7 +49,7 @@ export const Role = list({
     /* Manage All Todos means:
          - create new Todo items and assign them to someone else (with canCreateTodos)
          - update and delete Todo items not assigned to the current user */
-    canManageAllTodos: checkbox({ defaultValue: false }),
+    canManageAllEvents: checkbox({ defaultValue: false }),
     /* See Other Users means:
          - list all users in the database (users can always see themselves) */
     canSeeOtherPeople: checkbox({ defaultValue: false }),
@@ -71,5 +71,32 @@ export const Role = list({
     //     itemView: { fieldMode: "read" },
     //   },
     // }),
+    canCreateEventTypes: checkbox ({defaultValue: false}),
+
+    canManageEventTypes: checkbox ({defaultValue: false}),
+
+    canCreateVehicles: checkbox ({defaultValue: false}),
+
+    canManbageVehicles: checkbox ({defaultValue: false}),
+
+    canCreateLocations: checkbox ({defaultValue: false}),
+
+    canManageLocations: checkbox ({defaultValue: false}),
+
+    canCreateEventCategories: checkbox ({defaultValue: false}),
+
+    canManageEventCategories: checkbox ({defaultValue: false}),
+
+    canCreateEventUsers: checkbox ({defaultValue: false}),
+
+    canManageEventUsers: checkbox ({defaultValue: false}),
+
+    canCreateSellers: checkbox ({defaultValue: false}),
+
+    canManageSellers: checkbox ({defaultValue: false}),
+
+    canCreateBids: checkbox ({defaultValue: false}),
+    
+    canManageBids: checkbox ({defaultValue: false}),
   },
 });
