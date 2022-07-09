@@ -11,7 +11,7 @@ export async function uploadImages(req: Request, res: Response) {
     req.files?.forEach((file) => {
       const fn = file.fieldname;
       data[`${fn}_id`] = path.parse(file?.filename || "").name;
-      data[`${fn}_mode`] = "local";
+      // data[`${fn}_mode`] = "local";
       data[`${fn}_width`] = 200;
       data[`${fn}_height`] = 250;
       data[`${fn}_filesize`] = file?.size;

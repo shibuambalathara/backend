@@ -62,15 +62,20 @@ export const User = list({
     country: text({}),
     state: text({}),
     city: text({}),
-    role: select({
-      type: "enum",
-      options: [
-        { label: "Admin", value: "admin" },
-        { label: "Seller", value: "seller" },
-        { label: "Dealer", value: "dealer" },
-      ],
-      defaultValue: "seller",
-      ui: { displayMode: "segmented-control" },
+    // role: select({
+    //   type: "enum",
+    //   options: [
+    //     { label: "Admin", value: "admin" },
+    //     { label: "Seller", value: "seller" },
+    //     { label: "Dealer", value: "dealer" },
+    //   ],
+    //   defaultValue: "seller",
+    //   ui: { displayMode: "segmented-control" },
+    // }),
+
+    role: relationship({
+      ref: "Role.assignedTo",
+      many: true,
     }),
     status: select({
       type: "enum",

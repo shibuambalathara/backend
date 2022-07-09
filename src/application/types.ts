@@ -6,6 +6,7 @@ export type Session = {
     role?: {
       id: string;
       name: string;
+      isSuperAdmin: boolean;
       canCreateTodos: boolean;
       canManageAllTodos: boolean;
       canSeeOtherPeople: boolean;

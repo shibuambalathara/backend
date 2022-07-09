@@ -8,7 +8,12 @@ import {
   timestamp,
 } from "@keystone-6/core/fields";
 import { list } from "@keystone-6/core";
-import { isSignedIn, permissions, rules } from "../application/access";
+import {
+  isSignedIn,
+  permissions,
+  rules,
+  isSuperAdmin,
+} from "../application/access";
 
 export const Role = list({
   /*
@@ -43,13 +48,43 @@ export const Role = list({
   fields: {
     /* The name of the role */
     name: text({ validation: { isRequired: true } }),
-    /* Create Todos means:
-         - create todos (can only assign them to others with canManageAllTodos) */
+    /* Create Events means:
+         - create event (can only assign them to others with canManageAllEvent) 
+         - default event status will be the pending (author can't change the status) */
     canCreateEvents: checkbox({ defaultValue: false }),
-    /* Manage All Todos means:
-         - create new Todo items and assign them to someone else (with canCreateTodos)
-         - update and delete Todo items not assigned to the current user */
+    /* Manage All Events means:
+         - create new Events and assign them to someone else (with canCreateEvents)
+         - update and Events not assigned to the current user */
     canManageAllEvents: checkbox({ defaultValue: false }),
+
+    canCreateEventTypes: checkbox({ defaultValue: false }),
+
+    canManageEventTypes: checkbox({ defaultValue: false }),
+
+    canCreateVehicles: checkbox({ defaultValue: false }),
+
+    canManbageVehicles: checkbox({ defaultValue: false }),
+
+    canCreateLocations: checkbox({ defaultValue: false }),
+
+    canManageLocations: checkbox({ defaultValue: false }),
+
+    canCreateEventCategories: checkbox({ defaultValue: false }),
+
+    canManageEventCategories: checkbox({ defaultValue: false }),
+
+    canCreateEventUsers: checkbox({ defaultValue: false }),
+
+    canManageEventUsers: checkbox({ defaultValue: false }),
+
+    canCreateSellers: checkbox({ defaultValue: false }),
+
+    canManageSellers: checkbox({ defaultValue: false }),
+
+    canCreateBids: checkbox({ defaultValue: false }),
+
+    canManageBids: checkbox({ defaultValue: false }),
+
     /* See Other Users means:
          - list all users in the database (users can always see themselves) */
     canSeeOtherPeople: checkbox({ defaultValue: false }),
@@ -63,40 +98,35 @@ export const Role = list({
     /* Manage Roles means:
          - create, edit, and delete roles */
     canManageRoles: checkbox({ defaultValue: false }),
+
+    /* All Permissions without restrictions */
+
+    isSuperAdmin: checkbox({
+      defaultValue: false,
+      ui: {
+        createView: {
+          fieldMode: "hidden",
+        },
+        itemView: {
+          fieldMode: "hidden",
+        },
+        listView: {
+          fieldMode: "hidden",
+        },
+      },
+      access: {
+        create: isSuperAdmin,
+        update: isSuperAdmin,
+      },
+      // hide: (args) => !permissions.isSuperAdmin(args),
+    }),
     /* This list of People assigned to this role */
-    // assignedTo: relationship({
-    //   ref: "Person.role",
-    //   many: true,
-    //   ui: {
-    //     itemView: { fieldMode: "read" },
-    //   },
-    // }),
-    canCreateEventTypes: checkbox ({defaultValue: false}),
-
-    canManageEventTypes: checkbox ({defaultValue: false}),
-
-    canCreateVehicles: checkbox ({defaultValue: false}),
-
-    canManbageVehicles: checkbox ({defaultValue: false}),
-
-    canCreateLocations: checkbox ({defaultValue: false}),
-
-    canManageLocations: checkbox ({defaultValue: false}),
-
-    canCreateEventCategories: checkbox ({defaultValue: false}),
-
-    canManageEventCategories: checkbox ({defaultValue: false}),
-
-    canCreateEventUsers: checkbox ({defaultValue: false}),
-
-    canManageEventUsers: checkbox ({defaultValue: false}),
-
-    canCreateSellers: checkbox ({defaultValue: false}),
-
-    canManageSellers: checkbox ({defaultValue: false}),
-
-    canCreateBids: checkbox ({defaultValue: false}),
-    
-    canManageBids: checkbox ({defaultValue: false}),
+    assignedTo: relationship({
+      ref: "User.role",
+      many: true,
+      ui: {
+        itemView: { fieldMode: "read" },
+      },
+    }),
   },
 });

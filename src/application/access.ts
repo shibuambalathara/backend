@@ -27,6 +27,10 @@ export const isSignedIn = ({ session }: ListAccessArgs) => {
   return !!session;
 };
 
+export const isSuperAdmin = ({ session }: ListAccessArgs) => {
+  return !!session?.data?.role?.isSuperAdmin;
+};
+
 /*
   Permissions are shorthand functions for checking that the current user's role has the specified
   permission boolean set to true

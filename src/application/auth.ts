@@ -31,38 +31,61 @@ if (!sessionSecret) {
 // What we are saying here is that we want to use the list `User`, and to log in
 // we will need their email and password.
 const { withAuth } = createAuth({
-  listKey: 'User',
-  identityField: 'mobile',
-  sessionData: 'firstName lastName email mobile role',
-  secretField: 'password',
+  listKey: "User",
+  identityField: "mobile",
+  sessionData: `
+    firstName
+    lastName
+    email
+    mobile
+    role {
+      name
+      isSuperAdmin
+      canSeeOtherPeople
+      canEditOtherPeople
+      canManagePeople
+      canManageRoles
+    }`,
+  secretField: "password",
   initFirstItem: {
     // If there are no items in the database, keystone will ask you to create
     // a new user, filling in these fields.
-    fields: ['firstName', 'lastName','mobile','password'],
-    skipKeystoneWelcome: true
+    fields: ["firstName", "lastName", "mobile", "password"],
+    itemData: {
+      /*
+        This creates a related role with full permissions, so that when the first user signs in
+        they have complete access to the system (without this, you couldn't do anything)
+      */
+      role: {
+        create: {
+          name: "Admin Role",
+          isSuperAdmin: true,
+        },
+      },
+    },
+    skipKeystoneWelcome: true,
   },
   magicAuthLink: {
-    sendToken: async ({ identity, token, }) => { 
+    sendToken: async ({ identity, token }) => {
       const options = {
-        hostname: 'sms.textspeed.in',
+        hostname: "sms.textspeed.in",
         port: 443,
         path: `/vb/apikey.php?apikey=XJ66EJdlNH3GFxvZ&senderid=AUTBSE&templateid=1007762888385738662&number=${identity}&message=Use%20${token}%20as%20one-time%20password%20(OTP)%20to%20login%20into%20AUTOBSE.com.%20Please%20do%20not%20share%20this%20OTP%20with%20anyone%20to%20ensure%20account%27s%20security.`,
-        method: 'GET'
-      }
-      
-      const req = https.request(options, res => {
+        method: "GET",
+      };
+
+      const req = https.request(options, (res) => {
         // console.log(`statusCode: ${res.statusCode}`)
-      
         // res.on('data', d => {
         //   process.stdout.write(d)
         // })
-      })
-      req.on('error', error => {
-        console.error(error)
-      })
-      
-      req.end()
-      /* ... */ 
+      });
+      req.on("error", (error) => {
+        console.error(error);
+      });
+
+      req.end();
+      /* ... */
     },
     tokensValidForMins: 10,
   },

@@ -20,7 +20,13 @@ type User {
   country: String
   state: String
   city: String
-  role: UserRoleType
+  role(
+    where: RoleWhereInput! = {}
+    orderBy: [RoleOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Role!]
+  roleCount(where: RoleWhereInput! = {}): Int
   status: UserStatusType
   userEvents(
     where: EventUserWhereInput! = {}
@@ -83,12 +89,6 @@ enum UserIdProofTypeType {
   passport
 }
 
-enum UserRoleType {
-  admin
-  seller
-  dealer
-}
-
 enum UserStatusType {
   pending
   blocked
@@ -123,7 +123,7 @@ input UserWhereInput {
   country: StringFilter
   state: StringFilter
   city: StringFilter
-  role: UserRoleTypeNullableFilter
+  role: RoleManyRelationFilter
   status: UserStatusTypeNullableFilter
   userEvents: EventUserManyRelationFilter
   bidCountUpdates: BidCountUpdateManyRelationFilter
@@ -192,11 +192,10 @@ input UserIdProofTypeTypeNullableFilter {
   not: UserIdProofTypeTypeNullableFilter
 }
 
-input UserRoleTypeNullableFilter {
-  equals: UserRoleType
-  in: [UserRoleType!]
-  notIn: [UserRoleType!]
-  not: UserRoleTypeNullableFilter
+input RoleManyRelationFilter {
+  every: RoleWhereInput
+  some: RoleWhereInput
+  none: RoleWhereInput
 }
 
 input UserStatusTypeNullableFilter {
@@ -255,7 +254,6 @@ input UserOrderByInput {
   country: OrderDirection
   state: OrderDirection
   city: OrderDirection
-  role: OrderDirection
   status: OrderDirection
   createdAt: OrderDirection
   updatedAt: OrderDirection
@@ -286,7 +284,7 @@ input UserUpdateInput {
   country: String
   state: String
   city: String
-  role: UserRoleType
+  role: RoleRelateToManyForUpdateInput
   status: UserStatusType
   userEvents: EventUserRelateToManyForUpdateInput
   bidCountUpdates: BidCountUpdateRelateToManyForUpdateInput
@@ -305,6 +303,13 @@ input ImageFieldInput {
 The `Upload` scalar type represents a file upload.
 """
 scalar Upload
+
+input RoleRelateToManyForUpdateInput {
+  disconnect: [RoleWhereUniqueInput!]
+  set: [RoleWhereUniqueInput!]
+  create: [RoleCreateInput!]
+  connect: [RoleWhereUniqueInput!]
+}
 
 input EventUserRelateToManyForUpdateInput {
   disconnect: [EventUserWhereUniqueInput!]
@@ -357,7 +362,7 @@ input UserCreateInput {
   country: String
   state: String
   city: String
-  role: UserRoleType
+  role: RoleRelateToManyForCreateInput
   status: UserStatusType
   userEvents: EventUserRelateToManyForCreateInput
   bidCountUpdates: BidCountUpdateRelateToManyForCreateInput
@@ -366,6 +371,11 @@ input UserCreateInput {
   magicAuthToken: String
   magicAuthIssuedAt: DateTime
   magicAuthRedeemedAt: DateTime
+}
+
+input RoleRelateToManyForCreateInput {
+  create: [RoleCreateInput!]
+  connect: [RoleWhereUniqueInput!]
 }
 
 input EventUserRelateToManyForCreateInput {
@@ -1578,11 +1588,33 @@ type Role {
   id: ID!
   name: String
   canCreateEvents: Boolean
-  canManageAllTodos: Boolean
+  canManageAllEvents: Boolean
+  canCreateEventTypes: Boolean
+  canManageEventTypes: Boolean
+  canCreateVehicles: Boolean
+  canManbageVehicles: Boolean
+  canCreateLocations: Boolean
+  canManageLocations: Boolean
+  canCreateEventCategories: Boolean
+  canManageEventCategories: Boolean
+  canCreateEventUsers: Boolean
+  canManageEventUsers: Boolean
+  canCreateSellers: Boolean
+  canManageSellers: Boolean
+  canCreateBids: Boolean
+  canManageBids: Boolean
   canSeeOtherPeople: Boolean
   canEditOtherPeople: Boolean
   canManagePeople: Boolean
   canManageRoles: Boolean
+  isSuperAdmin: Boolean
+  assignedTo(
+    where: UserWhereInput! = {}
+    orderBy: [UserOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [User!]
+  assignedToCount(where: UserWhereInput! = {}): Int
 }
 
 input RoleWhereUniqueInput {
@@ -1596,11 +1628,27 @@ input RoleWhereInput {
   id: IDFilter
   name: StringFilter
   canCreateEvents: BooleanFilter
-  canManageAllTodos: BooleanFilter
+  canManageAllEvents: BooleanFilter
+  canCreateEventTypes: BooleanFilter
+  canManageEventTypes: BooleanFilter
+  canCreateVehicles: BooleanFilter
+  canManbageVehicles: BooleanFilter
+  canCreateLocations: BooleanFilter
+  canManageLocations: BooleanFilter
+  canCreateEventCategories: BooleanFilter
+  canManageEventCategories: BooleanFilter
+  canCreateEventUsers: BooleanFilter
+  canManageEventUsers: BooleanFilter
+  canCreateSellers: BooleanFilter
+  canManageSellers: BooleanFilter
+  canCreateBids: BooleanFilter
+  canManageBids: BooleanFilter
   canSeeOtherPeople: BooleanFilter
   canEditOtherPeople: BooleanFilter
   canManagePeople: BooleanFilter
   canManageRoles: BooleanFilter
+  isSuperAdmin: BooleanFilter
+  assignedTo: UserManyRelationFilter
 }
 
 input BooleanFilter {
@@ -1608,25 +1656,69 @@ input BooleanFilter {
   not: BooleanFilter
 }
 
+input UserManyRelationFilter {
+  every: UserWhereInput
+  some: UserWhereInput
+  none: UserWhereInput
+}
+
 input RoleOrderByInput {
   id: OrderDirection
   name: OrderDirection
   canCreateEvents: OrderDirection
-  canManageAllTodos: OrderDirection
+  canManageAllEvents: OrderDirection
+  canCreateEventTypes: OrderDirection
+  canManageEventTypes: OrderDirection
+  canCreateVehicles: OrderDirection
+  canManbageVehicles: OrderDirection
+  canCreateLocations: OrderDirection
+  canManageLocations: OrderDirection
+  canCreateEventCategories: OrderDirection
+  canManageEventCategories: OrderDirection
+  canCreateEventUsers: OrderDirection
+  canManageEventUsers: OrderDirection
+  canCreateSellers: OrderDirection
+  canManageSellers: OrderDirection
+  canCreateBids: OrderDirection
+  canManageBids: OrderDirection
   canSeeOtherPeople: OrderDirection
   canEditOtherPeople: OrderDirection
   canManagePeople: OrderDirection
   canManageRoles: OrderDirection
+  isSuperAdmin: OrderDirection
 }
 
 input RoleUpdateInput {
   name: String
   canCreateEvents: Boolean
-  canManageAllTodos: Boolean
+  canManageAllEvents: Boolean
+  canCreateEventTypes: Boolean
+  canManageEventTypes: Boolean
+  canCreateVehicles: Boolean
+  canManbageVehicles: Boolean
+  canCreateLocations: Boolean
+  canManageLocations: Boolean
+  canCreateEventCategories: Boolean
+  canManageEventCategories: Boolean
+  canCreateEventUsers: Boolean
+  canManageEventUsers: Boolean
+  canCreateSellers: Boolean
+  canManageSellers: Boolean
+  canCreateBids: Boolean
+  canManageBids: Boolean
   canSeeOtherPeople: Boolean
   canEditOtherPeople: Boolean
   canManagePeople: Boolean
   canManageRoles: Boolean
+  isSuperAdmin: Boolean
+  assignedTo: UserRelateToManyForUpdateInput
+}
+
+input UserRelateToManyForUpdateInput {
+  disconnect: [UserWhereUniqueInput!]
+  set: [UserWhereUniqueInput!]
+  create: [UserCreateInput!]
+  connect: [UserWhereUniqueInput!]
 }
 
 input RoleUpdateArgs {
@@ -1637,11 +1729,32 @@ input RoleUpdateArgs {
 input RoleCreateInput {
   name: String
   canCreateEvents: Boolean
-  canManageAllTodos: Boolean
+  canManageAllEvents: Boolean
+  canCreateEventTypes: Boolean
+  canManageEventTypes: Boolean
+  canCreateVehicles: Boolean
+  canManbageVehicles: Boolean
+  canCreateLocations: Boolean
+  canManageLocations: Boolean
+  canCreateEventCategories: Boolean
+  canManageEventCategories: Boolean
+  canCreateEventUsers: Boolean
+  canManageEventUsers: Boolean
+  canCreateSellers: Boolean
+  canManageSellers: Boolean
+  canCreateBids: Boolean
+  canManageBids: Boolean
   canSeeOtherPeople: Boolean
   canEditOtherPeople: Boolean
   canManagePeople: Boolean
   canManageRoles: Boolean
+  isSuperAdmin: Boolean
+  assignedTo: UserRelateToManyForCreateInput
+}
+
+input UserRelateToManyForCreateInput {
+  create: [UserCreateInput!]
+  connect: [UserWhereUniqueInput!]
 }
 
 """

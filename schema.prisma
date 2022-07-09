@@ -47,7 +47,7 @@ model User {
   country              String               @default("")
   state                String               @default("")
   city                 String               @default("")
-  role                 UserRoleType?        @default(seller)
+  role                 Role[]               @relation("Role_assignedTo")
   status               UserStatusType?      @default(active)
   userEvents           EventUser[]          @relation("EventUser_user")
   bidCountUpdates      BidCountUpdate[]     @relation("BidCountUpdate_createdBy")
@@ -259,26 +259,36 @@ model UserBid {
 }
 
 model Role {
-  id                 String  @id @default(cuid())
-  name               String  @default("")
-  canCreateEvents    Boolean @default(false)
-  canManageAllTodos  Boolean @default(false)
-  canSeeOtherPeople  Boolean @default(false)
-  canEditOtherPeople Boolean @default(false)
-  canManagePeople    Boolean @default(false)
-  canManageRoles     Boolean @default(false)
+  id                       String  @id @default(cuid())
+  name                     String  @default("")
+  canCreateEvents          Boolean @default(false)
+  canManageAllEvents       Boolean @default(false)
+  canCreateEventTypes      Boolean @default(false)
+  canManageEventTypes      Boolean @default(false)
+  canCreateVehicles        Boolean @default(false)
+  canManbageVehicles       Boolean @default(false)
+  canCreateLocations       Boolean @default(false)
+  canManageLocations       Boolean @default(false)
+  canCreateEventCategories Boolean @default(false)
+  canManageEventCategories Boolean @default(false)
+  canCreateEventUsers      Boolean @default(false)
+  canManageEventUsers      Boolean @default(false)
+  canCreateSellers         Boolean @default(false)
+  canManageSellers         Boolean @default(false)
+  canCreateBids            Boolean @default(false)
+  canManageBids            Boolean @default(false)
+  canSeeOtherPeople        Boolean @default(false)
+  canEditOtherPeople       Boolean @default(false)
+  canManagePeople          Boolean @default(false)
+  canManageRoles           Boolean @default(false)
+  isSuperAdmin             Boolean @default(false)
+  assignedTo               User[]  @relation("Role_assignedTo")
 }
 
 enum UserIdProofTypeType {
   aadhar
   drivingLicense
   passport
-}
-
-enum UserRoleType {
-  admin
-  seller
-  dealer
 }
 
 enum UserStatusType {
