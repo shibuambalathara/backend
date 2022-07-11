@@ -28,6 +28,7 @@ export const isSignedIn = ({ session }: ListAccessArgs) => {
 };
 
 export const isSuperAdmin = ({ session }: ListAccessArgs) => {
+  console.log("data: ", session?.data);
   return !!session?.data?.role?.isSuperAdmin;
 };
 
@@ -36,9 +37,9 @@ export const isSuperAdmin = ({ session }: ListAccessArgs) => {
   permission boolean set to true
 */
 export const permissions = {
-  canCreateTodos: ({ session }: ListAccessArgs) =>
+  canCreateEvents: ({ session }: ListAccessArgs) =>
     !!session?.data.role?.canCreateTodos,
-  canManageAllTodos: ({ session }: ListAccessArgs) =>
+  canManageAllEvents: ({ session }: ListAccessArgs) =>
     !!session?.data.role?.canManageAllTodos,
   canManagePeople: ({ session }: ListAccessArgs) =>
     !!session?.data.role?.canManagePeople,
@@ -51,7 +52,7 @@ export const permissions = {
   all or no items are available) or a set of filters that limit the available items
 */
 export const rules = {
-  canReadTodos: ({ session }: ListAccessArgs) => {
+  canReadEvents: ({ session }: ListAccessArgs) => {
     if (!session) {
       // No session? No todos.
       return false;
@@ -69,7 +70,7 @@ export const rules = {
       return { assignedTo: { id: { equals: session.itemId } } };
     }
   },
-  canManageTodos: ({ session }: ListAccessArgs) => {
+  canManageEvents: ({ session }: ListAccessArgs) => {
     if (!session) {
       // No session? No todos.
       return false;

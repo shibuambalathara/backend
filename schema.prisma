@@ -47,7 +47,8 @@ model User {
   country              String               @default("")
   state                String               @default("")
   city                 String               @default("")
-  role                 Role[]               @relation("Role_assignedTo")
+  role                 Role?                @relation("User_role", fields: [roleId], references: [id])
+  roleId               String?              @map("role")
   status               UserStatusType?      @default(active)
   userEvents           EventUser[]          @relation("EventUser_user")
   bidCountUpdates      BidCountUpdate[]     @relation("BidCountUpdate_createdBy")
@@ -58,6 +59,8 @@ model User {
   magicAuthToken       String?
   magicAuthIssuedAt    DateTime?
   magicAuthRedeemedAt  DateTime?
+
+  @@index([roleId])
 }
 
 model Event {
@@ -282,7 +285,7 @@ model Role {
   canManagePeople          Boolean @default(false)
   canManageRoles           Boolean @default(false)
   isSuperAdmin             Boolean @default(false)
-  assignedTo               User[]  @relation("Role_assignedTo")
+  assignedTo               User[]  @relation("User_role")
 }
 
 enum UserIdProofTypeType {

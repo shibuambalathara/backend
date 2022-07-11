@@ -7,7 +7,7 @@ import {
   timestamp,
 } from "@keystone-6/core/fields";
 import { list } from "@keystone-6/core";
-import { fieldOptions } from "../application/access";
+import { fieldOptions, isSignedIn, isSuperAdmin } from "../application/access";
 
 export const User = list({
   access: {
@@ -75,7 +75,17 @@ export const User = list({
 
     role: relationship({
       ref: "Role.assignedTo",
-      many: true,
+      many: false,
+      access: {
+        read: isSignedIn,
+        create: isSuperAdmin,
+        update: isSuperAdmin,
+      },
+      ui: {
+        itemView: {
+          fieldMode: (args) => (isSuperAdmin(args) ? "edit" : "read"),
+        },
+      },
     }),
     status: select({
       type: "enum",

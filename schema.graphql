@@ -20,13 +20,7 @@ type User {
   country: String
   state: String
   city: String
-  role(
-    where: RoleWhereInput! = {}
-    orderBy: [RoleOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [Role!]
-  roleCount(where: RoleWhereInput! = {}): Int
+  role: Role
   status: UserStatusType
   userEvents(
     where: EventUserWhereInput! = {}
@@ -123,7 +117,7 @@ input UserWhereInput {
   country: StringFilter
   state: StringFilter
   city: StringFilter
-  role: RoleManyRelationFilter
+  role: RoleWhereInput
   status: UserStatusTypeNullableFilter
   userEvents: EventUserManyRelationFilter
   bidCountUpdates: BidCountUpdateManyRelationFilter
@@ -190,12 +184,6 @@ input UserIdProofTypeTypeNullableFilter {
   in: [UserIdProofTypeType!]
   notIn: [UserIdProofTypeType!]
   not: UserIdProofTypeTypeNullableFilter
-}
-
-input RoleManyRelationFilter {
-  every: RoleWhereInput
-  some: RoleWhereInput
-  none: RoleWhereInput
 }
 
 input UserStatusTypeNullableFilter {
@@ -284,7 +272,7 @@ input UserUpdateInput {
   country: String
   state: String
   city: String
-  role: RoleRelateToManyForUpdateInput
+  role: RoleRelateToOneForUpdateInput
   status: UserStatusType
   userEvents: EventUserRelateToManyForUpdateInput
   bidCountUpdates: BidCountUpdateRelateToManyForUpdateInput
@@ -304,11 +292,10 @@ The `Upload` scalar type represents a file upload.
 """
 scalar Upload
 
-input RoleRelateToManyForUpdateInput {
-  disconnect: [RoleWhereUniqueInput!]
-  set: [RoleWhereUniqueInput!]
-  create: [RoleCreateInput!]
-  connect: [RoleWhereUniqueInput!]
+input RoleRelateToOneForUpdateInput {
+  create: RoleCreateInput
+  connect: RoleWhereUniqueInput
+  disconnect: Boolean
 }
 
 input EventUserRelateToManyForUpdateInput {
@@ -362,7 +349,7 @@ input UserCreateInput {
   country: String
   state: String
   city: String
-  role: RoleRelateToManyForCreateInput
+  role: RoleRelateToOneForCreateInput
   status: UserStatusType
   userEvents: EventUserRelateToManyForCreateInput
   bidCountUpdates: BidCountUpdateRelateToManyForCreateInput
@@ -373,9 +360,9 @@ input UserCreateInput {
   magicAuthRedeemedAt: DateTime
 }
 
-input RoleRelateToManyForCreateInput {
-  create: [RoleCreateInput!]
-  connect: [RoleWhereUniqueInput!]
+input RoleRelateToOneForCreateInput {
+  create: RoleCreateInput
+  connect: RoleWhereUniqueInput
 }
 
 input EventUserRelateToManyForCreateInput {
