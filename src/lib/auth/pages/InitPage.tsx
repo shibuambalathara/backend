@@ -227,12 +227,12 @@ const InitPage = ({ fieldPaths, listKey, enableWelcome }: InitPageProps) => {
     );
   }
 
-  return mode === 'init' ? (
+  return mode === "init" ? (
     <SigninContainer title="Welcome to KeystoneJS">
-      <H1>Welcome to KeystoneJS</H1>
+      <H1>Welcome to AutoBSe.com</H1>
       <p>Create your first user to get started</p>
       <form
-        onSubmit={event => {
+        onSubmit={(event) => {
           event.preventDefault();
           // Check if there are any invalidFields
           const newForceValidation = invalidFields.size !== 0;
@@ -243,12 +243,20 @@ const InitPage = ({ fieldPaths, listKey, enableWelcome }: InitPageProps) => {
 
           // If not we serialize the data
           const data: Record<string, any> = {};
-          const allSerializedValues = serializeValueToObjByFieldKey(fields, value);
-          Object.keys(allSerializedValues).forEach(fieldPath => {
+          const allSerializedValues = serializeValueToObjByFieldKey(
+            fields,
+            value
+          );
+          Object.keys(allSerializedValues).forEach((fieldPath) => {
             const { controller } = fields[fieldPath];
             const serialized = allSerializedValues[fieldPath];
             // we check the serialized values against the default values on the controller
-            if (!isDeepEqual(serialized, controller.serialize(controller.defaultValue))) {
+            if (
+              !isDeepEqual(
+                serialized,
+                controller.serialize(controller.defaultValue)
+              )
+            ) {
               // if they're different add them to the data object.
               Object.assign(data, serialized);
             }
@@ -269,7 +277,10 @@ const InitPage = ({ fieldPaths, listKey, enableWelcome }: InitPageProps) => {
       >
         <Stack gap="large">
           {error && (
-            <GraphQLErrorNotice errors={error?.graphQLErrors} networkError={error?.networkError} />
+            <GraphQLErrorNotice
+              errors={error?.graphQLErrors}
+              networkError={error?.networkError}
+            />
           )}
           <Fields
             fields={fields}
@@ -282,7 +293,8 @@ const InitPage = ({ fieldPaths, listKey, enableWelcome }: InitPageProps) => {
           <Button
             isLoading={
               loading ||
-              data?.authenticate?.__typename === `${listKey}AuthenticationWithPasswordSuccess`
+              data?.authenticate?.__typename ===
+                `${listKey}AuthenticationWithPasswordSuccess`
             }
             type="submit"
             weight="bold"
