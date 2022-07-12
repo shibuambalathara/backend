@@ -5,7 +5,7 @@ export const extendGraphqlSchema = graphQLSchemaExtension<Context>({
   typeDefs: graphql`
     type Query {
       """
-      Return all posts for a user from the last <days> days
+      Live Events
       """
       liveEvents(
         where: EventWhereInput
@@ -14,7 +14,7 @@ export const extendGraphqlSchema = graphQLSchemaExtension<Context>({
         skip: Int! = 0
       ): [Event]
       """
-      Compute statistics for a user
+      Upcoming Events
       """
       upcomingEvents(
         where: EventWhereInput
@@ -22,6 +22,16 @@ export const extendGraphqlSchema = graphQLSchemaExtension<Context>({
         take: Int! = 10
         skip: Int! = 0
       ): [Event]
+      """
+      Server Time
+      """
+      time: String
+    }
+    type Subscription {
+      """
+      New Live Bids
+      """
+      liveBid(id: ID!): Bid
     }
   `,
   resolvers: {
@@ -61,6 +71,18 @@ export const extendGraphqlSchema = graphQLSchemaExtension<Context>({
           orderBy,
           skip,
           take,
+        });
+      },
+      time: () => {
+        return new Date().toISOString();
+      },
+    },
+    Subscription: {
+      liveBid: (root, { id }, context) => {
+        return context.db.Bid.findOne({
+          where: {
+            id: id,
+          },
         });
       },
     },

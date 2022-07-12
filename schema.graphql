@@ -2023,7 +2023,7 @@ type Query {
   authenticatedItem: AuthenticatedItem
 
   """
-  Return all posts for a user from the last <days> days
+  Live Events
   """
   liveEvents(
     where: EventWhereInput
@@ -2033,7 +2033,7 @@ type Query {
   ): [Event]
 
   """
-  Compute statistics for a user
+  Upcoming Events
   """
   upcomingEvents(
     where: EventWhereInput
@@ -2041,6 +2041,11 @@ type Query {
     take: Int! = 10
     skip: Int! = 0
   ): [Event]
+
+  """
+  Server Time
+  """
+  time: String
 }
 
 union AuthenticatedItem = User
@@ -2126,4 +2131,11 @@ type KeystoneAdminUISort {
 enum KeystoneAdminUISortDirection {
   ASC
   DESC
+}
+
+type Subscription {
+  """
+  New Live Bids
+  """
+  liveBid(id: ID!): Bid
 }
