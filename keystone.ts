@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { config } from "@keystone-6/core";
 import { withAuth, session } from "./src/application/auth";
-import { lists, router } from "./src/application/schema";
+import { extendGraphqlSchema, lists, router } from "./src/application/schema";
 
 // const baseUrl = process.env.BASE_URL || "http://localhost:3000";
 
@@ -38,6 +38,7 @@ export default config(
       healthCheck: true,
       extendExpressApp: router,
     },
+    extendGraphqlSchema,
     graphql: {
       playground: "apollo", //process.env.NODE_ENV !== 'production' ? 'apollo' : false
       // debug: process.env.NODE_ENV !== 'production',

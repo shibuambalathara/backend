@@ -13,6 +13,7 @@ import { Bid } from "../entities/bids";
 import { UserBid } from "../entities/user-bids";
 import { Role } from "../entities/roles";
 export { router } from "./restRoutes";
+export { extendGraphqlSchema } from "./graphqlRoutes";
 export const lists = {
   User,
   Event,

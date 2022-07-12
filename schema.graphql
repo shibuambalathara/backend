@@ -2021,6 +2021,26 @@ type Query {
   rolesCount(where: RoleWhereInput! = {}): Int
   keystone: KeystoneMeta!
   authenticatedItem: AuthenticatedItem
+
+  """
+  Return all posts for a user from the last <days> days
+  """
+  liveEvents(
+    where: EventWhereInput
+    orderBy: [EventOrderByInput] = [{ createdAt: desc }]
+    take: Int! = 10
+    skip: Int! = 0
+  ): [Event]
+
+  """
+  Compute statistics for a user
+  """
+  upcomingEvents(
+    where: EventWhereInput
+    orderBy: [EventOrderByInput] = [{ startDate: asc }]
+    take: Int! = 10
+    skip: Int! = 0
+  ): [Event]
 }
 
 union AuthenticatedItem = User
