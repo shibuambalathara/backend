@@ -8,7 +8,7 @@ For more on auth, check out: https://keystonejs.com/docs/apis/auth#authenticatio
 */
 
 import https from 'https';
-import { createAuth } from '@keystone-6/auth'; //'../lib/auth';
+import { createAuth } from "k6-auth-otp"; //'../lib/auth';
 
 // See https://keystonejs.com/docs/apis/session#session-api for the session docs
 import { statelessSessions } from '@keystone-6/core/session';
