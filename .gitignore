@@ -4,3 +4,4 @@ node_modules
 .swc
 .next
 package-lock.json
+yarn.lock
