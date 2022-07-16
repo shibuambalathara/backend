@@ -17,7 +17,31 @@ export const Bid = list({
       delete: ({ session }) => !!session.itemId,
     },
   },
+  hooks: {
+    resolveInput: async ({ resolvedData, context, operation }) => {
+      if (operation !== "create") {
+        return resolvedData;
+      }
+      const [event, vehicle] = await Promise.all([
+        context.db.Event.findOne({
+          where: { id: resolvedData?.event?.connect?.id },
+        }),
+        context.db.Vehicle.findOne({
+          where: { id: resolvedData?.vehicle?.connect?.id },
+        }),
+      ]);
+      return {
+        ...resolvedData,
+        name: `${vehicle?.registrationNumber} : ${event?.name}`,
+      };
+    },
+  },
   fields: {
+    name: text({
+      ui: {
+        createView: { fieldMode: "hidden" },
+      },
+    }),
     eventTimeExpire: timestamp({}),
     bidTimeExpire: timestamp({}),
     currentBidAmount: integer({}),
@@ -25,9 +49,9 @@ export const Bid = list({
       ref: "User.activeBids",
       many: false,
     }),
-    vehicles: relationship({
+    vehicle: relationship({
       ref: "Vehicle.bids",
-      many: true,
+      many: false,
     }),
     event: relationship({
       ref: "Event.bids",

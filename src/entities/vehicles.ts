@@ -97,7 +97,7 @@ import {
           },
         }),
         bids: relationship({
-          ref: "Bid.vehicles",
+          ref: "Bid.vehicle",
           many: true,
         }),
 

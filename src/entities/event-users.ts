@@ -17,7 +17,31 @@ export const EventUser = list({
       delete: ({ session }) => !!session.itemId,
     },
   },
+  hooks: {
+    resolveInput: async ({ resolvedData, context, operation }) => {
+      if (operation !== "create") {
+        return resolvedData;
+      }
+      const [event, user] = await Promise.all([
+        context.db.Event.findOne({
+          where: { id: resolvedData?.event?.connect?.id },
+        }),
+        context.db.User.findOne({
+          where: { id: resolvedData?.user?.connect?.id },
+        }),
+      ]);
+      return {
+        ...resolvedData,
+        name: `${user?.name} : ${event?.name}`,
+      };
+    },
+  },
   fields: {
+    name: text({
+      ui: {
+        createView: { fieldMode: "hidden" },
+      },
+    }),
     event: relationship({
       ref: "Event.eventUsers",
       many: false,

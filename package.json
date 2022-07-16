@@ -1,7 +1,7 @@
 {
-  "name": "carids",
+  "name": "carbids",
   "version": "1.0.0",
-  "description": "aution system",
+  "description": "auction system",
   "main": "index.js",
   "author": "Muhad BK",
   "license": "MIT",

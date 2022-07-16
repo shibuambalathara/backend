@@ -65,6 +65,7 @@ model User {
 
 model Event {
   id              String           @id @default(cuid())
+  name            String           @default("")
   seller          Seller?          @relation("Event_seller", fields: [sellerId], references: [id])
   sellerId        String?          @map("seller")
   eventType       EventType?       @relation("Event_eventType", fields: [eventTypeId], references: [id])
@@ -168,7 +169,7 @@ model Vehicle {
   eventId             String?          @map("event")
   ExcelFile           ExcelUpload?     @relation("Vehicle_ExcelFile", fields: [ExcelFileId], references: [id])
   ExcelFileId         String?          @map("ExcelFile")
-  bids                Bid[]            @relation("Bid_vehicles")
+  bids                Bid[]            @relation("Bid_vehicle")
   createdAt           DateTime?        @default(now())
   updatedAt           DateTime?        @updatedAt
 
@@ -179,6 +180,7 @@ model Vehicle {
 
 model EventUser {
   id              String               @id @default(cuid())
+  name            String               @default("")
   event           Event?               @relation("EventUser_event", fields: [eventId], references: [id])
   eventId         String?              @map("event")
   user            User?                @relation("EventUser_user", fields: [userId], references: [id])
@@ -229,12 +231,14 @@ model BidCountUpdate {
 
 model Bid {
   id               String         @id @default(cuid())
+  name             String         @default("")
   eventTimeExpire  DateTime?
   bidTimeExpire    DateTime?
   currentBidAmount Int?
   currentBidUser   User?          @relation("Bid_currentBidUser", fields: [currentBidUserId], references: [id])
   currentBidUserId String?        @map("currentBidUser")
-  vehicles         Vehicle[]      @relation("Bid_vehicles")
+  vehicle          Vehicle?       @relation("Bid_vehicle", fields: [vehicleId], references: [id])
+  vehicleId        String?        @map("vehicle")
   event            Event?         @relation("Bid_event", fields: [eventId], references: [id])
   eventId          String?        @map("event")
   status           BidStatusType?
@@ -243,11 +247,13 @@ model Bid {
   updatedAt        DateTime?      @updatedAt
 
   @@index([currentBidUserId])
+  @@index([vehicleId])
   @@index([eventId])
 }
 
 model UserBid {
   id        String             @id @default(cuid())
+  name      String             @default("")
   amount    Int?
   user      User?              @relation("UserBid_user", fields: [userId], references: [id])
   userId    String?            @map("user")

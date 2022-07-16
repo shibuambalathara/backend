@@ -12,6 +12,7 @@ export const Event = list({
   ui: {
     listView: {
       initialColumns: [
+        "name",
         "seller",
         "eventCategory",
         "eventType",
@@ -28,21 +29,39 @@ export const Event = list({
       delete: ({ session }) => !!session.itemId,
     },
   },
+  hooks: {
+    resolveInput: async ({ resolvedData, context, operation }) => {
+      if (operation !== "create") {
+        return resolvedData;
+      }
+      const [category, seller, location] = await Promise.all([
+        context.db.EventCategory.findOne({
+          where: { id: resolvedData?.eventCategory?.connect?.id },
+        }),
+        context.db.Seller.findOne({
+          where: { id: resolvedData?.seller?.connect?.id },
+        }),
+        context.db.Location.findOne({
+          where: { id: resolvedData?.location?.connect?.id },
+        }),
+      ]);
+      return {
+        ...resolvedData,
+        name: `${seller?.name} 
+        - ${category?.name}
+        on ${resolvedData?.startDate?.toDateString()}
+        to ${resolvedData?.endDate?.toDateString()} 
+        @ ${location?.name}`,
+      };
+    },
+  },
 
   fields: {
-    // name: text({
-    //   ui: {
-    //     createView: { fieldMode: "hidden" },
-    //   },
-    //   hooks: {
-    //     resolveInput: async ({ context, item }) => {
-    //       if (item) {
-    //         return item.name;
-    //       }
-    //       return item;
-    //     },
-    //   },
-    // }),
+    name: text({
+      ui: {
+        createView: { fieldMode: "hidden" },
+      },
+    }),
     seller: relationship({
       ref: "Seller.events",
       many: false,

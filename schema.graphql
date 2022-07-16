@@ -387,6 +387,7 @@ input UserBidRelateToManyForCreateInput {
 
 type Event {
   id: ID!
+  name: String
   seller: Seller
   eventType: EventType
   eventCategory: EventCategory
@@ -437,6 +438,7 @@ input EventWhereInput {
   OR: [EventWhereInput!]
   NOT: [EventWhereInput!]
   id: IDFilter
+  name: StringFilter
   seller: SellerWhereInput
   eventType: EventTypeWhereInput
   eventCategory: EventCategoryWhereInput
@@ -490,6 +492,7 @@ input EventStatusTypeNullableFilter {
 
 input EventOrderByInput {
   id: OrderDirection
+  name: OrderDirection
   startDate: OrderDirection
   endDate: OrderDirection
   noOfBids: OrderDirection
@@ -499,6 +502,7 @@ input EventOrderByInput {
 }
 
 input EventUpdateInput {
+  name: String
   seller: SellerRelateToOneForUpdateInput
   eventType: EventTypeRelateToOneForUpdateInput
   eventCategory: EventCategoryRelateToOneForUpdateInput
@@ -556,6 +560,7 @@ input EventUpdateArgs {
 }
 
 input EventCreateInput {
+  name: String
   seller: SellerRelateToOneForCreateInput
   eventType: EventTypeRelateToOneForCreateInput
   eventCategory: EventCategoryRelateToOneForCreateInput
@@ -1110,6 +1115,7 @@ input EventRelateToOneForCreateInput {
 
 type EventUser {
   id: ID!
+  name: String
   event: Event
   user: User
   remainingBids: Int
@@ -1140,6 +1146,7 @@ input EventUserWhereInput {
   OR: [EventUserWhereInput!]
   NOT: [EventUserWhereInput!]
   id: IDFilter
+  name: StringFilter
   event: EventWhereInput
   user: UserWhereInput
   remainingBids: IntNullableFilter
@@ -1158,6 +1165,7 @@ input EventUserStatusTypeNullableFilter {
 
 input EventUserOrderByInput {
   id: OrderDirection
+  name: OrderDirection
   remainingBids: OrderDirection
   status: OrderDirection
   createdAt: OrderDirection
@@ -1165,6 +1173,7 @@ input EventUserOrderByInput {
 }
 
 input EventUserUpdateInput {
+  name: String
   event: EventRelateToOneForUpdateInput
   user: UserRelateToOneForUpdateInput
   remainingBids: Int
@@ -1184,6 +1193,7 @@ input EventUserUpdateArgs {
 }
 
 input EventUserCreateInput {
+  name: String
   event: EventRelateToOneForCreateInput
   user: UserRelateToOneForCreateInput
   remainingBids: Int
@@ -1395,17 +1405,12 @@ input EventUserRelateToOneForCreateInput {
 
 type Bid {
   id: ID!
+  name: String
   eventTimeExpire: DateTime
   bidTimeExpire: DateTime
   currentBidAmount: Int
   currentBidUser: User
-  vehicles(
-    where: VehicleWhereInput! = {}
-    orderBy: [VehicleOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [Vehicle!]
-  vehiclesCount(where: VehicleWhereInput! = {}): Int
+  vehicle: Vehicle
   event: Event
   status: BidStatusType
   userBids(
@@ -1435,11 +1440,12 @@ input BidWhereInput {
   OR: [BidWhereInput!]
   NOT: [BidWhereInput!]
   id: IDFilter
+  name: StringFilter
   eventTimeExpire: DateTimeNullableFilter
   bidTimeExpire: DateTimeNullableFilter
   currentBidAmount: IntNullableFilter
   currentBidUser: UserWhereInput
-  vehicles: VehicleManyRelationFilter
+  vehicle: VehicleWhereInput
   event: EventWhereInput
   status: BidStatusTypeNullableFilter
   userBids: UserBidManyRelationFilter
@@ -1456,6 +1462,7 @@ input BidStatusTypeNullableFilter {
 
 input BidOrderByInput {
   id: OrderDirection
+  name: OrderDirection
   eventTimeExpire: OrderDirection
   bidTimeExpire: OrderDirection
   currentBidAmount: OrderDirection
@@ -1465,14 +1472,21 @@ input BidOrderByInput {
 }
 
 input BidUpdateInput {
+  name: String
   eventTimeExpire: DateTime
   bidTimeExpire: DateTime
   currentBidAmount: Int
   currentBidUser: UserRelateToOneForUpdateInput
-  vehicles: VehicleRelateToManyForUpdateInput
+  vehicle: VehicleRelateToOneForUpdateInput
   event: EventRelateToOneForUpdateInput
   status: BidStatusType
   userBids: UserBidRelateToManyForUpdateInput
+}
+
+input VehicleRelateToOneForUpdateInput {
+  create: VehicleCreateInput
+  connect: VehicleWhereUniqueInput
+  disconnect: Boolean
 }
 
 input BidUpdateArgs {
@@ -1481,18 +1495,25 @@ input BidUpdateArgs {
 }
 
 input BidCreateInput {
+  name: String
   eventTimeExpire: DateTime
   bidTimeExpire: DateTime
   currentBidAmount: Int
   currentBidUser: UserRelateToOneForCreateInput
-  vehicles: VehicleRelateToManyForCreateInput
+  vehicle: VehicleRelateToOneForCreateInput
   event: EventRelateToOneForCreateInput
   status: BidStatusType
   userBids: UserBidRelateToManyForCreateInput
 }
 
+input VehicleRelateToOneForCreateInput {
+  create: VehicleCreateInput
+  connect: VehicleWhereUniqueInput
+}
+
 type UserBid {
   id: ID!
+  name: String
   amount: Int
   user: User
   bid: Bid
@@ -1518,6 +1539,7 @@ input UserBidWhereInput {
   OR: [UserBidWhereInput!]
   NOT: [UserBidWhereInput!]
   id: IDFilter
+  name: StringFilter
   amount: IntNullableFilter
   user: UserWhereInput
   bid: BidWhereInput
@@ -1535,6 +1557,7 @@ input UserBidStatusTypeNullableFilter {
 
 input UserBidOrderByInput {
   id: OrderDirection
+  name: OrderDirection
   amount: OrderDirection
   status: OrderDirection
   createdAt: OrderDirection
@@ -1542,6 +1565,7 @@ input UserBidOrderByInput {
 }
 
 input UserBidUpdateInput {
+  name: String
   amount: Int
   user: UserRelateToOneForUpdateInput
   bid: BidRelateToOneForUpdateInput
@@ -1560,6 +1584,7 @@ input UserBidUpdateArgs {
 }
 
 input UserBidCreateInput {
+  name: String
   amount: Int
   user: UserRelateToOneForCreateInput
   bid: BidRelateToOneForCreateInput
