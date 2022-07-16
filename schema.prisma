@@ -13,54 +13,56 @@ generator client {
 }
 
 model User {
-  id                   String               @id @default(cuid())
-  firstName            String               @default("")
-  lastName             String               @default("")
-  email                String               @default("")
-  username             String               @unique @default("")
-  phone                String               @default("")
-  mobile               String               @unique @default("")
-  password             String?
-  image_filesize       Int?
-  image_extension      String?
-  image_width          Int?
-  image_height         Int?
-  image_id             String?
-  pancard_filesize     Int?
-  pancard_extension    String?
-  pancard_width        Int?
-  pancard_height       Int?
-  pancard_id           String?
-  pancardNo            String               @default("")
-  idProof_filesize     Int?
-  idProof_extension    String?
-  idProof_width        Int?
-  idProof_height       Int?
-  idProof_id           String?
-  idProofType          UserIdProofTypeType?
-  idProofNo            String               @default("")
-  dealership_filesize  Int?
-  dealership_extension String?
-  dealership_width     Int?
-  dealership_height    Int?
-  dealership_id        String?
-  country              String               @default("")
-  state                String               @default("")
-  city                 String               @default("")
-  role                 Role?                @relation("User_role", fields: [roleId], references: [id])
-  roleId               String?              @map("role")
-  status               UserStatusType?      @default(active)
-  userEvents           EventUser[]          @relation("EventUser_user")
-  bidCountUpdates      BidCountUpdate[]     @relation("BidCountUpdate_createdBy")
-  activeBids           Bid[]                @relation("Bid_currentBidUser")
-  quotedBids           UserBid[]            @relation("UserBid_user")
-  createdAt            DateTime?            @default(now())
-  updatedAt            DateTime?            @updatedAt
-  magicAuthToken       String?
-  magicAuthIssuedAt    DateTime?
-  magicAuthRedeemedAt  DateTime?
-
-  @@index([roleId])
+  id                    String               @id @default(cuid())
+  firstName             String               @default("")
+  lastName              String               @default("")
+  email                 String               @default("")
+  username              String               @unique @default("")
+  phone                 String               @default("")
+  mobile                String               @unique @default("")
+  password              String?
+  image_filesize        Int?
+  image_extension       String?
+  image_width           Int?
+  image_height          Int?
+  image_id              String?
+  pancard_filesize      Int?
+  pancard_extension     String?
+  pancard_width         Int?
+  pancard_height        Int?
+  pancard_id            String?
+  pancardNo             String               @default("")
+  idProof_filesize      Int?
+  idProof_extension     String?
+  idProof_width         Int?
+  idProof_height        Int?
+  idProof_id            String?
+  idProofBack_filesize  Int?
+  idProofBack_extension String?
+  idProofBack_width     Int?
+  idProofBack_height    Int?
+  idProofBack_id        String?
+  idProofType           UserIdProofTypeType?
+  idProofNo             String               @default("")
+  dealership_filesize   Int?
+  dealership_extension  String?
+  dealership_width      Int?
+  dealership_height     Int?
+  dealership_id         String?
+  country               String               @default("")
+  state                 String               @default("")
+  city                  String               @default("")
+  role                  UserRoleType?        @default(dealer)
+  status                UserStatusType?      @default(pending)
+  userEvents            EventUser[]          @relation("EventUser_user")
+  bidCountUpdates       BidCountUpdate[]     @relation("BidCountUpdate_createdBy")
+  activeBids            Bid[]                @relation("Bid_currentBidUser")
+  quotedBids            UserBid[]            @relation("UserBid_user")
+  createdAt             DateTime?            @default(now())
+  updatedAt             DateTime?            @updatedAt
+  magicAuthToken        String?
+  magicAuthIssuedAt     DateTime?
+  magicAuthRedeemedAt   DateTime?
 }
 
 model Event {
@@ -80,7 +82,6 @@ model Event {
   noOfBids        Int
   status          EventStatusType? @default(active)
   eventUsers      EventUser[]      @relation("EventUser_event")
-  bids            Bid[]            @relation("Bid_event")
   ExcelFile       ExcelUpload?     @relation("Event_ExcelFile", fields: [ExcelFileId], references: [id])
   ExcelFileId     String?          @unique @map("ExcelFile")
   createdAt       DateTime?        @default(now())
@@ -239,8 +240,6 @@ model Bid {
   currentBidUserId String?        @map("currentBidUser")
   vehicle          Vehicle?       @relation("Bid_vehicle", fields: [vehicleId], references: [id])
   vehicleId        String?        @map("vehicle")
-  event            Event?         @relation("Bid_event", fields: [eventId], references: [id])
-  eventId          String?        @map("event")
   status           BidStatusType? @default(live)
   userBids         UserBid[]      @relation("UserBid_bid")
   createdAt        DateTime?      @default(now())
@@ -248,56 +247,34 @@ model Bid {
 
   @@index([currentBidUserId])
   @@index([vehicleId])
-  @@index([eventId])
 }
 
 model UserBid {
-  id        String             @id @default(cuid())
-  name      String             @default("")
+  id        String    @id @default(cuid())
+  name      String    @default("")
   amount    Int?
-  user      User?              @relation("UserBid_user", fields: [userId], references: [id])
-  userId    String?            @map("user")
-  bid       Bid?               @relation("UserBid_bid", fields: [bidId], references: [id])
-  bidId     String?            @map("bid")
-  status    UserBidStatusType?
-  createdAt DateTime?          @default(now())
-  updatedAt DateTime?          @updatedAt
+  user      User?     @relation("UserBid_user", fields: [userId], references: [id])
+  userId    String?   @map("user")
+  bid       Bid?      @relation("UserBid_bid", fields: [bidId], references: [id])
+  bidId     String?   @map("bid")
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
 
   @@index([userId])
   @@index([bidId])
-}
-
-model Role {
-  id                       String  @id @default(cuid())
-  name                     String  @default("")
-  canCreateEvents          Boolean @default(false)
-  canManageAllEvents       Boolean @default(false)
-  canCreateEventTypes      Boolean @default(false)
-  canManageEventTypes      Boolean @default(false)
-  canCreateVehicles        Boolean @default(false)
-  canManbageVehicles       Boolean @default(false)
-  canCreateLocations       Boolean @default(false)
-  canManageLocations       Boolean @default(false)
-  canCreateEventCategories Boolean @default(false)
-  canManageEventCategories Boolean @default(false)
-  canCreateEventUsers      Boolean @default(false)
-  canManageEventUsers      Boolean @default(false)
-  canCreateSellers         Boolean @default(false)
-  canManageSellers         Boolean @default(false)
-  canCreateBids            Boolean @default(false)
-  canManageBids            Boolean @default(false)
-  canSeeOtherPeople        Boolean @default(false)
-  canEditOtherPeople       Boolean @default(false)
-  canManagePeople          Boolean @default(false)
-  canManageRoles           Boolean @default(false)
-  isSuperAdmin             Boolean @default(false)
-  assignedTo               User[]  @relation("User_role")
 }
 
 enum UserIdProofTypeType {
   aadhar
   drivingLicense
   passport
+}
+
+enum UserRoleType {
+  admin
+  staff
+  seller
+  dealer
 }
 
 enum UserStatusType {
@@ -339,12 +316,4 @@ enum BidStatusType {
   blocked
   live
   closed
-}
-
-enum UserBidStatusType {
-  pending
-  blocked
-  live
-  closed
-  accepted
 }

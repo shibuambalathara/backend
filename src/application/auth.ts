@@ -39,13 +39,12 @@ const { withAuth } = createAuth({
     lastName
     email
     mobile
-    role {
-      name
-      isSuperAdmin
-      canSeeOtherPeople
-      canEditOtherPeople
-      canManagePeople
-      canManageRoles
+    role
+    userEvents{
+      id
+      event{
+        id
+      }
     }`,
   secretField: "password",
   initFirstItem: {
@@ -57,12 +56,13 @@ const { withAuth } = createAuth({
         This creates a related role with full permissions, so that when the first user signs in
         they have complete access to the system (without this, you couldn't do anything)
       */
-      role: {
-        create: {
-          name: "Admin Role",
-          isSuperAdmin: true,
-        },
-      },
+      role: "admin",
+      // role: {
+      //   create: {
+      //     name: "Admin Role",
+      //     isSuperAdmin: true,
+      //   },
+      // },
     },
     skipKeystoneWelcome: true,
   },

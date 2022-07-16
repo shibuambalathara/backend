@@ -7,19 +7,37 @@ import {
   timestamp,
 } from "@keystone-6/core/fields";
 import { list } from "@keystone-6/core";
-import { fieldOptions, isSignedIn, isSuperAdmin } from "../application/access";
+import {
+  fieldOptions,
+  isAdminCreate,
+  isAdminEdit,
+  isSignedIn,
+  isSuperAdmin,
+} from "../application/access";
+
+const ownerFilter = ({ session, context, listKey, operation }) => {
+  if (session.data.role === "admin") {
+    return true;
+  }
+  return { id: { equals: session.itemId } };
+};
 
 export const User = list({
   access: {
     operation: {
       query: () => true, //!!session.itemId,
-      create: () => true, //session.itemId,
+      create: ({ session }) => !session.itemId || isSuperAdmin(session),
       update: isSignedIn,
       delete: isSuperAdmin,
     },
+    filter: {
+      query: ownerFilter,
+      update: ownerFilter,
+    },
   },
   ui: {
-    labelField: "mobile",
+    labelField: "username",
+    hideCreate: ({ session }) => !!session.itemId || !isSuperAdmin(session),
   },
   fields: {
     firstName: text({}),
@@ -39,6 +57,15 @@ export const User = list({
       validation: {
         isRequired: true,
       },
+      ui: {
+        createView: { fieldMode: isAdminCreate },
+        itemView: { fieldMode: isAdminEdit },
+      },
+      access: {
+        read: isSignedIn,
+        create: isSuperAdmin,
+        update: isSuperAdmin,
+      },
     }),
     password: password({
       // validation: {
@@ -49,6 +76,7 @@ export const User = list({
     pancard: image({ storage: "local_images" }),
     pancardNo: text({}),
     idProof: image({ storage: "local_images" }),
+    idProofBack: image({ storage: "local_images" }),
     idProofType: select({
       type: "enum",
       options: [
@@ -62,31 +90,41 @@ export const User = list({
     country: text({}),
     state: text({}),
     city: text({}),
-    // role: select({
-    //   type: "enum",
-    //   options: [
-    //     { label: "Admin", value: "admin" },
-    //     { label: "Seller", value: "seller" },
-    //     { label: "Dealer", value: "dealer" },
-    //   ],
-    //   defaultValue: "seller",
-    //   ui: { displayMode: "segmented-control" },
-    // }),
-
-    role: relationship({
-      ref: "Role.assignedTo",
-      many: false,
+    role: select({
+      type: "enum",
+      options: [
+        { label: "Admin", value: "admin" },
+        { label: "Staff", value: "staff" },
+        { label: "Seller", value: "seller" },
+        { label: "Dealer", value: "dealer" },
+      ],
+      defaultValue: "dealer",
+      ui: {
+        displayMode: "segmented-control",
+        createView: { fieldMode: isAdminCreate },
+        itemView: { fieldMode: isAdminEdit },
+      },
       access: {
         read: isSignedIn,
         create: isSuperAdmin,
         update: isSuperAdmin,
       },
-      ui: {
-        itemView: {
-          fieldMode: (args) => (isSuperAdmin(args) ? "edit" : "read"),
-        },
-      },
     }),
+
+    // role: relationship({
+    //   ref: "Role.assignedTo",
+    //   many: false,
+    //   access: {
+    //     read: isSignedIn,
+    //     create: isSuperAdmin,
+    //     update: isSuperAdmin,
+    //   },
+    //   ui: {
+    //     itemView: {
+    //       fieldMode: (args) => (isSuperAdmin(args) ? "edit" : "read"),
+    //     },
+    //   },
+    // }),
     status: select({
       type: "enum",
       options: [
@@ -95,8 +133,12 @@ export const User = list({
         { label: "Active", value: "active" },
         { label: "Inactive", value: "inactive" },
       ],
-      defaultValue: "active",
-      ui: { displayMode: "segmented-control" },
+      defaultValue: "pending",
+      ui: {
+        displayMode: "segmented-control",
+        createView: { fieldMode: isAdminCreate },
+        itemView: { fieldMode: isAdminEdit },
+      },
       access: {
         read: isSignedIn,
         create: isSuperAdmin,
@@ -114,14 +156,26 @@ export const User = list({
     bidCountUpdates: relationship({
       ref: "BidCountUpdate.createdBy",
       many: true,
+      ui: {
+        createView: { fieldMode: "hidden" },
+        itemView: { fieldMode: "read" },
+      },
     }),
     activeBids: relationship({
       ref: "Bid.currentBidUser",
       many: true,
+      ui: {
+        createView: { fieldMode: "hidden" },
+        itemView: { fieldMode: "read" },
+      },
     }),
     quotedBids: relationship({
       ref: "UserBid.user",
       many: true,
+      ui: {
+        createView: { fieldMode: "hidden" },
+        itemView: { fieldMode: "read" },
+      },
     }),
     createdAt: timestamp({ ...fieldOptions, defaultValue: { kind: "now" } }),
     updatedAt: timestamp({ ...fieldOptions, db: { updatedAt: true } }),

@@ -14,13 +14,14 @@ type User {
   pancard: ImageFieldOutput
   pancardNo: String
   idProof: ImageFieldOutput
+  idProofBack: ImageFieldOutput
   idProofType: UserIdProofTypeType
   idProofNo: String
   dealership: ImageFieldOutput
   country: String
   state: String
   city: String
-  role: Role
+  role: UserRoleType
   status: UserStatusType
   userEvents(
     where: EventUserWhereInput! = {}
@@ -83,6 +84,13 @@ enum UserIdProofTypeType {
   passport
 }
 
+enum UserRoleType {
+  admin
+  staff
+  seller
+  dealer
+}
+
 enum UserStatusType {
   pending
   blocked
@@ -117,7 +125,7 @@ input UserWhereInput {
   country: StringFilter
   state: StringFilter
   city: StringFilter
-  role: RoleWhereInput
+  role: UserRoleTypeNullableFilter
   status: UserStatusTypeNullableFilter
   userEvents: EventUserManyRelationFilter
   bidCountUpdates: BidCountUpdateManyRelationFilter
@@ -186,6 +194,13 @@ input UserIdProofTypeTypeNullableFilter {
   not: UserIdProofTypeTypeNullableFilter
 }
 
+input UserRoleTypeNullableFilter {
+  equals: UserRoleType
+  in: [UserRoleType!]
+  notIn: [UserRoleType!]
+  not: UserRoleTypeNullableFilter
+}
+
 input UserStatusTypeNullableFilter {
   equals: UserStatusType
   in: [UserStatusType!]
@@ -242,6 +257,7 @@ input UserOrderByInput {
   country: OrderDirection
   state: OrderDirection
   city: OrderDirection
+  role: OrderDirection
   status: OrderDirection
   createdAt: OrderDirection
   updatedAt: OrderDirection
@@ -266,13 +282,14 @@ input UserUpdateInput {
   pancard: ImageFieldInput
   pancardNo: String
   idProof: ImageFieldInput
+  idProofBack: ImageFieldInput
   idProofType: UserIdProofTypeType
   idProofNo: String
   dealership: ImageFieldInput
   country: String
   state: String
   city: String
-  role: RoleRelateToOneForUpdateInput
+  role: UserRoleType
   status: UserStatusType
   userEvents: EventUserRelateToManyForUpdateInput
   bidCountUpdates: BidCountUpdateRelateToManyForUpdateInput
@@ -291,12 +308,6 @@ input ImageFieldInput {
 The `Upload` scalar type represents a file upload.
 """
 scalar Upload
-
-input RoleRelateToOneForUpdateInput {
-  create: RoleCreateInput
-  connect: RoleWhereUniqueInput
-  disconnect: Boolean
-}
 
 input EventUserRelateToManyForUpdateInput {
   disconnect: [EventUserWhereUniqueInput!]
@@ -343,13 +354,14 @@ input UserCreateInput {
   pancard: ImageFieldInput
   pancardNo: String
   idProof: ImageFieldInput
+  idProofBack: ImageFieldInput
   idProofType: UserIdProofTypeType
   idProofNo: String
   dealership: ImageFieldInput
   country: String
   state: String
   city: String
-  role: RoleRelateToOneForCreateInput
+  role: UserRoleType
   status: UserStatusType
   userEvents: EventUserRelateToManyForCreateInput
   bidCountUpdates: BidCountUpdateRelateToManyForCreateInput
@@ -358,11 +370,6 @@ input UserCreateInput {
   magicAuthToken: String
   magicAuthIssuedAt: DateTime
   magicAuthRedeemedAt: DateTime
-}
-
-input RoleRelateToOneForCreateInput {
-  create: RoleCreateInput
-  connect: RoleWhereUniqueInput
 }
 
 input EventUserRelateToManyForCreateInput {
@@ -410,13 +417,6 @@ type Event {
     skip: Int! = 0
   ): [EventUser!]
   eventUsersCount(where: EventUserWhereInput! = {}): Int
-  bids(
-    where: BidWhereInput! = {}
-    orderBy: [BidOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [Bid!]
-  bidsCount(where: BidWhereInput! = {}): Int
   ExcelFile: ExcelUpload
   createdAt: DateTime
   updatedAt: DateTime
@@ -449,7 +449,6 @@ input EventWhereInput {
   noOfBids: IntFilter
   status: EventStatusTypeNullableFilter
   eventUsers: EventUserManyRelationFilter
-  bids: BidManyRelationFilter
   ExcelFile: ExcelUploadWhereInput
   createdAt: DateTimeNullableFilter
   updatedAt: DateTimeNullableFilter
@@ -513,7 +512,6 @@ input EventUpdateInput {
   noOfBids: Int
   status: EventStatusType
   eventUsers: EventUserRelateToManyForUpdateInput
-  bids: BidRelateToManyForUpdateInput
   ExcelFile: ExcelUploadRelateToOneForUpdateInput
 }
 
@@ -571,7 +569,6 @@ input EventCreateInput {
   noOfBids: Int
   status: EventStatusType
   eventUsers: EventUserRelateToManyForCreateInput
-  bids: BidRelateToManyForCreateInput
   ExcelFile: ExcelUploadRelateToOneForCreateInput
 }
 
@@ -1411,7 +1408,6 @@ type Bid {
   currentBidAmount: Int
   currentBidUser: User
   vehicle: Vehicle
-  event: Event
   status: BidStatusType
   userBids(
     where: UserBidWhereInput! = {}
@@ -1446,7 +1442,6 @@ input BidWhereInput {
   currentBidAmount: IntNullableFilter
   currentBidUser: UserWhereInput
   vehicle: VehicleWhereInput
-  event: EventWhereInput
   status: BidStatusTypeNullableFilter
   userBids: UserBidManyRelationFilter
   createdAt: DateTimeNullableFilter
@@ -1478,7 +1473,6 @@ input BidUpdateInput {
   currentBidAmount: Int
   currentBidUser: UserRelateToOneForUpdateInput
   vehicle: VehicleRelateToOneForUpdateInput
-  event: EventRelateToOneForUpdateInput
   status: BidStatusType
   userBids: UserBidRelateToManyForUpdateInput
 }
@@ -1501,7 +1495,6 @@ input BidCreateInput {
   currentBidAmount: Int
   currentBidUser: UserRelateToOneForCreateInput
   vehicle: VehicleRelateToOneForCreateInput
-  event: EventRelateToOneForCreateInput
   status: BidStatusType
   userBids: UserBidRelateToManyForCreateInput
 }
@@ -1517,17 +1510,8 @@ type UserBid {
   amount: Int
   user: User
   bid: Bid
-  status: UserBidStatusType
   createdAt: DateTime
   updatedAt: DateTime
-}
-
-enum UserBidStatusType {
-  pending
-  blocked
-  live
-  closed
-  accepted
 }
 
 input UserBidWhereUniqueInput {
@@ -1543,23 +1527,14 @@ input UserBidWhereInput {
   amount: IntNullableFilter
   user: UserWhereInput
   bid: BidWhereInput
-  status: UserBidStatusTypeNullableFilter
   createdAt: DateTimeNullableFilter
   updatedAt: DateTimeNullableFilter
-}
-
-input UserBidStatusTypeNullableFilter {
-  equals: UserBidStatusType
-  in: [UserBidStatusType!]
-  notIn: [UserBidStatusType!]
-  not: UserBidStatusTypeNullableFilter
 }
 
 input UserBidOrderByInput {
   id: OrderDirection
   name: OrderDirection
   amount: OrderDirection
-  status: OrderDirection
   createdAt: OrderDirection
   updatedAt: OrderDirection
 }
@@ -1569,7 +1544,6 @@ input UserBidUpdateInput {
   amount: Int
   user: UserRelateToOneForUpdateInput
   bid: BidRelateToOneForUpdateInput
-  status: UserBidStatusType
 }
 
 input BidRelateToOneForUpdateInput {
@@ -1588,185 +1562,11 @@ input UserBidCreateInput {
   amount: Int
   user: UserRelateToOneForCreateInput
   bid: BidRelateToOneForCreateInput
-  status: UserBidStatusType
 }
 
 input BidRelateToOneForCreateInput {
   create: BidCreateInput
   connect: BidWhereUniqueInput
-}
-
-type Role {
-  id: ID!
-  name: String
-  canCreateEvents: Boolean
-  canManageAllEvents: Boolean
-  canCreateEventTypes: Boolean
-  canManageEventTypes: Boolean
-  canCreateVehicles: Boolean
-  canManbageVehicles: Boolean
-  canCreateLocations: Boolean
-  canManageLocations: Boolean
-  canCreateEventCategories: Boolean
-  canManageEventCategories: Boolean
-  canCreateEventUsers: Boolean
-  canManageEventUsers: Boolean
-  canCreateSellers: Boolean
-  canManageSellers: Boolean
-  canCreateBids: Boolean
-  canManageBids: Boolean
-  canSeeOtherPeople: Boolean
-  canEditOtherPeople: Boolean
-  canManagePeople: Boolean
-  canManageRoles: Boolean
-  isSuperAdmin: Boolean
-  assignedTo(
-    where: UserWhereInput! = {}
-    orderBy: [UserOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [User!]
-  assignedToCount(where: UserWhereInput! = {}): Int
-}
-
-input RoleWhereUniqueInput {
-  id: ID
-}
-
-input RoleWhereInput {
-  AND: [RoleWhereInput!]
-  OR: [RoleWhereInput!]
-  NOT: [RoleWhereInput!]
-  id: IDFilter
-  name: StringFilter
-  canCreateEvents: BooleanFilter
-  canManageAllEvents: BooleanFilter
-  canCreateEventTypes: BooleanFilter
-  canManageEventTypes: BooleanFilter
-  canCreateVehicles: BooleanFilter
-  canManbageVehicles: BooleanFilter
-  canCreateLocations: BooleanFilter
-  canManageLocations: BooleanFilter
-  canCreateEventCategories: BooleanFilter
-  canManageEventCategories: BooleanFilter
-  canCreateEventUsers: BooleanFilter
-  canManageEventUsers: BooleanFilter
-  canCreateSellers: BooleanFilter
-  canManageSellers: BooleanFilter
-  canCreateBids: BooleanFilter
-  canManageBids: BooleanFilter
-  canSeeOtherPeople: BooleanFilter
-  canEditOtherPeople: BooleanFilter
-  canManagePeople: BooleanFilter
-  canManageRoles: BooleanFilter
-  isSuperAdmin: BooleanFilter
-  assignedTo: UserManyRelationFilter
-}
-
-input BooleanFilter {
-  equals: Boolean
-  not: BooleanFilter
-}
-
-input UserManyRelationFilter {
-  every: UserWhereInput
-  some: UserWhereInput
-  none: UserWhereInput
-}
-
-input RoleOrderByInput {
-  id: OrderDirection
-  name: OrderDirection
-  canCreateEvents: OrderDirection
-  canManageAllEvents: OrderDirection
-  canCreateEventTypes: OrderDirection
-  canManageEventTypes: OrderDirection
-  canCreateVehicles: OrderDirection
-  canManbageVehicles: OrderDirection
-  canCreateLocations: OrderDirection
-  canManageLocations: OrderDirection
-  canCreateEventCategories: OrderDirection
-  canManageEventCategories: OrderDirection
-  canCreateEventUsers: OrderDirection
-  canManageEventUsers: OrderDirection
-  canCreateSellers: OrderDirection
-  canManageSellers: OrderDirection
-  canCreateBids: OrderDirection
-  canManageBids: OrderDirection
-  canSeeOtherPeople: OrderDirection
-  canEditOtherPeople: OrderDirection
-  canManagePeople: OrderDirection
-  canManageRoles: OrderDirection
-  isSuperAdmin: OrderDirection
-}
-
-input RoleUpdateInput {
-  name: String
-  canCreateEvents: Boolean
-  canManageAllEvents: Boolean
-  canCreateEventTypes: Boolean
-  canManageEventTypes: Boolean
-  canCreateVehicles: Boolean
-  canManbageVehicles: Boolean
-  canCreateLocations: Boolean
-  canManageLocations: Boolean
-  canCreateEventCategories: Boolean
-  canManageEventCategories: Boolean
-  canCreateEventUsers: Boolean
-  canManageEventUsers: Boolean
-  canCreateSellers: Boolean
-  canManageSellers: Boolean
-  canCreateBids: Boolean
-  canManageBids: Boolean
-  canSeeOtherPeople: Boolean
-  canEditOtherPeople: Boolean
-  canManagePeople: Boolean
-  canManageRoles: Boolean
-  isSuperAdmin: Boolean
-  assignedTo: UserRelateToManyForUpdateInput
-}
-
-input UserRelateToManyForUpdateInput {
-  disconnect: [UserWhereUniqueInput!]
-  set: [UserWhereUniqueInput!]
-  create: [UserCreateInput!]
-  connect: [UserWhereUniqueInput!]
-}
-
-input RoleUpdateArgs {
-  where: RoleWhereUniqueInput!
-  data: RoleUpdateInput!
-}
-
-input RoleCreateInput {
-  name: String
-  canCreateEvents: Boolean
-  canManageAllEvents: Boolean
-  canCreateEventTypes: Boolean
-  canManageEventTypes: Boolean
-  canCreateVehicles: Boolean
-  canManbageVehicles: Boolean
-  canCreateLocations: Boolean
-  canManageLocations: Boolean
-  canCreateEventCategories: Boolean
-  canManageEventCategories: Boolean
-  canCreateEventUsers: Boolean
-  canManageEventUsers: Boolean
-  canCreateSellers: Boolean
-  canManageSellers: Boolean
-  canCreateBids: Boolean
-  canManageBids: Boolean
-  canSeeOtherPeople: Boolean
-  canEditOtherPeople: Boolean
-  canManagePeople: Boolean
-  canManageRoles: Boolean
-  isSuperAdmin: Boolean
-  assignedTo: UserRelateToManyForCreateInput
-}
-
-input UserRelateToManyForCreateInput {
-  create: [UserCreateInput!]
-  connect: [UserWhereUniqueInput!]
 }
 
 """
@@ -1878,12 +1678,6 @@ type Mutation {
   updateUserBids(data: [UserBidUpdateArgs!]!): [UserBid]
   deleteUserBid(where: UserBidWhereUniqueInput!): UserBid
   deleteUserBids(where: [UserBidWhereUniqueInput!]!): [UserBid]
-  createRole(data: RoleCreateInput!): Role
-  createRoles(data: [RoleCreateInput!]!): [Role]
-  updateRole(where: RoleWhereUniqueInput!, data: RoleUpdateInput!): Role
-  updateRoles(data: [RoleUpdateArgs!]!): [Role]
-  deleteRole(where: RoleWhereUniqueInput!): Role
-  deleteRoles(where: [RoleWhereUniqueInput!]!): [Role]
   endSession: Boolean!
   authenticateUserWithPassword(
     mobile: String!
@@ -2036,14 +1830,6 @@ type Query {
   ): [UserBid!]
   userBid(where: UserBidWhereUniqueInput!): UserBid
   userBidsCount(where: UserBidWhereInput! = {}): Int
-  roles(
-    where: RoleWhereInput! = {}
-    orderBy: [RoleOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [Role!]
-  role(where: RoleWhereUniqueInput!): Role
-  rolesCount(where: RoleWhereInput! = {}): Int
   keystone: KeystoneMeta!
   authenticatedItem: AuthenticatedItem
 

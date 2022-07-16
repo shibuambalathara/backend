@@ -8,19 +8,43 @@ import {
       timestamp,
     } from "@keystone-6/core/fields";
     import { list } from "@keystone-6/core";
-    import { fieldOptions } from "../application/access";
-    
+    import {
+      fieldOptions,
+      isAdminCreate,
+      isAdminEdit,
+      isSignedIn,
+      isSuperAdmin,
+    } from "../application/access";
+
+    const ownerFilter = ({ session, context, listKey, operation }) => {
+      if (session.data.role === "admin") {
+        return true;
+      }
+      return {
+        event: {
+          id: { in: session.data?.userEvents?.map((e) => e.event.id) },
+        },
+      };
+    };
+
     export const Vehicle = list({
       access: {
         operation: {
-          query: ({ session }) => !!session.itemId,
-          create: ({ session }) => !!session.itemId,
-          update: ({ session }) => !!session.itemId,
-          delete: ({ session }) => !!session.itemId,
+          query: isSignedIn,
+          create: isSuperAdmin,
+          update: isSuperAdmin,
+          delete: isSuperAdmin,
+        },
+        filter: {
+          query: ownerFilter,
         },
       },
       ui: {
         labelField: "registrationNumber",
+        hideCreate: ({ session }) => !!session.itemId || !isSuperAdmin(session),
+        hideDelete: ({ session }) => !!session.itemId || !isSuperAdmin(session),
+        itemView: { defaultFieldMode: isAdminEdit },
+        createView: { defaultFieldMode: isAdminCreate },
       },
       fields: {
         registrationNumber: text({

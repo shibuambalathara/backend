@@ -4,17 +4,18 @@ export type Session = {
   data: {
     id: string;
     name: string;
-    role?: {
-      id: string;
-      name: string;
-      isSuperAdmin: boolean;
-      canCreateTodos: boolean;
-      canManageAllTodos: boolean;
-      canSeeOtherPeople: boolean;
-      canEditOtherPeople: boolean;
-      canManagePeople: boolean;
-      canManageRoles: boolean;
-    };
+    role: string;
+    // role?: {
+    //   id: string;
+    //   name: string;
+    //   isSuperAdmin: boolean;
+    //   canCreateTodos: boolean;
+    //   canManageAllTodos: boolean;
+    //   canSeeOtherPeople: boolean;
+    //   canEditOtherPeople: boolean;
+    //   canManagePeople: boolean;
+    //   canManageRoles: boolean;
+    // };
   };
 };
 

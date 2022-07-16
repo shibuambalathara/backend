@@ -11,7 +11,7 @@ import { Seller } from '../entities/sellers'
 import { BidCountUpdate } from "../entities/bid-count-updates";
 import { Bid } from "../entities/bids";
 import { UserBid } from "../entities/user-bids";
-import { Role } from "../entities/roles";
+// import { Role } from "../entities/roles";
 export { router } from "./restRoutes";
 export { extendGraphqlSchema } from "./graphqlRoutes";
 export const lists = {
@@ -27,5 +27,5 @@ export const lists = {
   BidCountUpdate,
   Bid,
   UserBid,
-  Role,
+  // Role,
 };

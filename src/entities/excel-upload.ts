@@ -1,6 +1,6 @@
 import { relationship, file, timestamp, text } from "@keystone-6/core/fields";
 import { list } from "@keystone-6/core";
-import { fieldOptions } from "../application/access";
+import { fieldOptions, isSuperAdmin } from "../application/access";
 import excelFileToJson from "../services/excelFileToJson";
 import { Vehicle } from "@prisma/client";
 
@@ -52,13 +52,14 @@ interface VehicleDTO {
 export const ExcelUpload = list({
   access: {
     operation: {
-      query: ({ session }) => true,
-      create: ({ session }) => !!session.itemId,
-      update: ({ session }) => false,
-      delete: ({ session }) => false,
+      query: () => true,
+      create: isSuperAdmin,
+      update: isSuperAdmin,
+      delete: isSuperAdmin,
     },
   },
   ui: {
+    isHidden: ({ session }) => !isSuperAdmin(session),
     hideDelete: true,
   },
   hooks: {

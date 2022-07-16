@@ -6,27 +6,26 @@ import {
   timestamp,
 } from "@keystone-6/core/fields";
 import { list } from "@keystone-6/core";
-import { fieldOptions } from "../application/access";
+import {
+  fieldOptions,
+  isAdminCreate,
+  isAdminEdit,
+  isSuperAdmin,
+} from "../application/access";
 
 export const Event = list({
   ui: {
-    listView: {
-      initialColumns: [
-        "name",
-        "seller",
-        "eventCategory",
-        "eventType",
-        "location",
-        "startDate",
-      ],
-    },
+    hideCreate: ({ session }) => !!session.itemId || !isSuperAdmin(session),
+    hideDelete: ({ session }) => !!session.itemId || !isSuperAdmin(session),
+    itemView: { defaultFieldMode: isAdminEdit },
+    createView: { defaultFieldMode: isAdminCreate },
   },
   access: {
     operation: {
       query: () => true,
-      create: ({ session }) => !!session.itemId,
-      update: ({ session }) => !!session.itemId,
-      delete: ({ session }) => !!session.itemId,
+      create: isSuperAdmin,
+      update: isSuperAdmin,
+      delete: isSuperAdmin,
     },
   },
   hooks: {
@@ -109,10 +108,6 @@ export const Event = list({
     }),
     eventUsers: relationship({
       ref: "EventUser.event",
-      many: true,
-    }),
-    bids: relationship({
-      ref: "Bid.event",
       many: true,
     }),
     ExcelFile: relationship({
