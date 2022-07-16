@@ -1406,8 +1406,8 @@ input EventUserRelateToOneForCreateInput {
 type Bid {
   id: ID!
   name: String
-  eventTimeExpire: DateTime
-  bidTimeExpire: DateTime
+  eventTimeExpire: String
+  bidTimeExpire: String
   currentBidAmount: Int
   currentBidUser: User
   vehicle: Vehicle
@@ -1441,8 +1441,8 @@ input BidWhereInput {
   NOT: [BidWhereInput!]
   id: IDFilter
   name: StringFilter
-  eventTimeExpire: DateTimeNullableFilter
-  bidTimeExpire: DateTimeNullableFilter
+  eventTimeExpire: StringFilter
+  bidTimeExpire: StringFilter
   currentBidAmount: IntNullableFilter
   currentBidUser: UserWhereInput
   vehicle: VehicleWhereInput
@@ -1473,8 +1473,8 @@ input BidOrderByInput {
 
 input BidUpdateInput {
   name: String
-  eventTimeExpire: DateTime
-  bidTimeExpire: DateTime
+  eventTimeExpire: String
+  bidTimeExpire: String
   currentBidAmount: Int
   currentBidUser: UserRelateToOneForUpdateInput
   vehicle: VehicleRelateToOneForUpdateInput
@@ -1496,8 +1496,8 @@ input BidUpdateArgs {
 
 input BidCreateInput {
   name: String
-  eventTimeExpire: DateTime
-  bidTimeExpire: DateTime
+  eventTimeExpire: String
+  bidTimeExpire: String
   currentBidAmount: Int
   currentBidUser: UserRelateToOneForCreateInput
   vehicle: VehicleRelateToOneForCreateInput

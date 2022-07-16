@@ -33,6 +33,8 @@ export const Bid = list({
       return {
         ...resolvedData,
         name: `${vehicle?.registrationNumber} : ${event?.name}`,
+        eventTimeExpire: event?.endDate,
+        bidTimeExpire: event?.endDate,
       };
     },
   },
@@ -40,10 +42,21 @@ export const Bid = list({
     name: text({
       ui: {
         createView: { fieldMode: "hidden" },
+        itemView: { fieldMode: "read" },
       },
     }),
-    eventTimeExpire: timestamp({}),
-    bidTimeExpire: timestamp({}),
+    eventTimeExpire: text({
+      ui: {
+        createView: { fieldMode: "hidden" },
+        itemView: { fieldMode: "read" },
+      },
+    }),
+    bidTimeExpire: text({
+      ui: {
+        createView: { fieldMode: "hidden" },
+        itemView: { fieldMode: "read" },
+      },
+    }),
     currentBidAmount: integer({}),
     currentBidUser: relationship({
       ref: "User.activeBids",
@@ -60,6 +73,7 @@ export const Bid = list({
 
     status: select({
       type: "enum",
+      defaultValue: "live",
       options: ["pending", "blocked", "live", "closed"],
     }),
     userBids: relationship({

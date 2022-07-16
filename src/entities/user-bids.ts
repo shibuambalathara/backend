@@ -13,11 +13,23 @@ export const UserBid = list({
     operation: {
       query: ({ session }) => !!session.itemId,
       create: ({ session }) => !!session.itemId,
-      update: ({ session }) => !!session.itemId,
-      delete: ({ session }) => !!session.itemId,
+      update: ({ session }) => false,
+      delete: ({ session }) => false,
     },
   },
   hooks: {
+    validateInput: async ({ resolvedData, context, addValidationError }) => {
+      const { amount } = resolvedData;
+      const bid = await context.db.Bid.findOne({
+        where: { id: resolvedData?.bid?.connect?.id },
+      });
+      if (!bid.currentBidAmount || bid.currentBidAmount <= amount) {
+        addValidationError(
+          "Bid Amount smaller than current bid amount, Current Bid Amount: " +
+            bid.currentBidAmount
+        );
+      }
+    },
     resolveInput: async ({ resolvedData, context, operation }) => {
       if (operation !== "create") {
         return resolvedData;

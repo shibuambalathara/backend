@@ -14,12 +14,12 @@ export const User = list({
     operation: {
       query: () => true, //!!session.itemId,
       create: () => true, //session.itemId,
-      update: ({ session }) => !!session.itemId,
-      delete: ({ session }) => !!session.itemId,
+      update: isSignedIn,
+      delete: isSuperAdmin,
     },
   },
   ui: {
-    labelField: "firstName",
+    labelField: "mobile",
   },
   fields: {
     firstName: text({}),
@@ -97,6 +97,11 @@ export const User = list({
       ],
       defaultValue: "active",
       ui: { displayMode: "segmented-control" },
+      access: {
+        read: isSignedIn,
+        create: isSuperAdmin,
+        update: isSuperAdmin,
+      },
     }),
     userEvents: relationship({
       ref: "EventUser.user",

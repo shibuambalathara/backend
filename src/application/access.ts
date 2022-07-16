@@ -2,6 +2,12 @@ import { TimestampFieldConfig } from "@keystone-6/core/fields";
 import { BaseListTypeInfo } from "@keystone-6/core/types";
 import { ListAccessArgs } from "./types";
 
+export const isAdminEdit = ({ session }: ListAccessArgs) =>
+  isSuperAdmin({ session }) ? "edit" : "read";
+
+export const isAdminCreate = ({ session }: ListAccessArgs) =>
+  isSuperAdmin({ session }) ? "edit" : "hidden";
+
 export const fieldOptions: TimestampFieldConfig<BaseListTypeInfo> = {
   access: {
     read: () => true,
@@ -27,8 +33,13 @@ export const isSignedIn = ({ session }: ListAccessArgs) => {
   return !!session;
 };
 
+export const isOwner =
+  (ownerId: string) =>
+  ({ session }: ListAccessArgs) => {
+    return session?.itemId === ownerId;
+  };
+
 export const isSuperAdmin = ({ session }: ListAccessArgs) => {
-  console.log("data: ", session?.data);
   return !!session?.data?.role?.isSuperAdmin;
 };
 

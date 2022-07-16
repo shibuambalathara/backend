@@ -34,6 +34,7 @@ const { withAuth } = createAuth({
   listKey: "User",
   identityField: "mobile",
   sessionData: `
+    id
     firstName
     lastName
     email

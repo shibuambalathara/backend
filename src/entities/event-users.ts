@@ -6,7 +6,11 @@ import {
   timestamp,
 } from "@keystone-6/core/fields";
 import { list } from "@keystone-6/core";
-import { fieldOptions } from "../application/access";
+import {
+  fieldOptions,
+  isAdminCreate,
+  isAdminEdit,
+} from "../application/access";
 
 export const EventUser = list({
   access: {
@@ -33,6 +37,7 @@ export const EventUser = list({
       return {
         ...resolvedData,
         name: `${user?.name} : ${event?.name}`,
+        remainingBids: event?.maxBids,
       };
     },
   },
@@ -51,20 +56,30 @@ export const EventUser = list({
       many: false,
     }),
     remainingBids: integer({
-      ui: { createView: { fieldMode: "hidden" } },
-      defaultValue: 10,
-      // hooks: {
-      //   resolveInput: async({ context, item }) => ,
-      // },
+      ui: {
+        createView: { fieldMode: "hidden" },
+        itemView: {
+          fieldMode: isAdminEdit,
+        },
+      },
     }),
     bidCountUpdates: relationship({
       ref: "BidCountUpdate.eventUser",
       many: true,
+      ui: {
+        createView: { fieldMode: "hidden" },
+        itemView: { fieldMode: isAdminEdit },
+      },
     }),
 
     status: select({
       type: "enum",
+      defaultValue: "pending",
       options: ["pending", "blocked", "accepted"],
+      ui: {
+        createView: { fieldMode: isAdminCreate },
+        itemView: { fieldMode: isAdminEdit },
+      },
     }),
     createdAt: timestamp({
       ...fieldOptions,
