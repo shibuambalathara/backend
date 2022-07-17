@@ -66,12 +66,18 @@ export const ExcelUpload = list({
     afterOperation: async ({ context, operation, resolvedData, item }) => {
       if (operation === "create") {
         // console.log("resolvedData", resolvedData);
-        const { file } = resolvedData;
+        const { file, event } = resolvedData;
         try {
-          const data = await excelFileToJson(
-            `${process.cwd()}/public/files/excel/${file.filename}`,
-            "Sheet1"
-          );
+          const [data, eventData] = await Promise.all([
+            excelFileToJson(
+              `${process.cwd()}/public/files/excel/${file.filename}`,
+              "Sheet1"
+            ),
+            context.query.Event.findOne({
+              where: { id: event.connect.id },
+              query: `endDate `,
+            }),
+          ]);
           // console.log("data", data);
           if (data.length > 0) {
             const vehicles: Vehicle[] = data.map((vehicleItem: VehicleDTO) => {
@@ -121,6 +127,10 @@ export const ExcelUpload = list({
                 image12: vehicleItem["image 12"],
                 ExcelFile: { connect: { id: item.id } },
                 event: resolvedData.event,
+                eventTimeExpire: eventData.endDate,
+                bidTimeExpire: eventData.endDate,
+                currentBidAmount: vehicleItem.Reserve_Price || 0,
+                bidStatus: "pending",
               };
             });
             await context.query.Vehicle.createMany({
