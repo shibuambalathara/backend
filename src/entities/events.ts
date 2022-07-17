@@ -47,11 +47,11 @@ export const Event = list({
       ]);
       return {
         ...resolvedData,
-        name: `${seller?.name} 
-        - ${category?.name}
-        on ${resolvedData?.startDate?.toDateString()}
-        to ${resolvedData?.endDate?.toDateString()} 
-        @ ${location?.name}`,
+        name: `${seller?.name} - ${
+          category?.name
+        } on ${resolvedData?.startDate?.toDateString()} to ${resolvedData?.endDate?.toDateString()} @ ${
+          location?.name
+        }`,
       };
     },
   },
@@ -69,6 +69,7 @@ export const Event = list({
 
     eventType: relationship({
       ref: "EventType.events",
+      many: true,
     }),
     eventCategory: relationship({
       ref: "EventCategory.events",
@@ -110,10 +111,18 @@ export const Event = list({
     eventUsers: relationship({
       ref: "EventUser.event",
       many: true,
+      ui: {
+        createView: { fieldMode: "hidden" },
+        itemView: { fieldMode: "read" },
+      },
     }),
     ExcelFile: relationship({
       ref: "ExcelUpload.event",
       many: false,
+      ui: {
+        createView: { fieldMode: "hidden" },
+        itemView: { fieldMode: isAdminEdit },
+      },
     }),
     createdAt: timestamp({ ...fieldOptions, defaultValue: { kind: "now" } }),
     updatedAt: timestamp({ ...fieldOptions, db: { updatedAt: true } }),
