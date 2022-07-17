@@ -36,7 +36,7 @@ export const Bid = list({
       const [bidVehicle, eventUser] = await Promise.all([
         context.query.Vehicle.findOne({
           where: { id: resolvedData?.bidVehicle?.connect?.id },
-          query: "id currentBidAmount bidTimeExpire event { startDate } ",
+          query: `id currentBidAmount bidTimeExpire event { startDate } `,
         }),
         context.prisma.eventUser.findFirst({
           where: {
@@ -45,7 +45,7 @@ export const Bid = list({
           },
         }),
       ]);
-      if (eventUser.remainingBids <= 0) {
+      if (eventUser?.remainingBids <= 0) {
         addValidationError("No Bids Remaining");
       }
       if (!bidVehicle) {
