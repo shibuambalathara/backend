@@ -35,17 +35,22 @@ export const Bid = list({
       const { amount } = resolvedData;
       const bidVehicle = await context.query.Vehicle.findOne({
         where: { id: resolvedData?.bidVehicle?.connect?.id },
-        query: "{ id currentBidAmount bidTimeExpire }",
+        query: "id currentBidAmount bidTimeExpire event { startDate } ",
       });
+      console.log("bidVehicle", bidVehicle);
+      console.log("resolvedData", resolvedData);
       if (!bidVehicle) {
-        addValidationError("Bid not found");
+        addValidationError("vehicle not found");
       }
       if (bidVehicle.bidTimeExpire < new Date()) {
-        addValidationError("Bid time expired");
+        addValidationError("Auction has ended");
+      }
+      if (bidVehicle.event.startDate > new Date()) {
+        addValidationError("Auction yet to start");
       }
       if (
         !bidVehicle.currentBidAmount ||
-        bidVehicle.currentBidAmount <= amount
+        bidVehicle.currentBidAmount >= amount
       ) {
         addValidationError(
           "Bid Amount smaller than current bid amount, Current Bid Amount: " +
@@ -58,16 +63,18 @@ export const Bid = list({
         return resolvedData;
       }
       const [bidVehicle, user] = await Promise.all([
-        context.db.Vehicle.findOne({
+        context.query.Vehicle.findOne({
           where: { id: resolvedData?.bidVehicle?.connect?.id },
+          query: ` registrationNumber `,
         }),
-        context.db.User.findOne({
+        context.query.User.findOne({
           where: { id: resolvedData?.user?.connect?.id },
+          query: ` username `,
         }),
       ]);
       return {
         ...resolvedData,
-        name: `${user?.fullName} : ${bidVehicle?.registrationNumber}`,
+        name: `${user?.username} : ${bidVehicle?.registrationNumber}`,
       };
     },
   },

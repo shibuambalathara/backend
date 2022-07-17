@@ -50,6 +50,7 @@ export const Bid = list({
         where: { id: resolvedData?.vehicle?.connect?.id },
         query: "id reservePrice registrationNumber event { name endDate }",
       });
+      
       return {
         ...resolvedData,
         name: `${vehicle?.registrationNumber} : ${vehicle?.event?.name}`,

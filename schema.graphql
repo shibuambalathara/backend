@@ -786,7 +786,6 @@ input EventCategoryCreateInput {
 type Vehicle {
   id: ID!
   registrationNumber: String
-  eventTimeExpire: String
   bidTimeExpire: String
   currentBidAmount: Int
   currentBidUser: User
@@ -872,7 +871,6 @@ input VehicleWhereInput {
   NOT: [VehicleWhereInput!]
   id: IDFilter
   registrationNumber: StringFilter
-  eventTimeExpire: StringFilter
   bidTimeExpire: StringFilter
   currentBidAmount: IntNullableFilter
   currentBidUser: UserWhereInput
@@ -966,7 +964,6 @@ input FloatNullableFilter {
 input VehicleOrderByInput {
   id: OrderDirection
   registrationNumber: OrderDirection
-  eventTimeExpire: OrderDirection
   bidTimeExpire: OrderDirection
   currentBidAmount: OrderDirection
   bidStatus: OrderDirection
@@ -1019,7 +1016,6 @@ input VehicleOrderByInput {
 
 input VehicleUpdateInput {
   registrationNumber: String
-  eventTimeExpire: String
   bidTimeExpire: String
   currentBidAmount: Int
   currentBidUser: UserRelateToOneForUpdateInput
@@ -1091,7 +1087,6 @@ input VehicleUpdateArgs {
 
 input VehicleCreateInput {
   registrationNumber: String
-  eventTimeExpire: String
   bidTimeExpire: String
   currentBidAmount: Int
   currentBidUser: UserRelateToOneForCreateInput
@@ -1355,6 +1350,71 @@ input SellerCreateInput {
   events: EventRelateToManyForCreateInput
 }
 
+type Bid {
+  id: ID!
+  name: String
+  amount: Int
+  user: User
+  bidVehicle: Vehicle
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+input BidWhereUniqueInput {
+  id: ID
+}
+
+input BidWhereInput {
+  AND: [BidWhereInput!]
+  OR: [BidWhereInput!]
+  NOT: [BidWhereInput!]
+  id: IDFilter
+  name: StringFilter
+  amount: IntNullableFilter
+  user: UserWhereInput
+  bidVehicle: VehicleWhereInput
+  createdAt: DateTimeNullableFilter
+  updatedAt: DateTimeNullableFilter
+}
+
+input BidOrderByInput {
+  id: OrderDirection
+  name: OrderDirection
+  amount: OrderDirection
+  createdAt: OrderDirection
+  updatedAt: OrderDirection
+}
+
+input BidUpdateInput {
+  name: String
+  amount: Int
+  user: UserRelateToOneForUpdateInput
+  bidVehicle: VehicleRelateToOneForUpdateInput
+}
+
+input VehicleRelateToOneForUpdateInput {
+  create: VehicleCreateInput
+  connect: VehicleWhereUniqueInput
+  disconnect: Boolean
+}
+
+input BidUpdateArgs {
+  where: BidWhereUniqueInput!
+  data: BidUpdateInput!
+}
+
+input BidCreateInput {
+  name: String
+  amount: Int
+  user: UserRelateToOneForCreateInput
+  bidVehicle: VehicleRelateToOneForCreateInput
+}
+
+input VehicleRelateToOneForCreateInput {
+  create: VehicleCreateInput
+  connect: VehicleWhereUniqueInput
+}
+
 type BidCountUpdate {
   id: ID!
   eventUser: EventUser
@@ -1431,71 +1491,6 @@ input BidCountUpdateCreateInput {
 input EventUserRelateToOneForCreateInput {
   create: EventUserCreateInput
   connect: EventUserWhereUniqueInput
-}
-
-type Bid {
-  id: ID!
-  name: String
-  amount: Int
-  user: User
-  bidVehicle: Vehicle
-  createdAt: DateTime
-  updatedAt: DateTime
-}
-
-input BidWhereUniqueInput {
-  id: ID
-}
-
-input BidWhereInput {
-  AND: [BidWhereInput!]
-  OR: [BidWhereInput!]
-  NOT: [BidWhereInput!]
-  id: IDFilter
-  name: StringFilter
-  amount: IntNullableFilter
-  user: UserWhereInput
-  bidVehicle: VehicleWhereInput
-  createdAt: DateTimeNullableFilter
-  updatedAt: DateTimeNullableFilter
-}
-
-input BidOrderByInput {
-  id: OrderDirection
-  name: OrderDirection
-  amount: OrderDirection
-  createdAt: OrderDirection
-  updatedAt: OrderDirection
-}
-
-input BidUpdateInput {
-  name: String
-  amount: Int
-  user: UserRelateToOneForUpdateInput
-  bidVehicle: VehicleRelateToOneForUpdateInput
-}
-
-input VehicleRelateToOneForUpdateInput {
-  create: VehicleCreateInput
-  connect: VehicleWhereUniqueInput
-  disconnect: Boolean
-}
-
-input BidUpdateArgs {
-  where: BidWhereUniqueInput!
-  data: BidUpdateInput!
-}
-
-input BidCreateInput {
-  name: String
-  amount: Int
-  user: UserRelateToOneForCreateInput
-  bidVehicle: VehicleRelateToOneForCreateInput
-}
-
-input VehicleRelateToOneForCreateInput {
-  create: VehicleCreateInput
-  connect: VehicleWhereUniqueInput
 }
 
 """
@@ -1581,6 +1576,12 @@ type Mutation {
   updateSellers(data: [SellerUpdateArgs!]!): [Seller]
   deleteSeller(where: SellerWhereUniqueInput!): Seller
   deleteSellers(where: [SellerWhereUniqueInput!]!): [Seller]
+  createBid(data: BidCreateInput!): Bid
+  createBids(data: [BidCreateInput!]!): [Bid]
+  updateBid(where: BidWhereUniqueInput!, data: BidUpdateInput!): Bid
+  updateBids(data: [BidUpdateArgs!]!): [Bid]
+  deleteBid(where: BidWhereUniqueInput!): Bid
+  deleteBids(where: [BidWhereUniqueInput!]!): [Bid]
   createBidCountUpdate(data: BidCountUpdateCreateInput!): BidCountUpdate
   createBidCountUpdates(data: [BidCountUpdateCreateInput!]!): [BidCountUpdate]
   updateBidCountUpdate(
@@ -1592,12 +1593,6 @@ type Mutation {
   deleteBidCountUpdates(
     where: [BidCountUpdateWhereUniqueInput!]!
   ): [BidCountUpdate]
-  createBid(data: BidCreateInput!): Bid
-  createBids(data: [BidCreateInput!]!): [Bid]
-  updateBid(where: BidWhereUniqueInput!, data: BidUpdateInput!): Bid
-  updateBids(data: [BidUpdateArgs!]!): [Bid]
-  deleteBid(where: BidWhereUniqueInput!): Bid
-  deleteBids(where: [BidWhereUniqueInput!]!): [Bid]
   endSession: Boolean!
   authenticateUserWithPassword(
     mobile: String!
@@ -1726,14 +1721,6 @@ type Query {
   ): [Seller!]
   seller(where: SellerWhereUniqueInput!): Seller
   sellersCount(where: SellerWhereInput! = {}): Int
-  bidCountUpdates(
-    where: BidCountUpdateWhereInput! = {}
-    orderBy: [BidCountUpdateOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [BidCountUpdate!]
-  bidCountUpdate(where: BidCountUpdateWhereUniqueInput!): BidCountUpdate
-  bidCountUpdatesCount(where: BidCountUpdateWhereInput! = {}): Int
   bids(
     where: BidWhereInput! = {}
     orderBy: [BidOrderByInput!]! = []
@@ -1742,6 +1729,14 @@ type Query {
   ): [Bid!]
   bid(where: BidWhereUniqueInput!): Bid
   bidsCount(where: BidWhereInput! = {}): Int
+  bidCountUpdates(
+    where: BidCountUpdateWhereInput! = {}
+    orderBy: [BidCountUpdateOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [BidCountUpdate!]
+  bidCountUpdate(where: BidCountUpdateWhereUniqueInput!): BidCountUpdate
+  bidCountUpdatesCount(where: BidCountUpdateWhereInput! = {}): Int
   keystone: KeystoneMeta!
   authenticatedItem: AuthenticatedItem
 

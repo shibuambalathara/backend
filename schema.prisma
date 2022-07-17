@@ -121,7 +121,6 @@ model EventCategory {
 model Vehicle {
   id                  String                @id @default(cuid())
   registrationNumber  String                @default("")
-  eventTimeExpire     String                @default("")
   bidTimeExpire       String                @default("")
   currentBidAmount    Int?
   currentBidUser      User?                 @relation("Vehicle_currentBidUser", fields: [currentBidUserId], references: [id])
@@ -220,21 +219,6 @@ model Seller {
   updatedAt DateTime? @updatedAt
 }
 
-model BidCountUpdate {
-  id              String                    @id @default(cuid())
-  eventUser       EventUser?                @relation("BidCountUpdate_eventUser", fields: [eventUserId], references: [id])
-  eventUserId     String?                   @map("eventUser")
-  updatedBidCount Int?                      @default(10)
-  status          BidCountUpdateStatusType?
-  createdBy       User?                     @relation("BidCountUpdate_createdBy", fields: [createdById], references: [id])
-  createdById     String?                   @map("createdBy")
-  createdAt       DateTime?                 @default(now())
-  updatedAt       DateTime?                 @updatedAt
-
-  @@index([eventUserId])
-  @@index([createdById])
-}
-
 model Bid {
   id           String    @id @default(cuid())
   name         String    @default("")
@@ -248,6 +232,21 @@ model Bid {
 
   @@index([userId])
   @@index([bidVehicleId])
+}
+
+model BidCountUpdate {
+  id              String                    @id @default(cuid())
+  eventUser       EventUser?                @relation("BidCountUpdate_eventUser", fields: [eventUserId], references: [id])
+  eventUserId     String?                   @map("eventUser")
+  updatedBidCount Int?                      @default(10)
+  status          BidCountUpdateStatusType?
+  createdBy       User?                     @relation("BidCountUpdate_createdBy", fields: [createdById], references: [id])
+  createdById     String?                   @map("createdBy")
+  createdAt       DateTime?                 @default(now())
+  updatedAt       DateTime?                 @updatedAt
+
+  @@index([eventUserId])
+  @@index([createdById])
 }
 
 enum UserIdProofTypeType {

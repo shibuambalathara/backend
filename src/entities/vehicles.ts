@@ -51,7 +51,6 @@ import {
           });
           return {
             ...resolvedData,
-            eventTimeExpire: event?.endDate,
             bidTimeExpire: event?.endDate,
             currentBidAmount: resolvedData?.reservePrice,
           };
@@ -70,12 +69,6 @@ import {
             isRequired: true,
           },
           isIndexed: true,
-        }),
-        eventTimeExpire: text({
-          ui: {
-            createView: { fieldMode: "hidden" },
-            itemView: { fieldMode: "read" },
-          },
         }),
         bidTimeExpire: text({
           ui: {

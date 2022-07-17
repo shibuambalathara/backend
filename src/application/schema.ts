@@ -24,7 +24,8 @@ export const lists = {
   EventUser,
   ExcelUpload,
   Seller,
-  BidCountUpdate,
   Bid,
+  BidCountUpdate,
+
   // Role,
 };

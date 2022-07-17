@@ -60,7 +60,7 @@ export const ExcelUpload = list({
   },
   ui: {
     isHidden: isNotAdmin,
-    hideDelete: true,
+    hideDelete: isNotAdmin,
   },
   hooks: {
     afterOperation: async ({ context, operation, resolvedData, item }) => {
@@ -127,7 +127,6 @@ export const ExcelUpload = list({
                 image12: vehicleItem["image 12"],
                 ExcelFile: { connect: { id: item.id } },
                 event: resolvedData.event,
-                eventTimeExpire: eventData.endDate,
                 bidTimeExpire: eventData.endDate,
                 currentBidAmount: vehicleItem.Reserve_Price || 0,
                 bidStatus: "pending",
