@@ -27,7 +27,7 @@ export const User = list({
   access: {
     operation: {
       query: () => true, //!!session?.itemId,
-      create: ({ session }) => !session?.itemId || isSuperAdmin(session),
+      create: ({ session }) => !session?.itemId || isSuperAdmin({ session }),
       update: isSignedIn,
       delete: isSuperAdmin,
     },
