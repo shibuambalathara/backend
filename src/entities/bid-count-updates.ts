@@ -5,15 +5,39 @@ import {
   timestamp,
 } from "@keystone-6/core/fields";
 import { list } from "@keystone-6/core";
-import { fieldOptions } from "../application/access";
+import { fieldOptions, isNotAdmin, isSuperAdmin } from "../application/access";
 
 export const BidCountUpdate = list({
   access: {
     operation: {
       query: ({ session }) => !!session?.itemId,
-      create: ({ session }) => !!session?.itemId,
-      update: ({ session }) => !!session?.itemId,
-      delete: ({ session }) => !!session?.itemId,
+      create: isSuperAdmin,
+      update: () => false,
+      delete: () => false,
+    },
+  },
+  ui: {
+    isHidden: isNotAdmin,
+    createView: { defaultFieldMode: "edit" },
+    itemView: { defaultFieldMode: "read" },
+    hideDelete: true,
+  },
+  hooks: {
+    afterOperation: async ({ resolvedData, context, operation }) => {
+      if (operation !== "create") {
+        return;
+      }
+      console.log("resolvedData", resolvedData);
+      await context.db.EventUser.updateOne({
+        where: {
+          id: resolvedData?.eventUser?.connect?.id,
+        },
+        data: {
+          remainingBids: {
+            increment: resolvedData.incrementBidCount,
+          },
+        },
+      });
     },
   },
   fields: {
@@ -21,18 +45,11 @@ export const BidCountUpdate = list({
       ref: "EventUser.bidCountUpdates",
     }),
 
-    updatedBidCount: integer({
-      defaultValue: 10,
-      // hooks: {
-      //   resolveInput: async({ context, item }) => ,
-      // },
+    incrementBidCount: integer({
+      defaultValue: 5,
     }),
 
-    status: select({
-      type: "enum",
-      options: ["pending", "blocked", "accepted"],
-    }),
-    createdBy: relationship({
+    createdFor: relationship({
       ref: "User.bidCountUpdates",
     }),
     createdAt: timestamp({

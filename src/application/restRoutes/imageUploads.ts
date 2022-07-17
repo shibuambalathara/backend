@@ -25,7 +25,6 @@ export async function uploadImages(req: Request, res: Response) {
 
     res.status(201).json({ status: "Success" }).end();
   } catch (e) {
-    console.log({ e });
     res.status(500).json({ status: "Something went wrong" }).end();
   }
 }

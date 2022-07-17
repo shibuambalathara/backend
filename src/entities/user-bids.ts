@@ -51,10 +51,10 @@ export const Bid = list({
       if (!bidVehicle) {
         addValidationError("vehicle not found");
       }
-      if (bidVehicle.bidTimeExpire < new Date()) {
+      if (new Date(bidVehicle.bidTimeExpire) < new Date()) {
         addValidationError("Auction has ended");
       }
-      if (bidVehicle.event.startDate > new Date()) {
+      if (new Date(bidVehicle.event.startDate) > new Date()) {
         addValidationError("Auction yet to start");
       }
       if (

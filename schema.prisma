@@ -55,7 +55,7 @@ model User {
   role                  UserRoleType?        @default(dealer)
   status                UserStatusType?      @default(pending)
   userEvents            EventUser[]          @relation("EventUser_user")
-  bidCountUpdates       BidCountUpdate[]     @relation("BidCountUpdate_createdBy")
+  bidCountUpdates       BidCountUpdate[]     @relation("BidCountUpdate_createdFor")
   activeBids            Vehicle[]            @relation("Vehicle_currentBidUser")
   quotedBids            Bid[]                @relation("Bid_user")
   createdAt             DateTime?            @default(now())
@@ -125,6 +125,8 @@ model Vehicle {
   currentBidAmount    Int?
   currentBidUser      User?                 @relation("Vehicle_currentBidUser", fields: [currentBidUserId], references: [id])
   currentBidUserId    String?               @map("currentBidUser")
+  event               Event?                @relation("Vehicle_event", fields: [eventId], references: [id])
+  eventId             String?               @map("event")
   bidStatus           VehicleBidStatusType? @default(pending)
   userVehicleBids     Bid[]                 @relation("Bid_bidVehicle")
   loanAgreementNo     String                @default("")
@@ -170,8 +172,6 @@ model Vehicle {
   image10             String                @default("")
   image11             String                @default("")
   image12             String                @default("")
-  event               Event?                @relation("Vehicle_event", fields: [eventId], references: [id])
-  eventId             String?               @map("event")
   ExcelFile           ExcelUpload?          @relation("Vehicle_ExcelFile", fields: [ExcelFileId], references: [id])
   ExcelFileId         String?               @map("ExcelFile")
   createdAt           DateTime?             @default(now())
@@ -235,18 +235,17 @@ model Bid {
 }
 
 model BidCountUpdate {
-  id              String                    @id @default(cuid())
-  eventUser       EventUser?                @relation("BidCountUpdate_eventUser", fields: [eventUserId], references: [id])
-  eventUserId     String?                   @map("eventUser")
-  updatedBidCount Int?                      @default(10)
-  status          BidCountUpdateStatusType?
-  createdBy       User?                     @relation("BidCountUpdate_createdBy", fields: [createdById], references: [id])
-  createdById     String?                   @map("createdBy")
-  createdAt       DateTime?                 @default(now())
-  updatedAt       DateTime?                 @updatedAt
+  id                String     @id @default(cuid())
+  eventUser         EventUser? @relation("BidCountUpdate_eventUser", fields: [eventUserId], references: [id])
+  eventUserId       String?    @map("eventUser")
+  incrementBidCount Int?       @default(5)
+  createdFor        User?      @relation("BidCountUpdate_createdFor", fields: [createdForId], references: [id])
+  createdForId      String?    @map("createdFor")
+  createdAt         DateTime?  @default(now())
+  updatedAt         DateTime?  @updatedAt
 
   @@index([eventUserId])
-  @@index([createdById])
+  @@index([createdForId])
 }
 
 enum UserIdProofTypeType {
@@ -292,12 +291,6 @@ enum VehicleFuelType {
 }
 
 enum EventUserStatusType {
-  pending
-  blocked
-  accepted
-}
-
-enum BidCountUpdateStatusType {
   pending
   blocked
   accepted

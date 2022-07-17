@@ -789,6 +789,7 @@ type Vehicle {
   bidTimeExpire: String
   currentBidAmount: Int
   currentBidUser: User
+  event: Event
   bidStatus: VehicleBidStatusType
   userVehicleBids(
     where: BidWhereInput! = {}
@@ -840,7 +841,6 @@ type Vehicle {
   image10: String
   image11: String
   image12: String
-  event: Event
   ExcelFile: ExcelUpload
   createdAt: DateTime
   updatedAt: DateTime
@@ -874,6 +874,7 @@ input VehicleWhereInput {
   bidTimeExpire: StringFilter
   currentBidAmount: IntNullableFilter
   currentBidUser: UserWhereInput
+  event: EventWhereInput
   bidStatus: VehicleBidStatusTypeNullableFilter
   userVehicleBids: BidManyRelationFilter
   loanAgreementNo: StringFilter
@@ -919,7 +920,6 @@ input VehicleWhereInput {
   image10: StringFilter
   image11: StringFilter
   image12: StringFilter
-  event: EventWhereInput
   ExcelFile: ExcelUploadWhereInput
   createdAt: DateTimeNullableFilter
   updatedAt: DateTimeNullableFilter
@@ -1019,6 +1019,7 @@ input VehicleUpdateInput {
   bidTimeExpire: String
   currentBidAmount: Int
   currentBidUser: UserRelateToOneForUpdateInput
+  event: EventRelateToOneForUpdateInput
   bidStatus: VehicleBidStatusType
   userVehicleBids: BidRelateToManyForUpdateInput
   loanAgreementNo: String
@@ -1064,7 +1065,6 @@ input VehicleUpdateInput {
   image10: String
   image11: String
   image12: String
-  event: EventRelateToOneForUpdateInput
   ExcelFile: ExcelUploadRelateToOneForUpdateInput
 }
 
@@ -1090,6 +1090,7 @@ input VehicleCreateInput {
   bidTimeExpire: String
   currentBidAmount: Int
   currentBidUser: UserRelateToOneForCreateInput
+  event: EventRelateToOneForCreateInput
   bidStatus: VehicleBidStatusType
   userVehicleBids: BidRelateToManyForCreateInput
   loanAgreementNo: String
@@ -1135,7 +1136,6 @@ input VehicleCreateInput {
   image10: String
   image11: String
   image12: String
-  event: EventRelateToOneForCreateInput
   ExcelFile: ExcelUploadRelateToOneForCreateInput
 }
 
@@ -1418,17 +1418,10 @@ input VehicleRelateToOneForCreateInput {
 type BidCountUpdate {
   id: ID!
   eventUser: EventUser
-  updatedBidCount: Int
-  status: BidCountUpdateStatusType
-  createdBy: User
+  incrementBidCount: Int
+  createdFor: User
   createdAt: DateTime
   updatedAt: DateTime
-}
-
-enum BidCountUpdateStatusType {
-  pending
-  blocked
-  accepted
 }
 
 input BidCountUpdateWhereUniqueInput {
@@ -1441,33 +1434,23 @@ input BidCountUpdateWhereInput {
   NOT: [BidCountUpdateWhereInput!]
   id: IDFilter
   eventUser: EventUserWhereInput
-  updatedBidCount: IntNullableFilter
-  status: BidCountUpdateStatusTypeNullableFilter
-  createdBy: UserWhereInput
+  incrementBidCount: IntNullableFilter
+  createdFor: UserWhereInput
   createdAt: DateTimeNullableFilter
   updatedAt: DateTimeNullableFilter
 }
 
-input BidCountUpdateStatusTypeNullableFilter {
-  equals: BidCountUpdateStatusType
-  in: [BidCountUpdateStatusType!]
-  notIn: [BidCountUpdateStatusType!]
-  not: BidCountUpdateStatusTypeNullableFilter
-}
-
 input BidCountUpdateOrderByInput {
   id: OrderDirection
-  updatedBidCount: OrderDirection
-  status: OrderDirection
+  incrementBidCount: OrderDirection
   createdAt: OrderDirection
   updatedAt: OrderDirection
 }
 
 input BidCountUpdateUpdateInput {
   eventUser: EventUserRelateToOneForUpdateInput
-  updatedBidCount: Int
-  status: BidCountUpdateStatusType
-  createdBy: UserRelateToOneForUpdateInput
+  incrementBidCount: Int
+  createdFor: UserRelateToOneForUpdateInput
 }
 
 input EventUserRelateToOneForUpdateInput {
@@ -1483,9 +1466,8 @@ input BidCountUpdateUpdateArgs {
 
 input BidCountUpdateCreateInput {
   eventUser: EventUserRelateToOneForCreateInput
-  updatedBidCount: Int
-  status: BidCountUpdateStatusType
-  createdBy: UserRelateToOneForCreateInput
+  incrementBidCount: Int
+  createdFor: UserRelateToOneForCreateInput
 }
 
 input EventUserRelateToOneForCreateInput {

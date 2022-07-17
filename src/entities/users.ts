@@ -155,7 +155,7 @@ export const User = list({
       },
     }),
     bidCountUpdates: relationship({
-      ref: "BidCountUpdate.createdBy",
+      ref: "BidCountUpdate.createdFor",
       many: true,
       ui: {
         createView: { fieldMode: "hidden" },

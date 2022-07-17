@@ -38,7 +38,6 @@ export default function ImportPage() {
     const file = inputRef.current.files[0];
     if (!file) return;
     const formData = new FormData();
-    console.log("sdf");
     formData.append("file", file);
     const { data } = await fetch("/api/upload", {
       method: "POST",

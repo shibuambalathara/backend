@@ -37,9 +37,6 @@ export const isSignedIn = ({ session }: ListAccessArgs) => {
 };
 
 export const isOwner = ({ session, context, listKey, operation }) => {
-  console.log("context", context);
-  console.log("listKey", listKey);
-  console.log("operation", operation);
   return true; // session?.itemId === context[listKey][operation].id;
 };
 
