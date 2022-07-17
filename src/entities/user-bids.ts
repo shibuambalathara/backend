@@ -125,12 +125,14 @@ export const Bid = list({
       ]);
       const durationInMinutes = 2; // 2 minutes
       const bidTimeExpire =
-        new Date(bidVehicle.bidTimeExpire) >=
-        new Date(new Date().setMinutes(-durationInMinutes))
+        new Date(bidVehicle.bidTimeExpire).setMinutes(-durationInMinutes) <=
+        new Date().getTime()
           ? new Date(
               new Date(bidVehicle.bidTimeExpire).setMinutes(durationInMinutes)
             )
           : new Date(bidVehicle.bidTimeExpire);
+      console.log("bidTimeExpire:", bidTimeExpire);
+      console.log("bidTimeExpire Old :", bidVehicle.bidTimeExpire);
       await Promise.all([
         context.prisma.eventUser.update({
           where: { id: eventUser.id },
