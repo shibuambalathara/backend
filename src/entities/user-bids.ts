@@ -98,7 +98,9 @@ export const Bid = list({
       /**
        * 1. Update the remaining bids for the event User
        * 2 .Update the current bid amount for the vehicle
-       * 3. Update the bid time expire for the vehicle if expire time with in 2 minutes
+       * 3. Update the bid time expire for the vehicle if
+       *    expire time with in 2 minutes
+       * 4. Update the current bid User for the vehicle
        */
       if (operation !== "create") {
         return;
@@ -132,6 +134,9 @@ export const Bid = list({
           data: {
             currentBidAmount: resolvedData?.amount,
             bidTimeExpire: bidTimeExpire,
+            currentBidUser: {
+              connect: { id: resolvedData?.user?.connect?.id },
+            },
           },
         }),
       ]);
