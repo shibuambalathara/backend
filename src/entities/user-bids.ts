@@ -120,6 +120,7 @@ export const Bid = list({
         }),
         context.query.Vehicle.findOne({
           where: { id: resolvedData?.bidVehicle?.connect?.id },
+          query: `bidTimeExpire`,
         }),
       ]);
       const durationInMinutes = 2; // 2 minutes
@@ -135,7 +136,7 @@ export const Bid = list({
             remainingBids: eventUser.remainingBids - 1,
           },
         }),
-        context.prisma.Vehicle.update({
+        context.prisma.vehicle.update({
           where: { id: resolvedData?.bidVehicle?.connect?.id },
           data: {
             currentBidAmount: resolvedData?.amount,
