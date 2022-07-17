@@ -25,7 +25,7 @@ export const EventUser = list({
   access: {
     operation: {
       query: ({ session }) => !!session?.itemId,
-      create: isSuperAdmin,
+      create: ({ session }) => !!session?.itemId,
       update: isSuperAdmin,
       delete: isSuperAdmin,
     },
@@ -39,6 +39,18 @@ export const EventUser = list({
     itemView: { defaultFieldMode: isAdminEdit },
   },
   hooks: {
+    validateInput: async ({ resolvedData, context, addValidationError }) => {
+      const eventUserCount = await context.query.EventUser.count({
+        where: {
+          event: { id: { equals: resolvedData?.event?.connect?.id } },
+          user: { id: { equals: resolvedData?.user?.connect?.id } },
+        },
+      });
+
+      if (eventUserCount) {
+        addValidationError("Duplicate Event User Entry");
+      }
+    },
     resolveInput: async ({ resolvedData, context, operation }) => {
       if (operation !== "create") {
         return resolvedData;

@@ -33,12 +33,21 @@ export const Bid = list({
   hooks: {
     validateInput: async ({ resolvedData, context, addValidationError }) => {
       const { amount } = resolvedData;
-      const bidVehicle = await context.query.Vehicle.findOne({
-        where: { id: resolvedData?.bidVehicle?.connect?.id },
-        query: "id currentBidAmount bidTimeExpire event { startDate } ",
-      });
-      console.log("bidVehicle", bidVehicle);
-      console.log("resolvedData", resolvedData);
+      const [bidVehicle, eventUser] = await Promise.all([
+        context.query.Vehicle.findOne({
+          where: { id: resolvedData?.bidVehicle?.connect?.id },
+          query: "id currentBidAmount bidTimeExpire event { startDate } ",
+        }),
+        context.prisma.eventUser.findFirst({
+          where: {
+            event: { id: resolvedData?.event?.connect?.id },
+            user: { id: resolvedData?.user?.connect?.id },
+          },
+        }),
+      ]);
+      if (eventUser.remainingBids <= 0) {
+        addValidationError("No Bids Remaining");
+      }
       if (!bidVehicle) {
         addValidationError("vehicle not found");
       }
@@ -77,11 +86,62 @@ export const Bid = list({
         name: `${user?.username} : ${bidVehicle?.registrationNumber}`,
       };
     },
+    afterOperation: async ({
+      listKey,
+      operation,
+      inputData,
+      originalItem,
+      item,
+      resolvedData,
+      context,
+    }) => {
+      /**
+       * 1. Update the remaining bids for the event User
+       * 2 .Update the current bid amount for the vehicle
+       * 3. Update the bid time expire for the vehicle if expire time with in 2 minutes
+       */
+      if (operation !== "create") {
+        return;
+      }
+      const [eventUser, bidVehicle] = await Promise.all([
+        context.prisma.eventUser.findFirst({
+          where: {
+            event: { id: resolvedData?.event?.connect?.id },
+            user: { id: resolvedData?.user?.connect?.id },
+          },
+        }),
+        context.query.Vehicle.findOne({
+          where: { id: resolvedData?.bidVehicle?.connect?.id },
+        }),
+      ]);
+      const durationInMinutes = 2; // 2 minutes
+      const bidTimeExpire =
+        bidVehicle.bidTimeExpire >=
+        new Date(new Date().setMinutes(-durationInMinutes))
+          ? new Date(bidVehicle.bidTimeExpire.setMinutes(durationInMinutes))
+          : bidVehicle.bidTimeExpire;
+      await Promise.all([
+        context.prisma.eventUser.update({
+          where: { id: eventUser.id },
+          data: {
+            remainingBids: eventUser.remainingBids - 1,
+          },
+        }),
+        context.prisma.Vehicle.update({
+          where: { id: resolvedData?.bidVehicle?.connect?.id },
+          data: {
+            currentBidAmount: resolvedData?.amount,
+            bidTimeExpire: bidTimeExpire,
+          },
+        }),
+      ]);
+    },
   },
   fields: {
     name: text({
       ui: {
         createView: { fieldMode: "hidden" },
+        itemView: { fieldMode: "read" },
       },
     }),
     amount: integer({}),
