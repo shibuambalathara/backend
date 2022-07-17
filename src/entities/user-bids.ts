@@ -45,6 +45,12 @@ export const Bid = list({
           },
         }),
       ]);
+      if (eventUser.status === "blocked") {
+        addValidationError("User is blocked on this event");
+      }
+      if (eventUser.status === "pending") {
+        addValidationError("User event participation request pending");
+      }
       if (eventUser?.remainingBids <= 0) {
         addValidationError("No Bids Remaining");
       }
@@ -118,10 +124,10 @@ export const Bid = list({
       ]);
       const durationInMinutes = 2; // 2 minutes
       const bidTimeExpire =
-        bidVehicle.bidTimeExpire >=
+        new Date(bidVehicle.bidTimeExpire) >=
         new Date(new Date().setMinutes(-durationInMinutes))
           ? new Date(bidVehicle.bidTimeExpire.setMinutes(durationInMinutes))
-          : bidVehicle.bidTimeExpire;
+          : new Date(bidVehicle.bidTimeExpire);
       await Promise.all([
         context.prisma.eventUser.update({
           where: { id: eventUser.id },

@@ -31,7 +31,7 @@ export const Event = list({
   },
   hooks: {
     resolveInput: async ({ resolvedData, context, operation }) => {
-      if (operation !== "create") {
+      if (operation !== "create" && operation !== "update") {
         return resolvedData;
       }
       const [category, seller, location] = await Promise.all([
@@ -54,6 +54,18 @@ export const Event = list({
         }`,
       };
     },
+    afterOperation: async ({ context, operation, resolvedData }) => {
+      if (operation !== "update")
+        return
+      await context.prisma.vehicle.updateMany({
+        where: {
+          event: { id: resolvedData?.id },
+        },
+        data: {
+          bidTimeExpire: resolvedData?.endDate,
+        }
+      })
+     }
   },
 
   fields: {
