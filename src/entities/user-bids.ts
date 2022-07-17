@@ -127,7 +127,9 @@ export const Bid = list({
       const bidTimeExpire =
         new Date(bidVehicle.bidTimeExpire) >=
         new Date(new Date().setMinutes(-durationInMinutes))
-          ? new Date(bidVehicle.bidTimeExpire.setMinutes(durationInMinutes))
+          ? new Date(
+              new Date(bidVehicle.bidTimeExpire).setMinutes(durationInMinutes)
+            )
           : new Date(bidVehicle.bidTimeExpire);
       await Promise.all([
         context.prisma.eventUser.update({
