@@ -36,6 +36,7 @@ export const EventUser = list({
   ui: {
     hideCreate: isNotAdmin,
     hideDelete: isNotAdmin,
+    itemView: { defaultFieldMode: isAdminEdit },
   },
   hooks: {
     resolveInput: async ({ resolvedData, context, operation }) => {
@@ -43,17 +44,19 @@ export const EventUser = list({
         return resolvedData;
       }
       const [event, user] = await Promise.all([
-        context.db.Event.findOne({
+        context.query.Event.findOne({
           where: { id: resolvedData?.event?.connect?.id },
+          query: "id name noOfBids",
         }),
-        context.db.User.findOne({
+        context.query.User.findOne({
           where: { id: resolvedData?.user?.connect?.id },
+          query: `id firstName lastName username`,
         }),
       ]);
       return {
         ...resolvedData,
-        name: `${user?.name} : ${event?.name}`,
-        remainingBids: event?.maxBids,
+        name: `${user?.firstName ?? user?.username}: ${event?.name}`,
+        remainingBids: event?.noOfBids,
       };
     },
   },
@@ -75,7 +78,7 @@ export const EventUser = list({
       ui: {
         createView: { fieldMode: "hidden" },
         itemView: {
-          fieldMode: isAdminEdit,
+          fieldMode: "read",
         },
       },
     }),
@@ -84,7 +87,7 @@ export const EventUser = list({
       many: true,
       ui: {
         createView: { fieldMode: "hidden" },
-        itemView: { fieldMode: isAdminEdit },
+        itemView: { fieldMode: "read" },
       },
     }),
 

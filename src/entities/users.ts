@@ -163,7 +163,7 @@ export const User = list({
       },
     }),
     activeBids: relationship({
-      ref: "Bid.currentBidUser",
+      ref: "Vehicle.currentBidUser",
       many: true,
       ui: {
         createView: { fieldMode: "hidden" },
@@ -171,7 +171,7 @@ export const User = list({
       },
     }),
     quotedBids: relationship({
-      ref: "UserBid.user",
+      ref: "Bid.user",
       many: true,
       ui: {
         createView: { fieldMode: "hidden" },

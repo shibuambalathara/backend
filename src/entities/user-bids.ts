@@ -1,7 +1,6 @@
 import {
   integer,
   relationship,
-  select,
   text,
   timestamp,
 } from "@keystone-6/core/fields";
@@ -19,7 +18,7 @@ const ownerFilter = ({ session, context, listKey, operation }) => {
   };
 };
 
-export const UserBid = list({
+export const Bid = list({
   access: {
     operation: {
       query: ({ session }) => !!session?.itemId,
@@ -34,20 +33,23 @@ export const UserBid = list({
   hooks: {
     validateInput: async ({ resolvedData, context, addValidationError }) => {
       const { amount } = resolvedData;
-      const bid = await context.query.Bid.findOne({
-        where: { id: resolvedData?.bid?.connect?.id },
+      const bidVehicle = await context.query.Vehicle.findOne({
+        where: { id: resolvedData?.bidVehicle?.connect?.id },
         query: "{ id currentBidAmount bidTimeExpire }",
       });
-      if (!bid) {
+      if (!bidVehicle) {
         addValidationError("Bid not found");
       }
-      if (bid.bidTimeExpire < new Date()) {
+      if (bidVehicle.bidTimeExpire < new Date()) {
         addValidationError("Bid time expired");
       }
-      if (!bid.currentBidAmount || bid.currentBidAmount <= amount) {
+      if (
+        !bidVehicle.currentBidAmount ||
+        bidVehicle.currentBidAmount <= amount
+      ) {
         addValidationError(
           "Bid Amount smaller than current bid amount, Current Bid Amount: " +
-            bid.currentBidAmount
+            bidVehicle.currentBidAmount
         );
       }
     },
@@ -55,9 +57,9 @@ export const UserBid = list({
       if (operation !== "create") {
         return resolvedData;
       }
-      const [bid, user] = await Promise.all([
-        context.db.Bid.findOne({
-          where: { id: resolvedData?.bid?.connect?.id },
+      const [bidVehicle, user] = await Promise.all([
+        context.db.Vehicle.findOne({
+          where: { id: resolvedData?.bidVehicle?.connect?.id },
         }),
         context.db.User.findOne({
           where: { id: resolvedData?.user?.connect?.id },
@@ -65,7 +67,7 @@ export const UserBid = list({
       ]);
       return {
         ...resolvedData,
-        name: `${user?.name} : ${bid?.name}`,
+        name: `${user?.fullName} : ${bidVehicle?.registrationNumber}`,
       };
     },
   },
@@ -81,8 +83,8 @@ export const UserBid = list({
       many: false,
     }),
 
-    bid: relationship({
-      ref: "Bid.userBids",
+    bidVehicle: relationship({
+      ref: "Vehicle.userVehicleBids",
       many: false,
     }),
     createdAt: timestamp({

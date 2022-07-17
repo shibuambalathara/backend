@@ -4,7 +4,11 @@ import {
       timestamp,
     } from "@keystone-6/core/fields";
     import { list } from "@keystone-6/core";
-    import { fieldOptions, isSuperAdmin } from "../application/access";
+    import {
+      fieldOptions,
+      isNotAdmin,
+      isSuperAdmin,
+    } from "../application/access";
 
     export const EventCategory = list({
       access: {
@@ -16,7 +20,7 @@ import {
         },
       },
       ui: {
-        isHidden: ({ session }) => isSuperAdmin(session),
+        isHidden: isNotAdmin,
       },
       fields: {
         name: text({

@@ -56,8 +56,8 @@ model User {
   status                UserStatusType?      @default(pending)
   userEvents            EventUser[]          @relation("EventUser_user")
   bidCountUpdates       BidCountUpdate[]     @relation("BidCountUpdate_createdBy")
-  activeBids            Bid[]                @relation("Bid_currentBidUser")
-  quotedBids            UserBid[]            @relation("UserBid_user")
+  activeBids            Vehicle[]            @relation("Vehicle_currentBidUser")
+  quotedBids            Bid[]                @relation("Bid_user")
   createdAt             DateTime?            @default(now())
   updatedAt             DateTime?            @updatedAt
   magicAuthToken        String?
@@ -121,60 +121,67 @@ model EventCategory {
 }
 
 model Vehicle {
-  id                  String           @id @default(cuid())
-  registrationNumber  String           @default("")
-  loanAgreementNo     String           @default("")
-  registeredOwnerName String           @default("")
-  make                String           @default("")
-  model               String           @default("")
-  varient             String           @default("")
-  categoty            String           @default("")
+  id                  String                @id @default(cuid())
+  registrationNumber  String                @default("")
+  eventTimeExpire     String                @default("")
+  bidTimeExpire       String                @default("")
+  currentBidAmount    Int?
+  currentBidUser      User?                 @relation("Vehicle_currentBidUser", fields: [currentBidUserId], references: [id])
+  currentBidUserId    String?               @map("currentBidUser")
+  bidStatus           VehicleBidStatusType? @default(pending)
+  userVehicleBids     Bid[]                 @relation("Bid_bidVehicle")
+  loanAgreementNo     String                @default("")
+  registeredOwnerName String                @default("")
+  make                String                @default("")
+  model               String                @default("")
+  varient             String                @default("")
+  categoty            String                @default("")
   fuel                VehicleFuelType?
-  type                String           @default("")
-  rcStatus            String           @default("")
+  type                String                @default("")
+  rcStatus            String                @default("")
   yearOfManufacture   Int?
   ownership           Int?
   kmReading           Int?
-  insuranceStatus     String           @default("")
-  yardLocation        String           @default("")
+  insuranceStatus     String                @default("")
+  yardLocation        String                @default("")
   startPrice          Float?
   reservePrice        Float?
   repoDt              Int?
-  veicleLocation      String           @default("")
-  vehicleRemarks      String           @default("")
-  auctionManager      String           @default("")
-  actionManager       String           @default("")
-  sellerName          String           @default("")
-  parkingCharges      String           @default("")
-  insurance           String           @default("")
-  insuranceValidTill  String           @default("")
-  tax                 String           @default("")
-  fitness             String           @default("")
-  permit              String           @default("")
-  fitnessPermit       String           @default("")
-  engineNo            String           @default("")
-  chassisNo           String           @default("")
-  frontImage          String           @default("")
-  backImage           String           @default("")
-  leftImage           String           @default("")
-  rightImage          String           @default("")
-  image5              String           @default("")
-  image6              String           @default("")
-  image7              String           @default("")
-  image8              String           @default("")
-  image9              String           @default("")
-  image10             String           @default("")
-  image11             String           @default("")
-  image12             String           @default("")
-  event               Event?           @relation("Vehicle_event", fields: [eventId], references: [id])
-  eventId             String?          @map("event")
-  ExcelFile           ExcelUpload?     @relation("Vehicle_ExcelFile", fields: [ExcelFileId], references: [id])
-  ExcelFileId         String?          @map("ExcelFile")
-  bids                Bid[]            @relation("Bid_vehicle")
-  createdAt           DateTime?        @default(now())
-  updatedAt           DateTime?        @updatedAt
+  veicleLocation      String                @default("")
+  vehicleRemarks      String                @default("")
+  auctionManager      String                @default("")
+  actionManager       String                @default("")
+  sellerName          String                @default("")
+  parkingCharges      String                @default("")
+  insurance           String                @default("")
+  insuranceValidTill  String                @default("")
+  tax                 String                @default("")
+  fitness             String                @default("")
+  permit              String                @default("")
+  fitnessPermit       String                @default("")
+  engineNo            String                @default("")
+  chassisNo           String                @default("")
+  frontImage          String                @default("")
+  backImage           String                @default("")
+  leftImage           String                @default("")
+  rightImage          String                @default("")
+  image5              String                @default("")
+  image6              String                @default("")
+  image7              String                @default("")
+  image8              String                @default("")
+  image9              String                @default("")
+  image10             String                @default("")
+  image11             String                @default("")
+  image12             String                @default("")
+  event               Event?                @relation("Vehicle_event", fields: [eventId], references: [id])
+  eventId             String?               @map("event")
+  ExcelFile           ExcelUpload?          @relation("Vehicle_ExcelFile", fields: [ExcelFileId], references: [id])
+  ExcelFileId         String?               @map("ExcelFile")
+  createdAt           DateTime?             @default(now())
+  updatedAt           DateTime?             @updatedAt
 
   @@index([registrationNumber])
+  @@index([currentBidUserId])
   @@index([eventId])
   @@index([ExcelFileId])
 }
@@ -231,37 +238,18 @@ model BidCountUpdate {
 }
 
 model Bid {
-  id               String         @id @default(cuid())
-  name             String         @default("")
-  eventTimeExpire  String         @default("")
-  bidTimeExpire    String         @default("")
-  currentBidAmount Int?
-  currentBidUser   User?          @relation("Bid_currentBidUser", fields: [currentBidUserId], references: [id])
-  currentBidUserId String?        @map("currentBidUser")
-  vehicle          Vehicle?       @relation("Bid_vehicle", fields: [vehicleId], references: [id])
-  vehicleId        String?        @map("vehicle")
-  status           BidStatusType? @default(live)
-  userBids         UserBid[]      @relation("UserBid_bid")
-  createdAt        DateTime?      @default(now())
-  updatedAt        DateTime?      @updatedAt
-
-  @@index([currentBidUserId])
-  @@index([vehicleId])
-}
-
-model UserBid {
-  id        String    @id @default(cuid())
-  name      String    @default("")
-  amount    Int?
-  user      User?     @relation("UserBid_user", fields: [userId], references: [id])
-  userId    String?   @map("user")
-  bid       Bid?      @relation("UserBid_bid", fields: [bidId], references: [id])
-  bidId     String?   @map("bid")
-  createdAt DateTime? @default(now())
-  updatedAt DateTime? @updatedAt
+  id           String    @id @default(cuid())
+  name         String    @default("")
+  amount       Int?
+  user         User?     @relation("Bid_user", fields: [userId], references: [id])
+  userId       String?   @map("user")
+  bidVehicle   Vehicle?  @relation("Bid_bidVehicle", fields: [bidVehicleId], references: [id])
+  bidVehicleId String?   @map("bidVehicle")
+  createdAt    DateTime? @default(now())
+  updatedAt    DateTime? @updatedAt
 
   @@index([userId])
-  @@index([bidId])
+  @@index([bidVehicleId])
 }
 
 enum UserIdProofTypeType {
@@ -291,6 +279,13 @@ enum EventStatusType {
   inactive
 }
 
+enum VehicleBidStatusType {
+  pending
+  blocked
+  live
+  closed
+}
+
 enum VehicleFuelType {
   diesel
   petrol
@@ -309,11 +304,4 @@ enum BidCountUpdateStatusType {
   pending
   blocked
   accepted
-}
-
-enum BidStatusType {
-  pending
-  blocked
-  live
-  closed
 }

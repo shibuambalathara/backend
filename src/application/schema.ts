@@ -9,8 +9,8 @@ import { EventUser } from "../entities/event-users"
 import { ExcelUpload } from '../entities/excel-upload'
 import { Seller } from '../entities/sellers'
 import { BidCountUpdate } from "../entities/bid-count-updates";
-import { Bid } from "../entities/bids";
-import { UserBid } from "../entities/user-bids";
+// import { Bid } from "../entities/bids";
+import { Bid } from "../entities/user-bids";
 // import { Role } from "../entities/roles";
 export { router } from "./restRoutes";
 export { extendGraphqlSchema } from "./graphqlRoutes";
@@ -26,6 +26,5 @@ export const lists = {
   Seller,
   BidCountUpdate,
   Bid,
-  UserBid,
   // Role,
 };

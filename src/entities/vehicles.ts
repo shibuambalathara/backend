@@ -40,6 +40,23 @@ import {
           query: ownerFilter,
         },
       },
+      hooks: {
+        resolveInput: async ({ resolvedData, context, operation }) => {
+          if (operation !== "create") {
+            return resolvedData;
+          }
+          const event = await context.query.Event.findOne({
+            where: { id: resolvedData?.event?.connect?.id },
+            query: " name endDate",
+          });
+          return {
+            ...resolvedData,
+            eventTimeExpire: event?.endDate,
+            bidTimeExpire: event?.endDate,
+            currentBidAmount: resolvedData?.reservePrice,
+          };
+        },
+      },
       ui: {
         labelField: "registrationNumber",
         hideCreate: isNotAdmin,
@@ -53,6 +70,50 @@ import {
             isRequired: true,
           },
           isIndexed: true,
+        }),
+        eventTimeExpire: text({
+          ui: {
+            createView: { fieldMode: "hidden" },
+            itemView: { fieldMode: "read" },
+          },
+        }),
+        bidTimeExpire: text({
+          ui: {
+            createView: { fieldMode: "hidden" },
+            itemView: { fieldMode: "read" },
+          },
+        }),
+        currentBidAmount: integer({
+          ui: {
+            createView: { fieldMode: "hidden" },
+            itemView: { fieldMode: "read" },
+          },
+        }),
+        currentBidUser: relationship({
+          ref: "User.activeBids",
+          many: false,
+          ui: {
+            createView: { fieldMode: isAdminCreate },
+            itemView: { fieldMode: "read" },
+          },
+        }),
+
+        bidStatus: select({
+          type: "enum",
+          defaultValue: "pending",
+          options: ["pending", "blocked", "live", "closed"],
+          ui: {
+            createView: { fieldMode: isAdminCreate },
+            itemView: { fieldMode: "read" },
+          },
+        }),
+        userVehicleBids: relationship({
+          ref: "Bid.bidVehicle",
+          many: true,
+          ui: {
+            createView: { fieldMode: "hidden" },
+            itemView: { fieldMode: "read" },
+          },
         }),
         loanAgreementNo: text({
           validation: {
@@ -121,10 +182,14 @@ import {
             itemView: { fieldMode: "read" },
           },
         }),
-        bids: relationship({
-          ref: "Bid.vehicle",
-          many: true,
-        }),
+        // Bids: relationship({
+        //   ref: "Bid.vehicle",
+        //   many: true,
+        //   ui: {
+        //     createView: { fieldMode: "hidden" },
+        //     itemView: { fieldMode: "read" },
+        //   },
+        // }),
 
         createdAt: timestamp({
           ...fieldOptions,

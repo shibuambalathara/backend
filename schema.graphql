@@ -38,19 +38,19 @@ type User {
   ): [BidCountUpdate!]
   bidCountUpdatesCount(where: BidCountUpdateWhereInput! = {}): Int
   activeBids(
+    where: VehicleWhereInput! = {}
+    orderBy: [VehicleOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Vehicle!]
+  activeBidsCount(where: VehicleWhereInput! = {}): Int
+  quotedBids(
     where: BidWhereInput! = {}
     orderBy: [BidOrderByInput!]! = []
     take: Int
     skip: Int! = 0
   ): [Bid!]
-  activeBidsCount(where: BidWhereInput! = {}): Int
-  quotedBids(
-    where: UserBidWhereInput! = {}
-    orderBy: [UserBidOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [UserBid!]
-  quotedBidsCount(where: UserBidWhereInput! = {}): Int
+  quotedBidsCount(where: BidWhereInput! = {}): Int
   createdAt: DateTime
   updatedAt: DateTime
   magicAuthToken: PasswordState
@@ -129,8 +129,8 @@ input UserWhereInput {
   status: UserStatusTypeNullableFilter
   userEvents: EventUserManyRelationFilter
   bidCountUpdates: BidCountUpdateManyRelationFilter
-  activeBids: BidManyRelationFilter
-  quotedBids: UserBidManyRelationFilter
+  activeBids: VehicleManyRelationFilter
+  quotedBids: BidManyRelationFilter
   createdAt: DateTimeNullableFilter
   updatedAt: DateTimeNullableFilter
   magicAuthToken: PasswordFilter
@@ -220,16 +220,16 @@ input BidCountUpdateManyRelationFilter {
   none: BidCountUpdateWhereInput
 }
 
+input VehicleManyRelationFilter {
+  every: VehicleWhereInput
+  some: VehicleWhereInput
+  none: VehicleWhereInput
+}
+
 input BidManyRelationFilter {
   every: BidWhereInput
   some: BidWhereInput
   none: BidWhereInput
-}
-
-input UserBidManyRelationFilter {
-  every: UserBidWhereInput
-  some: UserBidWhereInput
-  none: UserBidWhereInput
 }
 
 input DateTimeNullableFilter {
@@ -293,8 +293,8 @@ input UserUpdateInput {
   status: UserStatusType
   userEvents: EventUserRelateToManyForUpdateInput
   bidCountUpdates: BidCountUpdateRelateToManyForUpdateInput
-  activeBids: BidRelateToManyForUpdateInput
-  quotedBids: UserBidRelateToManyForUpdateInput
+  activeBids: VehicleRelateToManyForUpdateInput
+  quotedBids: BidRelateToManyForUpdateInput
   magicAuthToken: String
   magicAuthIssuedAt: DateTime
   magicAuthRedeemedAt: DateTime
@@ -323,18 +323,18 @@ input BidCountUpdateRelateToManyForUpdateInput {
   connect: [BidCountUpdateWhereUniqueInput!]
 }
 
+input VehicleRelateToManyForUpdateInput {
+  disconnect: [VehicleWhereUniqueInput!]
+  set: [VehicleWhereUniqueInput!]
+  create: [VehicleCreateInput!]
+  connect: [VehicleWhereUniqueInput!]
+}
+
 input BidRelateToManyForUpdateInput {
   disconnect: [BidWhereUniqueInput!]
   set: [BidWhereUniqueInput!]
   create: [BidCreateInput!]
   connect: [BidWhereUniqueInput!]
-}
-
-input UserBidRelateToManyForUpdateInput {
-  disconnect: [UserBidWhereUniqueInput!]
-  set: [UserBidWhereUniqueInput!]
-  create: [UserBidCreateInput!]
-  connect: [UserBidWhereUniqueInput!]
 }
 
 input UserUpdateArgs {
@@ -365,8 +365,8 @@ input UserCreateInput {
   status: UserStatusType
   userEvents: EventUserRelateToManyForCreateInput
   bidCountUpdates: BidCountUpdateRelateToManyForCreateInput
-  activeBids: BidRelateToManyForCreateInput
-  quotedBids: UserBidRelateToManyForCreateInput
+  activeBids: VehicleRelateToManyForCreateInput
+  quotedBids: BidRelateToManyForCreateInput
   magicAuthToken: String
   magicAuthIssuedAt: DateTime
   magicAuthRedeemedAt: DateTime
@@ -382,14 +382,14 @@ input BidCountUpdateRelateToManyForCreateInput {
   connect: [BidCountUpdateWhereUniqueInput!]
 }
 
+input VehicleRelateToManyForCreateInput {
+  create: [VehicleCreateInput!]
+  connect: [VehicleWhereUniqueInput!]
+}
+
 input BidRelateToManyForCreateInput {
   create: [BidCreateInput!]
   connect: [BidWhereUniqueInput!]
-}
-
-input UserBidRelateToManyForCreateInput {
-  create: [UserBidCreateInput!]
-  connect: [UserBidWhereUniqueInput!]
 }
 
 type Event {
@@ -452,12 +452,6 @@ input EventWhereInput {
   ExcelFile: ExcelUploadWhereInput
   createdAt: DateTimeNullableFilter
   updatedAt: DateTimeNullableFilter
-}
-
-input VehicleManyRelationFilter {
-  every: VehicleWhereInput
-  some: VehicleWhereInput
-  none: VehicleWhereInput
 }
 
 input DateTimeFilter {
@@ -539,13 +533,6 @@ input LocationRelateToOneForUpdateInput {
   disconnect: Boolean
 }
 
-input VehicleRelateToManyForUpdateInput {
-  disconnect: [VehicleWhereUniqueInput!]
-  set: [VehicleWhereUniqueInput!]
-  create: [VehicleCreateInput!]
-  connect: [VehicleWhereUniqueInput!]
-}
-
 input ExcelUploadRelateToOneForUpdateInput {
   create: ExcelUploadCreateInput
   connect: ExcelUploadWhereUniqueInput
@@ -590,11 +577,6 @@ input EventCategoryRelateToOneForCreateInput {
 input LocationRelateToOneForCreateInput {
   create: LocationCreateInput
   connect: LocationWhereUniqueInput
-}
-
-input VehicleRelateToManyForCreateInput {
-  create: [VehicleCreateInput!]
-  connect: [VehicleWhereUniqueInput!]
 }
 
 input ExcelUploadRelateToOneForCreateInput {
@@ -791,6 +773,18 @@ input EventCategoryCreateInput {
 type Vehicle {
   id: ID!
   registrationNumber: String
+  eventTimeExpire: String
+  bidTimeExpire: String
+  currentBidAmount: Int
+  currentBidUser: User
+  bidStatus: VehicleBidStatusType
+  userVehicleBids(
+    where: BidWhereInput! = {}
+    orderBy: [BidOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Bid!]
+  userVehicleBidsCount(where: BidWhereInput! = {}): Int
   loanAgreementNo: String
   registeredOwnerName: String
   make: String
@@ -836,15 +830,15 @@ type Vehicle {
   image12: String
   event: Event
   ExcelFile: ExcelUpload
-  bids(
-    where: BidWhereInput! = {}
-    orderBy: [BidOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [Bid!]
-  bidsCount(where: BidWhereInput! = {}): Int
   createdAt: DateTime
   updatedAt: DateTime
+}
+
+enum VehicleBidStatusType {
+  pending
+  blocked
+  live
+  closed
 }
 
 enum VehicleFuelType {
@@ -865,6 +859,12 @@ input VehicleWhereInput {
   NOT: [VehicleWhereInput!]
   id: IDFilter
   registrationNumber: StringFilter
+  eventTimeExpire: StringFilter
+  bidTimeExpire: StringFilter
+  currentBidAmount: IntNullableFilter
+  currentBidUser: UserWhereInput
+  bidStatus: VehicleBidStatusTypeNullableFilter
+  userVehicleBids: BidManyRelationFilter
   loanAgreementNo: StringFilter
   registeredOwnerName: StringFilter
   make: StringFilter
@@ -910,16 +910,8 @@ input VehicleWhereInput {
   image12: StringFilter
   event: EventWhereInput
   ExcelFile: ExcelUploadWhereInput
-  bids: BidManyRelationFilter
   createdAt: DateTimeNullableFilter
   updatedAt: DateTimeNullableFilter
-}
-
-input VehicleFuelTypeNullableFilter {
-  equals: VehicleFuelType
-  in: [VehicleFuelType!]
-  notIn: [VehicleFuelType!]
-  not: VehicleFuelTypeNullableFilter
 }
 
 input IntNullableFilter {
@@ -931,6 +923,20 @@ input IntNullableFilter {
   gt: Int
   gte: Int
   not: IntNullableFilter
+}
+
+input VehicleBidStatusTypeNullableFilter {
+  equals: VehicleBidStatusType
+  in: [VehicleBidStatusType!]
+  notIn: [VehicleBidStatusType!]
+  not: VehicleBidStatusTypeNullableFilter
+}
+
+input VehicleFuelTypeNullableFilter {
+  equals: VehicleFuelType
+  in: [VehicleFuelType!]
+  notIn: [VehicleFuelType!]
+  not: VehicleFuelTypeNullableFilter
 }
 
 input FloatNullableFilter {
@@ -947,6 +953,10 @@ input FloatNullableFilter {
 input VehicleOrderByInput {
   id: OrderDirection
   registrationNumber: OrderDirection
+  eventTimeExpire: OrderDirection
+  bidTimeExpire: OrderDirection
+  currentBidAmount: OrderDirection
+  bidStatus: OrderDirection
   loanAgreementNo: OrderDirection
   registeredOwnerName: OrderDirection
   make: OrderDirection
@@ -996,6 +1006,12 @@ input VehicleOrderByInput {
 
 input VehicleUpdateInput {
   registrationNumber: String
+  eventTimeExpire: String
+  bidTimeExpire: String
+  currentBidAmount: Int
+  currentBidUser: UserRelateToOneForUpdateInput
+  bidStatus: VehicleBidStatusType
+  userVehicleBids: BidRelateToManyForUpdateInput
   loanAgreementNo: String
   registeredOwnerName: String
   make: String
@@ -1041,7 +1057,12 @@ input VehicleUpdateInput {
   image12: String
   event: EventRelateToOneForUpdateInput
   ExcelFile: ExcelUploadRelateToOneForUpdateInput
-  bids: BidRelateToManyForUpdateInput
+}
+
+input UserRelateToOneForUpdateInput {
+  create: UserCreateInput
+  connect: UserWhereUniqueInput
+  disconnect: Boolean
 }
 
 input EventRelateToOneForUpdateInput {
@@ -1057,6 +1078,12 @@ input VehicleUpdateArgs {
 
 input VehicleCreateInput {
   registrationNumber: String
+  eventTimeExpire: String
+  bidTimeExpire: String
+  currentBidAmount: Int
+  currentBidUser: UserRelateToOneForCreateInput
+  bidStatus: VehicleBidStatusType
+  userVehicleBids: BidRelateToManyForCreateInput
   loanAgreementNo: String
   registeredOwnerName: String
   make: String
@@ -1102,7 +1129,11 @@ input VehicleCreateInput {
   image12: String
   event: EventRelateToOneForCreateInput
   ExcelFile: ExcelUploadRelateToOneForCreateInput
-  bids: BidRelateToManyForCreateInput
+}
+
+input UserRelateToOneForCreateInput {
+  create: UserCreateInput
+  connect: UserWhereUniqueInput
 }
 
 input EventRelateToOneForCreateInput {
@@ -1178,12 +1209,6 @@ input EventUserUpdateInput {
   status: EventUserStatusType
 }
 
-input UserRelateToOneForUpdateInput {
-  create: UserCreateInput
-  connect: UserWhereUniqueInput
-  disconnect: Boolean
-}
-
 input EventUserUpdateArgs {
   where: EventUserWhereUniqueInput!
   data: EventUserUpdateInput!
@@ -1196,11 +1221,6 @@ input EventUserCreateInput {
   remainingBids: Int
   bidCountUpdates: BidCountUpdateRelateToManyForCreateInput
   status: EventUserStatusType
-}
-
-input UserRelateToOneForCreateInput {
-  create: UserCreateInput
-  connect: UserWhereUniqueInput
 }
 
 type ExcelUpload {
@@ -1403,28 +1423,11 @@ input EventUserRelateToOneForCreateInput {
 type Bid {
   id: ID!
   name: String
-  eventTimeExpire: String
-  bidTimeExpire: String
-  currentBidAmount: Int
-  currentBidUser: User
-  vehicle: Vehicle
-  status: BidStatusType
-  userBids(
-    where: UserBidWhereInput! = {}
-    orderBy: [UserBidOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [UserBid!]
-  userBidsCount(where: UserBidWhereInput! = {}): Int
+  amount: Int
+  user: User
+  bidVehicle: Vehicle
   createdAt: DateTime
   updatedAt: DateTime
-}
-
-enum BidStatusType {
-  pending
-  blocked
-  live
-  closed
 }
 
 input BidWhereUniqueInput {
@@ -1437,44 +1440,26 @@ input BidWhereInput {
   NOT: [BidWhereInput!]
   id: IDFilter
   name: StringFilter
-  eventTimeExpire: StringFilter
-  bidTimeExpire: StringFilter
-  currentBidAmount: IntNullableFilter
-  currentBidUser: UserWhereInput
-  vehicle: VehicleWhereInput
-  status: BidStatusTypeNullableFilter
-  userBids: UserBidManyRelationFilter
+  amount: IntNullableFilter
+  user: UserWhereInput
+  bidVehicle: VehicleWhereInput
   createdAt: DateTimeNullableFilter
   updatedAt: DateTimeNullableFilter
-}
-
-input BidStatusTypeNullableFilter {
-  equals: BidStatusType
-  in: [BidStatusType!]
-  notIn: [BidStatusType!]
-  not: BidStatusTypeNullableFilter
 }
 
 input BidOrderByInput {
   id: OrderDirection
   name: OrderDirection
-  eventTimeExpire: OrderDirection
-  bidTimeExpire: OrderDirection
-  currentBidAmount: OrderDirection
-  status: OrderDirection
+  amount: OrderDirection
   createdAt: OrderDirection
   updatedAt: OrderDirection
 }
 
 input BidUpdateInput {
   name: String
-  eventTimeExpire: String
-  bidTimeExpire: String
-  currentBidAmount: Int
-  currentBidUser: UserRelateToOneForUpdateInput
-  vehicle: VehicleRelateToOneForUpdateInput
-  status: BidStatusType
-  userBids: UserBidRelateToManyForUpdateInput
+  amount: Int
+  user: UserRelateToOneForUpdateInput
+  bidVehicle: VehicleRelateToOneForUpdateInput
 }
 
 input VehicleRelateToOneForUpdateInput {
@@ -1490,83 +1475,14 @@ input BidUpdateArgs {
 
 input BidCreateInput {
   name: String
-  eventTimeExpire: String
-  bidTimeExpire: String
-  currentBidAmount: Int
-  currentBidUser: UserRelateToOneForCreateInput
-  vehicle: VehicleRelateToOneForCreateInput
-  status: BidStatusType
-  userBids: UserBidRelateToManyForCreateInput
+  amount: Int
+  user: UserRelateToOneForCreateInput
+  bidVehicle: VehicleRelateToOneForCreateInput
 }
 
 input VehicleRelateToOneForCreateInput {
   create: VehicleCreateInput
   connect: VehicleWhereUniqueInput
-}
-
-type UserBid {
-  id: ID!
-  name: String
-  amount: Int
-  user: User
-  bid: Bid
-  createdAt: DateTime
-  updatedAt: DateTime
-}
-
-input UserBidWhereUniqueInput {
-  id: ID
-}
-
-input UserBidWhereInput {
-  AND: [UserBidWhereInput!]
-  OR: [UserBidWhereInput!]
-  NOT: [UserBidWhereInput!]
-  id: IDFilter
-  name: StringFilter
-  amount: IntNullableFilter
-  user: UserWhereInput
-  bid: BidWhereInput
-  createdAt: DateTimeNullableFilter
-  updatedAt: DateTimeNullableFilter
-}
-
-input UserBidOrderByInput {
-  id: OrderDirection
-  name: OrderDirection
-  amount: OrderDirection
-  createdAt: OrderDirection
-  updatedAt: OrderDirection
-}
-
-input UserBidUpdateInput {
-  name: String
-  amount: Int
-  user: UserRelateToOneForUpdateInput
-  bid: BidRelateToOneForUpdateInput
-}
-
-input BidRelateToOneForUpdateInput {
-  create: BidCreateInput
-  connect: BidWhereUniqueInput
-  disconnect: Boolean
-}
-
-input UserBidUpdateArgs {
-  where: UserBidWhereUniqueInput!
-  data: UserBidUpdateInput!
-}
-
-input UserBidCreateInput {
-  name: String
-  amount: Int
-  user: UserRelateToOneForCreateInput
-  bid: BidRelateToOneForCreateInput
-}
-
-input BidRelateToOneForCreateInput {
-  create: BidCreateInput
-  connect: BidWhereUniqueInput
 }
 
 """
@@ -1669,15 +1585,6 @@ type Mutation {
   updateBids(data: [BidUpdateArgs!]!): [Bid]
   deleteBid(where: BidWhereUniqueInput!): Bid
   deleteBids(where: [BidWhereUniqueInput!]!): [Bid]
-  createUserBid(data: UserBidCreateInput!): UserBid
-  createUserBids(data: [UserBidCreateInput!]!): [UserBid]
-  updateUserBid(
-    where: UserBidWhereUniqueInput!
-    data: UserBidUpdateInput!
-  ): UserBid
-  updateUserBids(data: [UserBidUpdateArgs!]!): [UserBid]
-  deleteUserBid(where: UserBidWhereUniqueInput!): UserBid
-  deleteUserBids(where: [UserBidWhereUniqueInput!]!): [UserBid]
   endSession: Boolean!
   authenticateUserWithPassword(
     mobile: String!
@@ -1822,14 +1729,6 @@ type Query {
   ): [Bid!]
   bid(where: BidWhereUniqueInput!): Bid
   bidsCount(where: BidWhereInput! = {}): Int
-  userBids(
-    where: UserBidWhereInput! = {}
-    orderBy: [UserBidOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [UserBid!]
-  userBid(where: UserBidWhereUniqueInput!): UserBid
-  userBidsCount(where: UserBidWhereInput! = {}): Int
   keystone: KeystoneMeta!
   authenticatedItem: AuthenticatedItem
 
