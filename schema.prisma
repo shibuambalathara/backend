@@ -70,8 +70,7 @@ model Event {
   name            String           @default("")
   seller          Seller?          @relation("Event_seller", fields: [sellerId], references: [id])
   sellerId        String?          @map("seller")
-  eventType       EventType?       @relation("Event_eventType", fields: [eventTypeId], references: [id])
-  eventTypeId     String?          @map("eventType")
+  eventType       EventType[]      @relation("Event_eventType")
   eventCategory   EventCategory?   @relation("Event_eventCategory", fields: [eventCategoryId], references: [id])
   eventCategoryId String?          @map("eventCategory")
   location        Location?        @relation("Event_location", fields: [locationId], references: [id])
@@ -88,7 +87,6 @@ model Event {
   updatedAt       DateTime?        @updatedAt
 
   @@index([sellerId])
-  @@index([eventTypeId])
   @@index([eventCategoryId])
   @@index([locationId])
 }

@@ -396,7 +396,13 @@ type Event {
   id: ID!
   name: String
   seller: Seller
-  eventType: EventType
+  eventType(
+    where: EventTypeWhereInput! = {}
+    orderBy: [EventTypeOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [EventType!]
+  eventTypeCount(where: EventTypeWhereInput! = {}): Int
   eventCategory: EventCategory
   location: Location
   vehicles(
@@ -440,7 +446,7 @@ input EventWhereInput {
   id: IDFilter
   name: StringFilter
   seller: SellerWhereInput
-  eventType: EventTypeWhereInput
+  eventType: EventTypeManyRelationFilter
   eventCategory: EventCategoryWhereInput
   location: LocationWhereInput
   vehicles: VehicleManyRelationFilter
@@ -452,6 +458,12 @@ input EventWhereInput {
   ExcelFile: ExcelUploadWhereInput
   createdAt: DateTimeNullableFilter
   updatedAt: DateTimeNullableFilter
+}
+
+input EventTypeManyRelationFilter {
+  every: EventTypeWhereInput
+  some: EventTypeWhereInput
+  none: EventTypeWhereInput
 }
 
 input DateTimeFilter {
@@ -497,7 +509,7 @@ input EventOrderByInput {
 input EventUpdateInput {
   name: String
   seller: SellerRelateToOneForUpdateInput
-  eventType: EventTypeRelateToOneForUpdateInput
+  eventType: EventTypeRelateToManyForUpdateInput
   eventCategory: EventCategoryRelateToOneForUpdateInput
   location: LocationRelateToOneForUpdateInput
   vehicles: VehicleRelateToManyForUpdateInput
@@ -515,10 +527,11 @@ input SellerRelateToOneForUpdateInput {
   disconnect: Boolean
 }
 
-input EventTypeRelateToOneForUpdateInput {
-  create: EventTypeCreateInput
-  connect: EventTypeWhereUniqueInput
-  disconnect: Boolean
+input EventTypeRelateToManyForUpdateInput {
+  disconnect: [EventTypeWhereUniqueInput!]
+  set: [EventTypeWhereUniqueInput!]
+  create: [EventTypeCreateInput!]
+  connect: [EventTypeWhereUniqueInput!]
 }
 
 input EventCategoryRelateToOneForUpdateInput {
@@ -547,7 +560,7 @@ input EventUpdateArgs {
 input EventCreateInput {
   name: String
   seller: SellerRelateToOneForCreateInput
-  eventType: EventTypeRelateToOneForCreateInput
+  eventType: EventTypeRelateToManyForCreateInput
   eventCategory: EventCategoryRelateToOneForCreateInput
   location: LocationRelateToOneForCreateInput
   vehicles: VehicleRelateToManyForCreateInput
@@ -564,9 +577,9 @@ input SellerRelateToOneForCreateInput {
   connect: SellerWhereUniqueInput
 }
 
-input EventTypeRelateToOneForCreateInput {
-  create: EventTypeCreateInput
-  connect: EventTypeWhereUniqueInput
+input EventTypeRelateToManyForCreateInput {
+  create: [EventTypeCreateInput!]
+  connect: [EventTypeWhereUniqueInput!]
 }
 
 input EventCategoryRelateToOneForCreateInput {
