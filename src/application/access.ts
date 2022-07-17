@@ -46,6 +46,9 @@ export const isOwner = ({ session, context, listKey, operation }) => {
 export const isSuperAdmin = ({ session }: ListAccessArgs) => {
   return session?.data?.role === "admin";
 };
+export const isNotAdmin = ({ session }: ListAccessArgs) => {
+  return session?.data?.role !== "admin";
+};
 
 /*
   Permissions are shorthand functions for checking that the current user's role has the specified

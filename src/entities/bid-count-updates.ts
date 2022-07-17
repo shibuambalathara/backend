@@ -10,10 +10,10 @@ import { fieldOptions } from "../application/access";
 export const BidCountUpdate = list({
   access: {
     operation: {
-      query: ({ session }) => !!session.itemId,
-      create: ({ session }) => !!session.itemId,
-      update: ({ session }) => !!session.itemId,
-      delete: ({ session }) => !!session.itemId,
+      query: ({ session }) => !!session?.itemId,
+      create: ({ session }) => !!session?.itemId,
+      update: ({ session }) => !!session?.itemId,
+      delete: ({ session }) => !!session?.itemId,
     },
   },
   fields: {

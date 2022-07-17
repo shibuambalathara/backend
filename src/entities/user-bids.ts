@@ -14,7 +14,7 @@ const ownerFilter = ({ session, context, listKey, operation }) => {
   }
   return {
     user: {
-      id: { equals: session.itemId },
+      id: { equals: session?.itemId },
     },
   };
 };
@@ -22,8 +22,8 @@ const ownerFilter = ({ session, context, listKey, operation }) => {
 export const UserBid = list({
   access: {
     operation: {
-      query: ({ session }) => !!session.itemId,
-      create: ({ session }) => !!session.itemId,
+      query: ({ session }) => !!session?.itemId,
+      create: ({ session }) => !!session?.itemId,
       update: isSuperAdmin,
       delete: isSuperAdmin,
     },

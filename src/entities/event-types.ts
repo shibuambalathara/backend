@@ -8,6 +8,7 @@ import {
     import {
       fieldOptions,
       isAdminList,
+      isNotAdmin,
       isSuperAdmin,
     } from "../application/access";
 
@@ -21,7 +22,7 @@ import {
         },
       },
       ui: {
-        isHidden: ({ session }) => !isSuperAdmin(session),
+        isHidden: isNotAdmin,
       },
       fields: {
         name: text({

@@ -1,6 +1,6 @@
 import { relationship, file, timestamp, text } from "@keystone-6/core/fields";
 import { list } from "@keystone-6/core";
-import { fieldOptions, isSuperAdmin } from "../application/access";
+import { fieldOptions, isNotAdmin, isSuperAdmin } from "../application/access";
 import excelFileToJson from "../services/excelFileToJson";
 import { Vehicle } from "@prisma/client";
 
@@ -59,7 +59,7 @@ export const ExcelUpload = list({
     },
   },
   ui: {
-    isHidden: ({ session }) => !isSuperAdmin(session),
+    isHidden: isNotAdmin,
     hideDelete: true,
   },
   hooks: {

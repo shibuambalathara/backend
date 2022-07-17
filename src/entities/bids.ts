@@ -10,6 +10,7 @@ import {
   fieldOptions,
   isAdminCreate,
   isAdminEdit,
+  isNotAdmin,
   isSuperAdmin,
 } from "../application/access";
 
@@ -27,9 +28,9 @@ const ownerFilter = ({ session, context, listKey, operation }) => {
 export const Bid = list({
   access: {
     operation: {
-      query: ({ session }) => !!session.itemId,
-      create: ({ session }) => !!session.itemId,
-      update: ({ session }) => !!session.itemId,
+      query: ({ session }) => !!session?.itemId,
+      create: ({ session }) => !!session?.itemId,
+      update: ({ session }) => !!session?.itemId,
       delete: isSuperAdmin,
     },
     filter: {
@@ -37,7 +38,7 @@ export const Bid = list({
     },
   },
   ui: {
-    hideDelete: ({ session }) => !!session.itemId || !isSuperAdmin(session),
+    hideDelete: isNotAdmin,
     itemView: { defaultFieldMode: isAdminEdit },
   },
   hooks: {
@@ -57,7 +58,7 @@ export const Bid = list({
         currentBidAmount: vehicle?.reservePrice,
         currentBidUser: isSuperAdmin(context.session)
           ? resolvedData.currentBidUser
-          : { connect: { id: context.session.itemId } },
+          : { connect: { id: context?.session?.itemId } },
       };
     },
   },

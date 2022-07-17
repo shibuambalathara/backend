@@ -16,7 +16,7 @@ import {
         },
       },
       ui: {
-        isHidden: ({ session }) => !isSuperAdmin(session),
+        isHidden: ({ session }) => isSuperAdmin(session),
       },
       fields: {
         name: text({

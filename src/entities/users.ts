@@ -11,6 +11,7 @@ import {
   fieldOptions,
   isAdminCreate,
   isAdminEdit,
+  isNotAdmin,
   isSignedIn,
   isSuperAdmin,
 } from "../application/access";
@@ -19,14 +20,14 @@ const ownerFilter = ({ session, context, listKey, operation }) => {
   if (session.data.role === "admin") {
     return true;
   }
-  return { id: { equals: session.itemId } };
+  return { id: { equals: session?.itemId } };
 };
 
 export const User = list({
   access: {
     operation: {
-      query: () => true, //!!session.itemId,
-      create: ({ session }) => !session.itemId || isSuperAdmin(session),
+      query: () => true, //!!session?.itemId,
+      create: ({ session }) => !session?.itemId || isSuperAdmin(session),
       update: isSignedIn,
       delete: isSuperAdmin,
     },
@@ -37,7 +38,7 @@ export const User = list({
   },
   ui: {
     labelField: "username",
-    hideCreate: ({ session }) => !!session.itemId || !isSuperAdmin(session),
+    hideCreate: isNotAdmin,
   },
   fields: {
     firstName: text({}),

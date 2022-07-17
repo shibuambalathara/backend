@@ -12,6 +12,7 @@ import {
       fieldOptions,
       isAdminCreate,
       isAdminEdit,
+      isNotAdmin,
       isSignedIn,
       isSuperAdmin,
     } from "../application/access";
@@ -41,8 +42,8 @@ import {
       },
       ui: {
         labelField: "registrationNumber",
-        hideCreate: ({ session }) => !!session.itemId || !isSuperAdmin(session),
-        hideDelete: ({ session }) => !!session.itemId || !isSuperAdmin(session),
+        hideCreate: isNotAdmin,
+        hideDelete: isNotAdmin,
         itemView: { defaultFieldMode: isAdminEdit },
         createView: { defaultFieldMode: isAdminCreate },
       },

@@ -10,6 +10,7 @@ import {
   fieldOptions,
   isAdminCreate,
   isAdminEdit,
+  isNotAdmin,
   isSuperAdmin,
 } from "../application/access";
 
@@ -17,13 +18,13 @@ const ownerFilter = ({ session, context, listKey, operation }) => {
   if (session.data.role === "admin") {
     return true;
   }
-  return { user: { id: { equals: session.itemId } } };
+  return { user: { id: { equals: session?.itemId } } };
 };
 
 export const EventUser = list({
   access: {
     operation: {
-      query: ({ session }) => !!session.itemId,
+      query: ({ session }) => !!session?.itemId,
       create: isSuperAdmin,
       update: isSuperAdmin,
       delete: isSuperAdmin,
@@ -33,8 +34,8 @@ export const EventUser = list({
     },
   },
   ui: {
-    hideCreate: ({ session }) => !!session.itemId || !isSuperAdmin(session),
-    hideDelete: ({ session }) => !!session.itemId || !isSuperAdmin(session),
+    hideCreate: isNotAdmin,
+    hideDelete: isNotAdmin,
   },
   hooks: {
     resolveInput: async ({ resolvedData, context, operation }) => {

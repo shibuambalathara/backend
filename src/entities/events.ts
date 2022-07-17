@@ -10,13 +10,14 @@ import {
   fieldOptions,
   isAdminCreate,
   isAdminEdit,
+  isNotAdmin,
   isSuperAdmin,
 } from "../application/access";
 
 export const Event = list({
   ui: {
-    hideCreate: ({ session }) => !!session.itemId || !isSuperAdmin(session),
-    hideDelete: ({ session }) => !!session.itemId || !isSuperAdmin(session),
+    hideCreate: isNotAdmin,
+    hideDelete: isNotAdmin,
     itemView: { defaultFieldMode: isAdminEdit },
     createView: { defaultFieldMode: isAdminCreate },
   },
