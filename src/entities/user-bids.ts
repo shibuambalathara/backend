@@ -123,12 +123,12 @@ export const Bid = list({
           query: `bidTimeExpire`,
         }),
       ]);
-      const durationInMinutes = 2; // 2 minutes
+      const durationInMinutes = 2 * 60000;  // 2 minutes
       const bidTimeExpire =
-        new Date(bidVehicle.bidTimeExpire).setMinutes(-durationInMinutes) <=
+        new Date(bidVehicle.bidTimeExpire).getTime() - durationInMinutes <=
         new Date().getTime()
           ? new Date(
-              new Date(bidVehicle.bidTimeExpire).setMinutes(durationInMinutes)
+              new Date(bidVehicle.bidTimeExpire).getTime() + durationInMinutes
             )
           : new Date(bidVehicle.bidTimeExpire);
       console.log("bidTimeExpire:", bidTimeExpire);

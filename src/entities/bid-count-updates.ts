@@ -27,7 +27,6 @@ export const BidCountUpdate = list({
       if (operation !== "create") {
         return;
       }
-      console.log("resolvedData", resolvedData);
       await context.db.EventUser.updateOne({
         where: {
           id: resolvedData?.eventUser?.connect?.id,
