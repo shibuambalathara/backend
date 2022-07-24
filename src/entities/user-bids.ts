@@ -5,7 +5,7 @@ import {
   timestamp,
 } from "@keystone-6/core/fields";
 import { list } from "@keystone-6/core";
-import { fieldOptions, isSuperAdmin } from "../application/access";
+import { fieldOptions, isAdminCreate, isAdminEdit, isSuperAdmin } from "../application/access";
 
 const ownerFilter = ({ session, context, listKey, operation }) => {
   if (session.data.role === "admin") {
@@ -87,10 +87,11 @@ export const Bid = list({
           query: ` username `,
         }),
       ]);
-      return {
-        ...resolvedData,
-        name: `${user?.username} : ${bidVehicle?.registrationNumber}`,
-      };
+        return {
+          ...resolvedData,
+          name: `${user?.username} : ${bidVehicle?.registrationNumber}`,
+          user: context?.session?.data?.role==="admin" ? resolvedData?.user : { connect: { id: context?.session?.itemId } },
+        };
     },
     afterOperation: async ({
       listKey,
@@ -164,6 +165,10 @@ export const Bid = list({
     user: relationship({
       ref: "User.quotedBids",
       many: false,
+      ui: {
+        createView: { fieldMode: isAdminCreate },
+        itemView: { fieldMode: isAdminEdit },
+      },
     }),
 
     bidVehicle: relationship({
