@@ -41,8 +41,13 @@ export const VehicleUser = list({
     validateInput: async ({ resolvedData, context, addValidationError }) => {
       const vehicleUserCount = await context.query.VehicleUser.count({
         where: {
-          event: { id: { equals: resolvedData?.vehicle?.connect?.id } },
-          user: { id: { equals: resolvedData?.user?.connect?.id } },
+          vehicle: { id: { equals: resolvedData?.vehicle?.connect?.id } },
+          user: {
+            id: {
+              equals:
+                resolvedData?.user?.connect?.id ?? context?.session?.itemId,
+            },
+          },
         },
       });
 
@@ -50,49 +55,55 @@ export const VehicleUser = list({
         addValidationError("Duplicate Vehicle User Entry");
       }
 
-      const user = await context.query.user.findOne({
+      const user = await context.query.User.findOne({
         where: {
-          event: { id: { equals: resolvedData?.user?.connect?.id } },
-          query: `endDate emdBalance`,
+          id: resolvedData?.user?.connect?.id ?? context?.session?.itemId,
         },
+        query: `emdBalance`,
       });
-        if(user.emdBalance >= 10000 ){
-          addValidationError("Insufficient EMD Balance");
-        }
+      if (user?.emdBalance < 10000) {
+        addValidationError("Insufficient EMD Balance");
+      }
     },
     resolveInput: async ({ resolvedData, context, operation }) => {
       if (operation !== "create") {
         return resolvedData;
       }
       const [vehicle, user] = await Promise.all([
-        context.query.Vehcle.findOne({
+        context.query.Vehicle.findOne({
           where: { id: resolvedData?.vehicle?.connect?.id },
-          query: "id registrationNumber events { noOfBids }",
+          query: "id registrationNumber event { noOfBids }",
         }),
         context.query.User.findOne({
-          where: { id: resolvedData?.user?.connect?.id },
+          where: {
+            id: resolvedData?.user?.connect?.id ?? context?.session?.itemId,
+          },
           query: `id firstName lastName username`,
         }),
       ]);
       return {
         ...resolvedData,
-        name: `${user?.firstName ?? user?.username}: ${vehicle?.registrationNumber}`,
+        name: `${user?.firstName ?? user?.username}: ${
+          vehicle?.registrationNumber
+        }`,
         remainingBids: vehicle?.event?.noOfBids,
       };
     },
     afterOperation: async ({ context, operation, resolvedData }) => {
       if (operation !== "create") {
-        return
+        return;
       }
       await context.prisma.user.update({
         where: {
-          id: resolvedData?.user?.connect?.id,
+          id: resolvedData?.user?.connect?.id ?? context?.session?.itemId,
         },
         data: {
-          emdBalance: resolvedData?.user?.emdBalance - 10000,
-        }
-      })
-    }
+          emdBalance: {
+            increment: -10000,
+          } ,
+        },
+      });
+    },
   },
   fields: {
     name: text({
@@ -115,11 +126,11 @@ export const VehicleUser = list({
           fieldMode: "read",
         },
       },
-      access:{
+      access: {
         read: isSignedIn,
         create: isSuperAdmin,
         update: isSuperAdmin,
-      }
+      },
     }),
     bidCountUpdates: relationship({
       ref: "BidCountUpdate.vehicleUser",

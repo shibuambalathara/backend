@@ -5,7 +5,12 @@ import {
   timestamp,
 } from "@keystone-6/core/fields";
 import { list } from "@keystone-6/core";
-import { fieldOptions, isAdminCreate, isAdminEdit, isSuperAdmin } from "../application/access";
+import {
+  fieldOptions,
+  isAdminCreate,
+  isAdminEdit,
+  isSuperAdmin,
+} from "../application/access";
 
 const ownerFilter = ({ session, context, listKey, operation }) => {
   if (session.data.role === "admin") {
@@ -33,6 +38,7 @@ export const Bid = list({
   hooks: {
     validateInput: async ({ resolvedData, context, addValidationError }) => {
       const { amount } = resolvedData;
+      console.log("rrrr: ", resolvedData?.bidVehicle?.connect?.id)
       const [bidVehicle, vehicleUser] = await Promise.all([
         context.query.Vehicle.findOne({
           where: { id: resolvedData?.bidVehicle?.connect?.id },
@@ -40,12 +46,20 @@ export const Bid = list({
         }),
         context.prisma.vehicleUser.findFirst({
           where: {
-            vehicle: { id: resolvedData?.vehicle?.connect?.id },
-            user: { id: resolvedData?.user?.connect?.id?? context?.session?.itemId },
+                vehicle: {
+                  id:  resolvedData?.bidVehicle?.connect?.id,
+                },
+                user: {
+                  id: 
+                      resolvedData?.user?.connect?.id ??
+                      context?.session?.itemId
+                },
           },
+          // query: `remainingBids`,
         }),
       ]);
-      
+      console.log("eef: ", vehicleUser);
+
       if (!bidVehicle) {
         addValidationError("vehicle not found");
       }
@@ -64,21 +78,28 @@ export const Bid = list({
             bidVehicle.currentBidAmount
         );
       }
+
       if (vehicleUser) {
-        if(vehicleUser.remainingBids < 1)
-        addValidationError("No Bids Left");
-      }
-      else{
+        if (vehicleUser?.remainingBids < 1)
+          addValidationError("No Bids Left");
+      } else {
         const newVehicleUser = await context.query.VehicleUser.createOne({
           data: {
-            vehicle: { connect: { id: bidVehicle.id } },
-            user: { connect: { id: context?.session?.itemId } },
+            vehicle: { connect: { id: resolvedData?.bidVehicle?.connect?.id } },
+            user: {
+              connect: {
+                id: resolvedData?.user?.connect?.id ?? context?.session?.itemId,
+              },
+            },
           },
-          query: `id remainingBids`,
-        })
-        if(newVehicleUser?.remainingBids < 1)
+          query: `id remainingBids user { emdBalance }`,
+        });
+        console.log("newVehicleUser: ", newVehicleUser);
+        if(newVehicleUser?.user?.emdBalance < 10000) {
+          addValidationError("Insufficient EMD Balance");
+        }
+        if (newVehicleUser?.remainingBids < 1)
           addValidationError("No Bids Left");
-        
       }
     },
     resolveInput: async ({ resolvedData, context, operation }) => {
@@ -91,15 +112,20 @@ export const Bid = list({
           query: ` registrationNumber `,
         }),
         context.query.User.findOne({
-          where: { id: resolvedData?.user?.connect?.id },
+          where: {
+            id: resolvedData?.user?.connect?.id ?? context?.session?.itemId,
+          },
           query: ` username `,
         }),
       ]);
-        return {
-          ...resolvedData,
-          name: `${user?.username} : ${bidVehicle?.registrationNumber}`,
-          user: context?.session?.data?.role==="admin" ? resolvedData?.user : { connect: { id: context?.session?.itemId } },
-        };
+      return {
+        ...resolvedData,
+        name: `${user?.username} : ${bidVehicle?.registrationNumber}`,
+        user:
+          context?.session?.data?.role === "admin"
+            ? resolvedData?.user
+            : { connect: { id: context?.session?.itemId } },
+      };
     },
     afterOperation: async ({
       listKey,
@@ -132,7 +158,7 @@ export const Bid = list({
           query: `bidTimeExpire`,
         }),
       ]);
-      const durationInMinutes = 2 * 60000;  // 2 minutes
+      const durationInMinutes = 2 * 60000; // 2 minutes
       const bidTimeExpire =
         new Date(bidVehicle.bidTimeExpire).getTime() - durationInMinutes <=
         new Date().getTime()
