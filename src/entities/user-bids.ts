@@ -33,27 +33,19 @@ export const Bid = list({
   hooks: {
     validateInput: async ({ resolvedData, context, addValidationError }) => {
       const { amount } = resolvedData;
-      const [bidVehicle, eventUser] = await Promise.all([
+      const [bidVehicle, vehicleUser] = await Promise.all([
         context.query.Vehicle.findOne({
           where: { id: resolvedData?.bidVehicle?.connect?.id },
           query: `id currentBidAmount bidTimeExpire event { startDate } `,
         }),
-        context.prisma.eventUser.findFirst({
+        context.prisma.vehicleUser.findFirst({
           where: {
-            event: { id: resolvedData?.event?.connect?.id },
+            vehicle: { id: resolvedData?.vehicle?.connect?.id },
             user: { id: resolvedData?.user?.connect?.id },
           },
         }),
       ]);
-      if (eventUser.status === "blocked") {
-        addValidationError("User is blocked on this event");
-      }
-      if (eventUser.status === "pending") {
-        addValidationError("User event participation request pending");
-      }
-      if (eventUser?.remainingBids <= 0) {
-        addValidationError("No Bids Remaining");
-      }
+      
       if (!bidVehicle) {
         addValidationError("vehicle not found");
       }
@@ -71,6 +63,22 @@ export const Bid = list({
           "Bid Amount smaller than current bid amount, Current Bid Amount: " +
             bidVehicle.currentBidAmount
         );
+      }
+      if (vehicleUser) {
+        if(vehicleUser.remainingBids < 1)
+        addValidationError("No Bids Left");
+      }
+      else{
+        const newVehicleUser = await context.query.VehicleUser.createOne({
+          data: {
+            vehicle: { connect: { id: bidVehicle.id } },
+            user: { connect: { id: context?.session?.itemId } },
+          },
+          query: `id remainingBids`,
+        })
+        if(newVehicleUser?.remainingBids < 1)
+          addValidationError("No Bids Left");
+        
       }
     },
     resolveInput: async ({ resolvedData, context, operation }) => {
@@ -112,10 +120,10 @@ export const Bid = list({
       if (operation !== "create") {
         return;
       }
-      const [eventUser, bidVehicle] = await Promise.all([
-        context.prisma.eventUser.findFirst({
+      const [vehicleUser, bidVehicle] = await Promise.all([
+        context.prisma.vehicleUser.findFirst({
           where: {
-            event: { id: resolvedData?.event?.connect?.id },
+            vehicle: { id: resolvedData?.vehicle?.connect?.id },
             user: { id: resolvedData?.user?.connect?.id },
           },
         }),
@@ -135,10 +143,10 @@ export const Bid = list({
       console.log("bidTimeExpire:", bidTimeExpire);
       console.log("bidTimeExpire Old :", bidVehicle.bidTimeExpire);
       await Promise.all([
-        context.prisma.eventUser.update({
-          where: { id: eventUser.id },
+        context.prisma.vehicleUser.update({
+          where: { id: vehicleUser.id },
           data: {
-            remainingBids: eventUser.remainingBids - 1,
+            remainingBids: vehicleUser.remainingBids - 1,
           },
         }),
         context.prisma.vehicle.update({

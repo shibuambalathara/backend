@@ -17,14 +17,10 @@ import {
 } from "../application/access";
 
 const ownerFilter = ({ session, context, listKey, operation }) => {
-  if (session.data.role === "admin") {
+  if (session.data.status === "active") {
     return true;
   }
-  return {
-    event: {
-      id: { in: session.data?.userEvents?.map((e) => e.event.id) },
-    },
-  };
+  return false
 };
 
 export const Vehicle = list({
@@ -163,6 +159,14 @@ export const Vehicle = list({
     image10: text(),
     image11: text(),
     image12: text(),
+    vehicleUsers: relationship({
+      ref: "VehicleUser.vehicle",
+      many: true,
+      ui: {
+        createView: { fieldMode: "hidden" },
+        itemView: { fieldMode: "read" },
+      },
+    }),
     ExcelFile: relationship({
       ref: "ExcelUpload.vehicles",
       many: false,
@@ -171,15 +175,6 @@ export const Vehicle = list({
         itemView: { fieldMode: "read" },
       },
     }),
-    // Bids: relationship({
-    //   ref: "Bid.vehicle",
-    //   many: true,
-    //   ui: {
-    //     createView: { fieldMode: "hidden" },
-    //     itemView: { fieldMode: "read" },
-    //   },
-    // }),
-
     createdAt: timestamp({
       ...fieldOptions,
       defaultValue: { kind: "now" },

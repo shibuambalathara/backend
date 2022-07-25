@@ -26,7 +26,10 @@ import {
           },
         }),
         country: text({}),
-        state: text({}),
+        state: relationship({
+          ref: "State.locations",
+          many: false,
+        }),
         city: text({}),
         events: relationship({
           ref: "Event.location",

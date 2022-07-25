@@ -27,9 +27,9 @@ export const BidCountUpdate = list({
       if (operation !== "create") {
         return;
       }
-      await context.db.EventUser.updateOne({
+      await context.db.VehicleUser.updateOne({
         where: {
-          id: resolvedData?.eventUser?.connect?.id,
+          id: resolvedData?.vehicleUser?.connect?.id,
         },
         data: {
           remainingBids: {
@@ -40,8 +40,8 @@ export const BidCountUpdate = list({
     },
   },
   fields: {
-    eventUser: relationship({
-      ref: "EventUser.bidCountUpdates",
+    vehicleUser: relationship({
+      ref: "VehicleUser.bidCountUpdates",
     }),
 
     incrementBidCount: integer({

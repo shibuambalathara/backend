@@ -5,6 +5,7 @@ import {
   select,
   text,
   timestamp,
+  integer,
 } from "@keystone-6/core/fields";
 import { list } from "@keystone-6/core";
 import {
@@ -111,21 +112,18 @@ export const User = list({
         update: isSuperAdmin,
       },
     }),
-
-    // role: relationship({
-    //   ref: "Role.assignedTo",
-    //   many: false,
-    //   access: {
-    //     read: isSignedIn,
-    //     create: isSuperAdmin,
-    //     update: isSuperAdmin,
-    //   },
-    //   ui: {
-    //     itemView: {
-    //       fieldMode: (args) => (isSuperAdmin(args) ? "edit" : "read"),
-    //     },
-    //   },
-    // }),
+    bidEnabledVehicles: relationship({
+      ref: "VehicleUser.user",
+      many: true,
+    }),
+    emdBalance: integer({
+      access: {
+        read: isSignedIn,
+        create: isSuperAdmin,
+        update: isSuperAdmin,
+      },
+      defaultValue: 0,
+    }),
     status: select({
       type: "enum",
       options: [
@@ -146,13 +144,9 @@ export const User = list({
         update: isSuperAdmin,
       },
     }),
-    userEvents: relationship({
-      ref: "EventUser.user",
+    states: relationship({
+      ref: "State.users",
       many: true,
-      ui: {
-        createView: { fieldMode: "hidden" },
-        itemView: { fieldMode: "read" },
-      },
     }),
     bidCountUpdates: relationship({
       ref: "BidCountUpdate.createdFor",

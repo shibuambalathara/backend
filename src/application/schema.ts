@@ -4,28 +4,25 @@ import { EventType } from '../entities/event-types'
 import { EventCategory } from '../entities/event-categories'
 import { Location } from '../entities/locations'
 import { Vehicle } from '../entities/vehicles'
-//import { Bid } from '../entities/bids'
-import { EventUser } from "../entities/event-users"
 import { ExcelUpload } from '../entities/excel-upload'
 import { Seller } from '../entities/sellers'
 import { BidCountUpdate } from "../entities/bid-count-updates";
-// import { Bid } from "../entities/bids";
 import { Bid } from "../entities/user-bids";
-// import { Role } from "../entities/roles";
+import { State } from '../entities/states'
+import { VehicleUser } from '../entities/vehicle-users'
 export { router } from "./restRoutes";
 export { extendGraphqlSchema } from "./graphqlRoutes";
 export const lists = {
   User,
   Event,
+  Vehicle,
+  VehicleUser,
+  Bid,
   EventType,
   Location,
+  State,
   EventCategory,
-  Vehicle,
-  EventUser,
   ExcelUpload,
   Seller,
-  Bid,
   BidCountUpdate,
-
-  // Role,
 };

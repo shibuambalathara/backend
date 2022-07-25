@@ -5,6 +5,7 @@ import {
   text,
   timestamp,
 } from "@keystone-6/core/fields";
+import { document } from "@keystone-6/fields-document";
 import { list } from "@keystone-6/core";
 import {
   fieldOptions,
@@ -30,10 +31,16 @@ export const Event = list({
     },
   },
   hooks: {
+    validateInput: async ({ resolvedData, context, operation, addValidationError,  }) => {
+      if(new Date(resolvedData.endDate) < new Date()){
+        addValidationError("End date must be in the future");
+      }
+    },
     resolveInput: async ({ resolvedData, context, operation }) => {
       if (operation !== "create" && operation !== "update") {
         return resolvedData;
       }
+      console.log("resolveInput: ", resolvedData);
       const [category, seller, location] = await Promise.all([
         context.db.EventCategory.findOne({
           where: { id: resolvedData?.eventCategory?.connect?.id },
@@ -55,8 +62,9 @@ export const Event = list({
       };
     },
     afterOperation: async ({ context, operation, resolvedData }) => {
-      if (operation !== "update")
+      if (operation !== "update") {
         return
+      }
       await context.prisma.vehicle.updateMany({
         where: {
           event: { id: resolvedData?.id },
@@ -120,14 +128,6 @@ export const Event = list({
       defaultValue: "active",
       ui: { displayMode: "segmented-control" },
     }),
-    eventUsers: relationship({
-      ref: "EventUser.event",
-      many: true,
-      ui: {
-        createView: { fieldMode: "hidden" },
-        itemView: { fieldMode: "read" },
-      },
-    }),
     ExcelFile: relationship({
       ref: "ExcelUpload.event",
       many: false,
@@ -135,6 +135,10 @@ export const Event = list({
         createView: { fieldMode: "hidden" },
         itemView: { fieldMode: isAdminEdit },
       },
+    }),
+    termsAndConditions: document({
+      links: true,
+      dividers: true, 
     }),
     createdAt: timestamp({ ...fieldOptions, defaultValue: { kind: "now" } }),
     updatedAt: timestamp({ ...fieldOptions, db: { updatedAt: true } }),

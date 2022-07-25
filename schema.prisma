@@ -53,8 +53,10 @@ model User {
   state                 String               @default("")
   city                  String               @default("")
   role                  UserRoleType?        @default(dealer)
+  bidEnabledVehicles    VehicleUser[]        @relation("VehicleUser_user")
+  emdBalance            Int?                 @default(0)
   status                UserStatusType?      @default(pending)
-  userEvents            EventUser[]          @relation("EventUser_user")
+  states                State[]              @relation("State_users")
   bidCountUpdates       BidCountUpdate[]     @relation("BidCountUpdate_createdFor")
   activeBids            Vehicle[]            @relation("Vehicle_currentBidUser")
   quotedBids            Bid[]                @relation("Bid_user")
@@ -66,56 +68,29 @@ model User {
 }
 
 model Event {
-  id              String           @id @default(cuid())
-  name            String           @default("")
-  seller          Seller?          @relation("Event_seller", fields: [sellerId], references: [id])
-  sellerId        String?          @map("seller")
-  eventType       EventType[]      @relation("Event_eventType")
-  eventCategory   EventCategory?   @relation("Event_eventCategory", fields: [eventCategoryId], references: [id])
-  eventCategoryId String?          @map("eventCategory")
-  location        Location?        @relation("Event_location", fields: [locationId], references: [id])
-  locationId      String?          @map("location")
-  vehicles        Vehicle[]        @relation("Vehicle_event")
-  startDate       DateTime
-  endDate         DateTime
-  noOfBids        Int
-  status          EventStatusType? @default(active)
-  eventUsers      EventUser[]      @relation("EventUser_event")
-  ExcelFile       ExcelUpload?     @relation("Event_ExcelFile", fields: [ExcelFileId], references: [id])
-  ExcelFileId     String?          @unique @map("ExcelFile")
-  createdAt       DateTime?        @default(now())
-  updatedAt       DateTime?        @updatedAt
+  id                 String           @id @default(cuid())
+  name               String           @default("")
+  seller             Seller?          @relation("Event_seller", fields: [sellerId], references: [id])
+  sellerId           String?          @map("seller")
+  eventType          EventType[]      @relation("Event_eventType")
+  eventCategory      EventCategory?   @relation("Event_eventCategory", fields: [eventCategoryId], references: [id])
+  eventCategoryId    String?          @map("eventCategory")
+  location           Location?        @relation("Event_location", fields: [locationId], references: [id])
+  locationId         String?          @map("location")
+  vehicles           Vehicle[]        @relation("Vehicle_event")
+  startDate          DateTime
+  endDate            DateTime
+  noOfBids           Int
+  status             EventStatusType? @default(active)
+  ExcelFile          ExcelUpload?     @relation("Event_ExcelFile", fields: [ExcelFileId], references: [id])
+  ExcelFileId        String?          @unique @map("ExcelFile")
+  termsAndConditions Json             @default("[{\"type\":\"paragraph\",\"children\":[{\"text\":\"\"}]}]")
+  createdAt          DateTime?        @default(now())
+  updatedAt          DateTime?        @updatedAt
 
   @@index([sellerId])
   @@index([eventCategoryId])
   @@index([locationId])
-}
-
-model EventType {
-  id        String    @id @default(cuid())
-  name      String    @default("")
-  events    Event[]   @relation("Event_eventType")
-  createdAt DateTime? @default(now())
-  updatedAt DateTime? @updatedAt
-}
-
-model Location {
-  id        String    @id @default(cuid())
-  name      String    @default("")
-  country   String    @default("")
-  state     String    @default("")
-  city      String    @default("")
-  events    Event[]   @relation("Event_location")
-  createdAt DateTime? @default(now())
-  updatedAt DateTime? @updatedAt
-}
-
-model EventCategory {
-  id        String    @id @default(cuid())
-  name      String    @default("")
-  events    Event[]   @relation("Event_eventCategory")
-  createdAt DateTime? @default(now())
-  updatedAt DateTime? @updatedAt
 }
 
 model Vehicle {
@@ -172,6 +147,7 @@ model Vehicle {
   image10             String                @default("")
   image11             String                @default("")
   image12             String                @default("")
+  vehicleUsers        VehicleUser[]         @relation("VehicleUser_vehicle")
   ExcelFile           ExcelUpload?          @relation("Vehicle_ExcelFile", fields: [ExcelFileId], references: [id])
   ExcelFileId         String?               @map("ExcelFile")
   createdAt           DateTime?             @default(now())
@@ -183,21 +159,74 @@ model Vehicle {
   @@index([ExcelFileId])
 }
 
-model EventUser {
-  id              String               @id @default(cuid())
-  name            String               @default("")
-  event           Event?               @relation("EventUser_event", fields: [eventId], references: [id])
-  eventId         String?              @map("event")
-  user            User?                @relation("EventUser_user", fields: [userId], references: [id])
-  userId          String?              @map("user")
+model VehicleUser {
+  id              String           @id @default(cuid())
+  name            String           @default("")
+  vehicle         Vehicle?         @relation("VehicleUser_vehicle", fields: [vehicleId], references: [id])
+  vehicleId       String?          @map("vehicle")
+  user            User?            @relation("VehicleUser_user", fields: [userId], references: [id])
+  userId          String?          @map("user")
   remainingBids   Int?
-  bidCountUpdates BidCountUpdate[]     @relation("BidCountUpdate_eventUser")
-  status          EventUserStatusType? @default(pending)
-  createdAt       DateTime?            @default(now())
-  updatedAt       DateTime?            @updatedAt
+  bidCountUpdates BidCountUpdate[] @relation("BidCountUpdate_vehicleUser")
+  createdAt       DateTime?        @default(now())
+  updatedAt       DateTime?        @updatedAt
 
-  @@index([eventId])
+  @@index([vehicleId])
   @@index([userId])
+}
+
+model Bid {
+  id           String    @id @default(cuid())
+  name         String    @default("")
+  amount       Int?
+  user         User?     @relation("Bid_user", fields: [userId], references: [id])
+  userId       String?   @map("user")
+  bidVehicle   Vehicle?  @relation("Bid_bidVehicle", fields: [bidVehicleId], references: [id])
+  bidVehicleId String?   @map("bidVehicle")
+  createdAt    DateTime? @default(now())
+  updatedAt    DateTime? @updatedAt
+
+  @@index([userId])
+  @@index([bidVehicleId])
+}
+
+model EventType {
+  id        String    @id @default(cuid())
+  name      String    @default("")
+  events    Event[]   @relation("Event_eventType")
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+}
+
+model Location {
+  id        String    @id @default(cuid())
+  name      String    @default("")
+  country   String    @default("")
+  state     State?    @relation("Location_state", fields: [stateId], references: [id])
+  stateId   String?   @map("state")
+  city      String    @default("")
+  events    Event[]   @relation("Event_location")
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+
+  @@index([stateId])
+}
+
+model State {
+  id        String     @id @default(cuid())
+  name      String     @default("")
+  users     User[]     @relation("State_users")
+  locations Location[] @relation("Location_state")
+  createdAt DateTime?  @default(now())
+  updatedAt DateTime?  @updatedAt
+}
+
+model EventCategory {
+  id        String    @id @default(cuid())
+  name      String    @default("")
+  events    Event[]   @relation("Event_eventCategory")
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
 }
 
 model ExcelUpload {
@@ -219,32 +248,17 @@ model Seller {
   updatedAt DateTime? @updatedAt
 }
 
-model Bid {
-  id           String    @id @default(cuid())
-  name         String    @default("")
-  amount       Int?
-  user         User?     @relation("Bid_user", fields: [userId], references: [id])
-  userId       String?   @map("user")
-  bidVehicle   Vehicle?  @relation("Bid_bidVehicle", fields: [bidVehicleId], references: [id])
-  bidVehicleId String?   @map("bidVehicle")
-  createdAt    DateTime? @default(now())
-  updatedAt    DateTime? @updatedAt
-
-  @@index([userId])
-  @@index([bidVehicleId])
-}
-
 model BidCountUpdate {
-  id                String     @id @default(cuid())
-  eventUser         EventUser? @relation("BidCountUpdate_eventUser", fields: [eventUserId], references: [id])
-  eventUserId       String?    @map("eventUser")
-  incrementBidCount Int?       @default(5)
-  createdFor        User?      @relation("BidCountUpdate_createdFor", fields: [createdForId], references: [id])
-  createdForId      String?    @map("createdFor")
-  createdAt         DateTime?  @default(now())
-  updatedAt         DateTime?  @updatedAt
+  id                String       @id @default(cuid())
+  vehicleUser       VehicleUser? @relation("BidCountUpdate_vehicleUser", fields: [vehicleUserId], references: [id])
+  vehicleUserId     String?      @map("vehicleUser")
+  incrementBidCount Int?         @default(5)
+  createdFor        User?        @relation("BidCountUpdate_createdFor", fields: [createdForId], references: [id])
+  createdForId      String?      @map("createdFor")
+  createdAt         DateTime?    @default(now())
+  updatedAt         DateTime?    @updatedAt
 
-  @@index([eventUserId])
+  @@index([vehicleUserId])
   @@index([createdForId])
 }
 
@@ -288,10 +302,4 @@ enum VehicleFuelType {
   cng
   lpg
   electric
-}
-
-enum EventUserStatusType {
-  pending
-  blocked
-  accepted
 }

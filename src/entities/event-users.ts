@@ -86,22 +86,22 @@ export const EventUser = list({
       ref: "User.userEvents",
       many: false,
     }),
-    remainingBids: integer({
-      ui: {
-        createView: { fieldMode: "hidden" },
-        itemView: {
-          fieldMode: "read",
-        },
-      },
-    }),
-    bidCountUpdates: relationship({
-      ref: "BidCountUpdate.eventUser",
-      many: true,
-      ui: {
-        createView: { fieldMode: "hidden" },
-        itemView: { fieldMode: "read" },
-      },
-    }),
+    // remainingBids: integer({
+    //   ui: {
+    //     createView: { fieldMode: "hidden" },
+    //     itemView: {
+    //       fieldMode: "read",
+    //     },
+    //   },
+    // }),
+    // bidCountUpdates: relationship({
+    //   ref: "BidCountUpdate.eventUser",
+    //   many: true,
+    //   ui: {
+    //     createView: { fieldMode: "hidden" },
+    //     itemView: { fieldMode: "read" },
+    //   },
+    // }),
 
     status: select({
       type: "enum",

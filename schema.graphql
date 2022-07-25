@@ -22,14 +22,22 @@ type User {
   state: String
   city: String
   role: UserRoleType
-  status: UserStatusType
-  userEvents(
-    where: EventUserWhereInput! = {}
-    orderBy: [EventUserOrderByInput!]! = []
+  bidEnabledVehicles(
+    where: VehicleUserWhereInput! = {}
+    orderBy: [VehicleUserOrderByInput!]! = []
     take: Int
     skip: Int! = 0
-  ): [EventUser!]
-  userEventsCount(where: EventUserWhereInput! = {}): Int
+  ): [VehicleUser!]
+  bidEnabledVehiclesCount(where: VehicleUserWhereInput! = {}): Int
+  emdBalance: Int
+  status: UserStatusType
+  states(
+    where: StateWhereInput! = {}
+    orderBy: [StateOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [State!]
+  statesCount(where: StateWhereInput! = {}): Int
   bidCountUpdates(
     where: BidCountUpdateWhereInput! = {}
     orderBy: [BidCountUpdateOrderByInput!]! = []
@@ -126,8 +134,10 @@ input UserWhereInput {
   state: StringFilter
   city: StringFilter
   role: UserRoleTypeNullableFilter
+  bidEnabledVehicles: VehicleUserManyRelationFilter
+  emdBalance: IntNullableFilter
   status: UserStatusTypeNullableFilter
-  userEvents: EventUserManyRelationFilter
+  states: StateManyRelationFilter
   bidCountUpdates: BidCountUpdateManyRelationFilter
   activeBids: VehicleManyRelationFilter
   quotedBids: BidManyRelationFilter
@@ -201,6 +211,23 @@ input UserRoleTypeNullableFilter {
   not: UserRoleTypeNullableFilter
 }
 
+input VehicleUserManyRelationFilter {
+  every: VehicleUserWhereInput
+  some: VehicleUserWhereInput
+  none: VehicleUserWhereInput
+}
+
+input IntNullableFilter {
+  equals: Int
+  in: [Int!]
+  notIn: [Int!]
+  lt: Int
+  lte: Int
+  gt: Int
+  gte: Int
+  not: IntNullableFilter
+}
+
 input UserStatusTypeNullableFilter {
   equals: UserStatusType
   in: [UserStatusType!]
@@ -208,10 +235,10 @@ input UserStatusTypeNullableFilter {
   not: UserStatusTypeNullableFilter
 }
 
-input EventUserManyRelationFilter {
-  every: EventUserWhereInput
-  some: EventUserWhereInput
-  none: EventUserWhereInput
+input StateManyRelationFilter {
+  every: StateWhereInput
+  some: StateWhereInput
+  none: StateWhereInput
 }
 
 input BidCountUpdateManyRelationFilter {
@@ -258,6 +285,7 @@ input UserOrderByInput {
   state: OrderDirection
   city: OrderDirection
   role: OrderDirection
+  emdBalance: OrderDirection
   status: OrderDirection
   createdAt: OrderDirection
   updatedAt: OrderDirection
@@ -290,8 +318,10 @@ input UserUpdateInput {
   state: String
   city: String
   role: UserRoleType
+  bidEnabledVehicles: VehicleUserRelateToManyForUpdateInput
+  emdBalance: Int
   status: UserStatusType
-  userEvents: EventUserRelateToManyForUpdateInput
+  states: StateRelateToManyForUpdateInput
   bidCountUpdates: BidCountUpdateRelateToManyForUpdateInput
   activeBids: VehicleRelateToManyForUpdateInput
   quotedBids: BidRelateToManyForUpdateInput
@@ -309,11 +339,18 @@ The `Upload` scalar type represents a file upload.
 """
 scalar Upload
 
-input EventUserRelateToManyForUpdateInput {
-  disconnect: [EventUserWhereUniqueInput!]
-  set: [EventUserWhereUniqueInput!]
-  create: [EventUserCreateInput!]
-  connect: [EventUserWhereUniqueInput!]
+input VehicleUserRelateToManyForUpdateInput {
+  disconnect: [VehicleUserWhereUniqueInput!]
+  set: [VehicleUserWhereUniqueInput!]
+  create: [VehicleUserCreateInput!]
+  connect: [VehicleUserWhereUniqueInput!]
+}
+
+input StateRelateToManyForUpdateInput {
+  disconnect: [StateWhereUniqueInput!]
+  set: [StateWhereUniqueInput!]
+  create: [StateCreateInput!]
+  connect: [StateWhereUniqueInput!]
 }
 
 input BidCountUpdateRelateToManyForUpdateInput {
@@ -362,8 +399,10 @@ input UserCreateInput {
   state: String
   city: String
   role: UserRoleType
+  bidEnabledVehicles: VehicleUserRelateToManyForCreateInput
+  emdBalance: Int
   status: UserStatusType
-  userEvents: EventUserRelateToManyForCreateInput
+  states: StateRelateToManyForCreateInput
   bidCountUpdates: BidCountUpdateRelateToManyForCreateInput
   activeBids: VehicleRelateToManyForCreateInput
   quotedBids: BidRelateToManyForCreateInput
@@ -372,9 +411,14 @@ input UserCreateInput {
   magicAuthRedeemedAt: DateTime
 }
 
-input EventUserRelateToManyForCreateInput {
-  create: [EventUserCreateInput!]
-  connect: [EventUserWhereUniqueInput!]
+input VehicleUserRelateToManyForCreateInput {
+  create: [VehicleUserCreateInput!]
+  connect: [VehicleUserWhereUniqueInput!]
+}
+
+input StateRelateToManyForCreateInput {
+  create: [StateCreateInput!]
+  connect: [StateWhereUniqueInput!]
 }
 
 input BidCountUpdateRelateToManyForCreateInput {
@@ -416,14 +460,8 @@ type Event {
   endDate: DateTime
   noOfBids: Int
   status: EventStatusType
-  eventUsers(
-    where: EventUserWhereInput! = {}
-    orderBy: [EventUserOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [EventUser!]
-  eventUsersCount(where: EventUserWhereInput! = {}): Int
   ExcelFile: ExcelUpload
+  termsAndConditions: Event_termsAndConditions_Document
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -433,6 +471,10 @@ enum EventStatusType {
   blocked
   active
   inactive
+}
+
+type Event_termsAndConditions_Document {
+  document(hydrateRelationships: Boolean! = false): JSON!
 }
 
 input EventWhereUniqueInput {
@@ -454,7 +496,6 @@ input EventWhereInput {
   endDate: DateTimeFilter
   noOfBids: IntFilter
   status: EventStatusTypeNullableFilter
-  eventUsers: EventUserManyRelationFilter
   ExcelFile: ExcelUploadWhereInput
   createdAt: DateTimeNullableFilter
   updatedAt: DateTimeNullableFilter
@@ -517,8 +558,8 @@ input EventUpdateInput {
   endDate: DateTime
   noOfBids: Int
   status: EventStatusType
-  eventUsers: EventUserRelateToManyForUpdateInput
   ExcelFile: ExcelUploadRelateToOneForUpdateInput
+  termsAndConditions: JSON
 }
 
 input SellerRelateToOneForUpdateInput {
@@ -568,8 +609,8 @@ input EventCreateInput {
   endDate: DateTime
   noOfBids: Int
   status: EventStatusType
-  eventUsers: EventUserRelateToManyForCreateInput
   ExcelFile: ExcelUploadRelateToOneForCreateInput
+  termsAndConditions: JSON
 }
 
 input SellerRelateToOneForCreateInput {
@@ -595,192 +636,6 @@ input LocationRelateToOneForCreateInput {
 input ExcelUploadRelateToOneForCreateInput {
   create: ExcelUploadCreateInput
   connect: ExcelUploadWhereUniqueInput
-}
-
-type EventType {
-  id: ID!
-  name: String
-  events(
-    where: EventWhereInput! = {}
-    orderBy: [EventOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [Event!]
-  eventsCount(where: EventWhereInput! = {}): Int
-  createdAt: DateTime
-  updatedAt: DateTime
-}
-
-input EventTypeWhereUniqueInput {
-  id: ID
-}
-
-input EventTypeWhereInput {
-  AND: [EventTypeWhereInput!]
-  OR: [EventTypeWhereInput!]
-  NOT: [EventTypeWhereInput!]
-  id: IDFilter
-  name: StringFilter
-  events: EventManyRelationFilter
-  createdAt: DateTimeNullableFilter
-  updatedAt: DateTimeNullableFilter
-}
-
-input EventManyRelationFilter {
-  every: EventWhereInput
-  some: EventWhereInput
-  none: EventWhereInput
-}
-
-input EventTypeOrderByInput {
-  id: OrderDirection
-  name: OrderDirection
-  createdAt: OrderDirection
-  updatedAt: OrderDirection
-}
-
-input EventTypeUpdateInput {
-  name: String
-  events: EventRelateToManyForUpdateInput
-}
-
-input EventRelateToManyForUpdateInput {
-  disconnect: [EventWhereUniqueInput!]
-  set: [EventWhereUniqueInput!]
-  create: [EventCreateInput!]
-  connect: [EventWhereUniqueInput!]
-}
-
-input EventTypeUpdateArgs {
-  where: EventTypeWhereUniqueInput!
-  data: EventTypeUpdateInput!
-}
-
-input EventTypeCreateInput {
-  name: String
-  events: EventRelateToManyForCreateInput
-}
-
-input EventRelateToManyForCreateInput {
-  create: [EventCreateInput!]
-  connect: [EventWhereUniqueInput!]
-}
-
-type Location {
-  id: ID!
-  name: String
-  country: String
-  state: String
-  city: String
-  events(
-    where: EventWhereInput! = {}
-    orderBy: [EventOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [Event!]
-  eventsCount(where: EventWhereInput! = {}): Int
-  createdAt: DateTime
-  updatedAt: DateTime
-}
-
-input LocationWhereUniqueInput {
-  id: ID
-}
-
-input LocationWhereInput {
-  AND: [LocationWhereInput!]
-  OR: [LocationWhereInput!]
-  NOT: [LocationWhereInput!]
-  id: IDFilter
-  name: StringFilter
-  country: StringFilter
-  state: StringFilter
-  city: StringFilter
-  events: EventManyRelationFilter
-  createdAt: DateTimeNullableFilter
-  updatedAt: DateTimeNullableFilter
-}
-
-input LocationOrderByInput {
-  id: OrderDirection
-  name: OrderDirection
-  country: OrderDirection
-  state: OrderDirection
-  city: OrderDirection
-  createdAt: OrderDirection
-  updatedAt: OrderDirection
-}
-
-input LocationUpdateInput {
-  name: String
-  country: String
-  state: String
-  city: String
-  events: EventRelateToManyForUpdateInput
-}
-
-input LocationUpdateArgs {
-  where: LocationWhereUniqueInput!
-  data: LocationUpdateInput!
-}
-
-input LocationCreateInput {
-  name: String
-  country: String
-  state: String
-  city: String
-  events: EventRelateToManyForCreateInput
-}
-
-type EventCategory {
-  id: ID!
-  name: String
-  events(
-    where: EventWhereInput! = {}
-    orderBy: [EventOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [Event!]
-  eventsCount(where: EventWhereInput! = {}): Int
-  createdAt: DateTime
-  updatedAt: DateTime
-}
-
-input EventCategoryWhereUniqueInput {
-  id: ID
-}
-
-input EventCategoryWhereInput {
-  AND: [EventCategoryWhereInput!]
-  OR: [EventCategoryWhereInput!]
-  NOT: [EventCategoryWhereInput!]
-  id: IDFilter
-  name: StringFilter
-  events: EventManyRelationFilter
-  createdAt: DateTimeNullableFilter
-  updatedAt: DateTimeNullableFilter
-}
-
-input EventCategoryOrderByInput {
-  id: OrderDirection
-  name: OrderDirection
-  createdAt: OrderDirection
-  updatedAt: OrderDirection
-}
-
-input EventCategoryUpdateInput {
-  name: String
-  events: EventRelateToManyForUpdateInput
-}
-
-input EventCategoryUpdateArgs {
-  where: EventCategoryWhereUniqueInput!
-  data: EventCategoryUpdateInput!
-}
-
-input EventCategoryCreateInput {
-  name: String
-  events: EventRelateToManyForCreateInput
 }
 
 type Vehicle {
@@ -841,6 +696,13 @@ type Vehicle {
   image10: String
   image11: String
   image12: String
+  vehicleUsers(
+    where: VehicleUserWhereInput! = {}
+    orderBy: [VehicleUserOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [VehicleUser!]
+  vehicleUsersCount(where: VehicleUserWhereInput! = {}): Int
   ExcelFile: ExcelUpload
   createdAt: DateTime
   updatedAt: DateTime
@@ -920,20 +782,10 @@ input VehicleWhereInput {
   image10: StringFilter
   image11: StringFilter
   image12: StringFilter
+  vehicleUsers: VehicleUserManyRelationFilter
   ExcelFile: ExcelUploadWhereInput
   createdAt: DateTimeNullableFilter
   updatedAt: DateTimeNullableFilter
-}
-
-input IntNullableFilter {
-  equals: Int
-  in: [Int!]
-  notIn: [Int!]
-  lt: Int
-  lte: Int
-  gt: Int
-  gte: Int
-  not: IntNullableFilter
 }
 
 input VehicleBidStatusTypeNullableFilter {
@@ -1065,6 +917,7 @@ input VehicleUpdateInput {
   image10: String
   image11: String
   image12: String
+  vehicleUsers: VehicleUserRelateToManyForUpdateInput
   ExcelFile: ExcelUploadRelateToOneForUpdateInput
 }
 
@@ -1136,6 +989,7 @@ input VehicleCreateInput {
   image10: String
   image11: String
   image12: String
+  vehicleUsers: VehicleUserRelateToManyForCreateInput
   ExcelFile: ExcelUploadRelateToOneForCreateInput
 }
 
@@ -1149,10 +1003,10 @@ input EventRelateToOneForCreateInput {
   connect: EventWhereUniqueInput
 }
 
-type EventUser {
+type VehicleUser {
   id: ID!
   name: String
-  event: Event
+  vehicle: Vehicle
   user: User
   remainingBids: Int
   bidCountUpdates(
@@ -1162,73 +1016,413 @@ type EventUser {
     skip: Int! = 0
   ): [BidCountUpdate!]
   bidCountUpdatesCount(where: BidCountUpdateWhereInput! = {}): Int
-  status: EventUserStatusType
   createdAt: DateTime
   updatedAt: DateTime
 }
 
-enum EventUserStatusType {
-  pending
-  blocked
-  accepted
-}
-
-input EventUserWhereUniqueInput {
+input VehicleUserWhereUniqueInput {
   id: ID
 }
 
-input EventUserWhereInput {
-  AND: [EventUserWhereInput!]
-  OR: [EventUserWhereInput!]
-  NOT: [EventUserWhereInput!]
+input VehicleUserWhereInput {
+  AND: [VehicleUserWhereInput!]
+  OR: [VehicleUserWhereInput!]
+  NOT: [VehicleUserWhereInput!]
   id: IDFilter
   name: StringFilter
-  event: EventWhereInput
+  vehicle: VehicleWhereInput
   user: UserWhereInput
   remainingBids: IntNullableFilter
   bidCountUpdates: BidCountUpdateManyRelationFilter
-  status: EventUserStatusTypeNullableFilter
   createdAt: DateTimeNullableFilter
   updatedAt: DateTimeNullableFilter
 }
 
-input EventUserStatusTypeNullableFilter {
-  equals: EventUserStatusType
-  in: [EventUserStatusType!]
-  notIn: [EventUserStatusType!]
-  not: EventUserStatusTypeNullableFilter
-}
-
-input EventUserOrderByInput {
+input VehicleUserOrderByInput {
   id: OrderDirection
   name: OrderDirection
   remainingBids: OrderDirection
-  status: OrderDirection
   createdAt: OrderDirection
   updatedAt: OrderDirection
 }
 
-input EventUserUpdateInput {
+input VehicleUserUpdateInput {
   name: String
-  event: EventRelateToOneForUpdateInput
+  vehicle: VehicleRelateToOneForUpdateInput
   user: UserRelateToOneForUpdateInput
   remainingBids: Int
   bidCountUpdates: BidCountUpdateRelateToManyForUpdateInput
-  status: EventUserStatusType
 }
 
-input EventUserUpdateArgs {
-  where: EventUserWhereUniqueInput!
-  data: EventUserUpdateInput!
+input VehicleRelateToOneForUpdateInput {
+  create: VehicleCreateInput
+  connect: VehicleWhereUniqueInput
+  disconnect: Boolean
 }
 
-input EventUserCreateInput {
+input VehicleUserUpdateArgs {
+  where: VehicleUserWhereUniqueInput!
+  data: VehicleUserUpdateInput!
+}
+
+input VehicleUserCreateInput {
   name: String
-  event: EventRelateToOneForCreateInput
+  vehicle: VehicleRelateToOneForCreateInput
   user: UserRelateToOneForCreateInput
   remainingBids: Int
   bidCountUpdates: BidCountUpdateRelateToManyForCreateInput
-  status: EventUserStatusType
+}
+
+input VehicleRelateToOneForCreateInput {
+  create: VehicleCreateInput
+  connect: VehicleWhereUniqueInput
+}
+
+type Bid {
+  id: ID!
+  name: String
+  amount: Int
+  user: User
+  bidVehicle: Vehicle
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+input BidWhereUniqueInput {
+  id: ID
+}
+
+input BidWhereInput {
+  AND: [BidWhereInput!]
+  OR: [BidWhereInput!]
+  NOT: [BidWhereInput!]
+  id: IDFilter
+  name: StringFilter
+  amount: IntNullableFilter
+  user: UserWhereInput
+  bidVehicle: VehicleWhereInput
+  createdAt: DateTimeNullableFilter
+  updatedAt: DateTimeNullableFilter
+}
+
+input BidOrderByInput {
+  id: OrderDirection
+  name: OrderDirection
+  amount: OrderDirection
+  createdAt: OrderDirection
+  updatedAt: OrderDirection
+}
+
+input BidUpdateInput {
+  name: String
+  amount: Int
+  user: UserRelateToOneForUpdateInput
+  bidVehicle: VehicleRelateToOneForUpdateInput
+}
+
+input BidUpdateArgs {
+  where: BidWhereUniqueInput!
+  data: BidUpdateInput!
+}
+
+input BidCreateInput {
+  name: String
+  amount: Int
+  user: UserRelateToOneForCreateInput
+  bidVehicle: VehicleRelateToOneForCreateInput
+}
+
+type EventType {
+  id: ID!
+  name: String
+  events(
+    where: EventWhereInput! = {}
+    orderBy: [EventOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Event!]
+  eventsCount(where: EventWhereInput! = {}): Int
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+input EventTypeWhereUniqueInput {
+  id: ID
+}
+
+input EventTypeWhereInput {
+  AND: [EventTypeWhereInput!]
+  OR: [EventTypeWhereInput!]
+  NOT: [EventTypeWhereInput!]
+  id: IDFilter
+  name: StringFilter
+  events: EventManyRelationFilter
+  createdAt: DateTimeNullableFilter
+  updatedAt: DateTimeNullableFilter
+}
+
+input EventManyRelationFilter {
+  every: EventWhereInput
+  some: EventWhereInput
+  none: EventWhereInput
+}
+
+input EventTypeOrderByInput {
+  id: OrderDirection
+  name: OrderDirection
+  createdAt: OrderDirection
+  updatedAt: OrderDirection
+}
+
+input EventTypeUpdateInput {
+  name: String
+  events: EventRelateToManyForUpdateInput
+}
+
+input EventRelateToManyForUpdateInput {
+  disconnect: [EventWhereUniqueInput!]
+  set: [EventWhereUniqueInput!]
+  create: [EventCreateInput!]
+  connect: [EventWhereUniqueInput!]
+}
+
+input EventTypeUpdateArgs {
+  where: EventTypeWhereUniqueInput!
+  data: EventTypeUpdateInput!
+}
+
+input EventTypeCreateInput {
+  name: String
+  events: EventRelateToManyForCreateInput
+}
+
+input EventRelateToManyForCreateInput {
+  create: [EventCreateInput!]
+  connect: [EventWhereUniqueInput!]
+}
+
+type Location {
+  id: ID!
+  name: String
+  country: String
+  state: State
+  city: String
+  events(
+    where: EventWhereInput! = {}
+    orderBy: [EventOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Event!]
+  eventsCount(where: EventWhereInput! = {}): Int
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+input LocationWhereUniqueInput {
+  id: ID
+}
+
+input LocationWhereInput {
+  AND: [LocationWhereInput!]
+  OR: [LocationWhereInput!]
+  NOT: [LocationWhereInput!]
+  id: IDFilter
+  name: StringFilter
+  country: StringFilter
+  state: StateWhereInput
+  city: StringFilter
+  events: EventManyRelationFilter
+  createdAt: DateTimeNullableFilter
+  updatedAt: DateTimeNullableFilter
+}
+
+input LocationOrderByInput {
+  id: OrderDirection
+  name: OrderDirection
+  country: OrderDirection
+  city: OrderDirection
+  createdAt: OrderDirection
+  updatedAt: OrderDirection
+}
+
+input LocationUpdateInput {
+  name: String
+  country: String
+  state: StateRelateToOneForUpdateInput
+  city: String
+  events: EventRelateToManyForUpdateInput
+}
+
+input StateRelateToOneForUpdateInput {
+  create: StateCreateInput
+  connect: StateWhereUniqueInput
+  disconnect: Boolean
+}
+
+input LocationUpdateArgs {
+  where: LocationWhereUniqueInput!
+  data: LocationUpdateInput!
+}
+
+input LocationCreateInput {
+  name: String
+  country: String
+  state: StateRelateToOneForCreateInput
+  city: String
+  events: EventRelateToManyForCreateInput
+}
+
+input StateRelateToOneForCreateInput {
+  create: StateCreateInput
+  connect: StateWhereUniqueInput
+}
+
+type State {
+  id: ID!
+  name: String
+  users(
+    where: UserWhereInput! = {}
+    orderBy: [UserOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [User!]
+  usersCount(where: UserWhereInput! = {}): Int
+  locations(
+    where: LocationWhereInput! = {}
+    orderBy: [LocationOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Location!]
+  locationsCount(where: LocationWhereInput! = {}): Int
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+input StateWhereUniqueInput {
+  id: ID
+}
+
+input StateWhereInput {
+  AND: [StateWhereInput!]
+  OR: [StateWhereInput!]
+  NOT: [StateWhereInput!]
+  id: IDFilter
+  name: StringFilter
+  users: UserManyRelationFilter
+  locations: LocationManyRelationFilter
+  createdAt: DateTimeNullableFilter
+  updatedAt: DateTimeNullableFilter
+}
+
+input UserManyRelationFilter {
+  every: UserWhereInput
+  some: UserWhereInput
+  none: UserWhereInput
+}
+
+input LocationManyRelationFilter {
+  every: LocationWhereInput
+  some: LocationWhereInput
+  none: LocationWhereInput
+}
+
+input StateOrderByInput {
+  id: OrderDirection
+  name: OrderDirection
+  createdAt: OrderDirection
+  updatedAt: OrderDirection
+}
+
+input StateUpdateInput {
+  name: String
+  users: UserRelateToManyForUpdateInput
+  locations: LocationRelateToManyForUpdateInput
+}
+
+input UserRelateToManyForUpdateInput {
+  disconnect: [UserWhereUniqueInput!]
+  set: [UserWhereUniqueInput!]
+  create: [UserCreateInput!]
+  connect: [UserWhereUniqueInput!]
+}
+
+input LocationRelateToManyForUpdateInput {
+  disconnect: [LocationWhereUniqueInput!]
+  set: [LocationWhereUniqueInput!]
+  create: [LocationCreateInput!]
+  connect: [LocationWhereUniqueInput!]
+}
+
+input StateUpdateArgs {
+  where: StateWhereUniqueInput!
+  data: StateUpdateInput!
+}
+
+input StateCreateInput {
+  name: String
+  users: UserRelateToManyForCreateInput
+  locations: LocationRelateToManyForCreateInput
+}
+
+input UserRelateToManyForCreateInput {
+  create: [UserCreateInput!]
+  connect: [UserWhereUniqueInput!]
+}
+
+input LocationRelateToManyForCreateInput {
+  create: [LocationCreateInput!]
+  connect: [LocationWhereUniqueInput!]
+}
+
+type EventCategory {
+  id: ID!
+  name: String
+  events(
+    where: EventWhereInput! = {}
+    orderBy: [EventOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Event!]
+  eventsCount(where: EventWhereInput! = {}): Int
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+input EventCategoryWhereUniqueInput {
+  id: ID
+}
+
+input EventCategoryWhereInput {
+  AND: [EventCategoryWhereInput!]
+  OR: [EventCategoryWhereInput!]
+  NOT: [EventCategoryWhereInput!]
+  id: IDFilter
+  name: StringFilter
+  events: EventManyRelationFilter
+  createdAt: DateTimeNullableFilter
+  updatedAt: DateTimeNullableFilter
+}
+
+input EventCategoryOrderByInput {
+  id: OrderDirection
+  name: OrderDirection
+  createdAt: OrderDirection
+  updatedAt: OrderDirection
+}
+
+input EventCategoryUpdateInput {
+  name: String
+  events: EventRelateToManyForUpdateInput
+}
+
+input EventCategoryUpdateArgs {
+  where: EventCategoryWhereUniqueInput!
+  data: EventCategoryUpdateInput!
+}
+
+input EventCategoryCreateInput {
+  name: String
+  events: EventRelateToManyForCreateInput
 }
 
 type ExcelUpload {
@@ -1350,74 +1544,9 @@ input SellerCreateInput {
   events: EventRelateToManyForCreateInput
 }
 
-type Bid {
-  id: ID!
-  name: String
-  amount: Int
-  user: User
-  bidVehicle: Vehicle
-  createdAt: DateTime
-  updatedAt: DateTime
-}
-
-input BidWhereUniqueInput {
-  id: ID
-}
-
-input BidWhereInput {
-  AND: [BidWhereInput!]
-  OR: [BidWhereInput!]
-  NOT: [BidWhereInput!]
-  id: IDFilter
-  name: StringFilter
-  amount: IntNullableFilter
-  user: UserWhereInput
-  bidVehicle: VehicleWhereInput
-  createdAt: DateTimeNullableFilter
-  updatedAt: DateTimeNullableFilter
-}
-
-input BidOrderByInput {
-  id: OrderDirection
-  name: OrderDirection
-  amount: OrderDirection
-  createdAt: OrderDirection
-  updatedAt: OrderDirection
-}
-
-input BidUpdateInput {
-  name: String
-  amount: Int
-  user: UserRelateToOneForUpdateInput
-  bidVehicle: VehicleRelateToOneForUpdateInput
-}
-
-input VehicleRelateToOneForUpdateInput {
-  create: VehicleCreateInput
-  connect: VehicleWhereUniqueInput
-  disconnect: Boolean
-}
-
-input BidUpdateArgs {
-  where: BidWhereUniqueInput!
-  data: BidUpdateInput!
-}
-
-input BidCreateInput {
-  name: String
-  amount: Int
-  user: UserRelateToOneForCreateInput
-  bidVehicle: VehicleRelateToOneForCreateInput
-}
-
-input VehicleRelateToOneForCreateInput {
-  create: VehicleCreateInput
-  connect: VehicleWhereUniqueInput
-}
-
 type BidCountUpdate {
   id: ID!
-  eventUser: EventUser
+  vehicleUser: VehicleUser
   incrementBidCount: Int
   createdFor: User
   createdAt: DateTime
@@ -1433,7 +1562,7 @@ input BidCountUpdateWhereInput {
   OR: [BidCountUpdateWhereInput!]
   NOT: [BidCountUpdateWhereInput!]
   id: IDFilter
-  eventUser: EventUserWhereInput
+  vehicleUser: VehicleUserWhereInput
   incrementBidCount: IntNullableFilter
   createdFor: UserWhereInput
   createdAt: DateTimeNullableFilter
@@ -1448,14 +1577,14 @@ input BidCountUpdateOrderByInput {
 }
 
 input BidCountUpdateUpdateInput {
-  eventUser: EventUserRelateToOneForUpdateInput
+  vehicleUser: VehicleUserRelateToOneForUpdateInput
   incrementBidCount: Int
   createdFor: UserRelateToOneForUpdateInput
 }
 
-input EventUserRelateToOneForUpdateInput {
-  create: EventUserCreateInput
-  connect: EventUserWhereUniqueInput
+input VehicleUserRelateToOneForUpdateInput {
+  create: VehicleUserCreateInput
+  connect: VehicleUserWhereUniqueInput
   disconnect: Boolean
 }
 
@@ -1465,14 +1594,14 @@ input BidCountUpdateUpdateArgs {
 }
 
 input BidCountUpdateCreateInput {
-  eventUser: EventUserRelateToOneForCreateInput
+  vehicleUser: VehicleUserRelateToOneForCreateInput
   incrementBidCount: Int
   createdFor: UserRelateToOneForCreateInput
 }
 
-input EventUserRelateToOneForCreateInput {
-  create: EventUserCreateInput
-  connect: EventUserWhereUniqueInput
+input VehicleUserRelateToOneForCreateInput {
+  create: VehicleUserCreateInput
+  connect: VehicleUserWhereUniqueInput
 }
 
 """
@@ -1496,6 +1625,30 @@ type Mutation {
   updateEvents(data: [EventUpdateArgs!]!): [Event]
   deleteEvent(where: EventWhereUniqueInput!): Event
   deleteEvents(where: [EventWhereUniqueInput!]!): [Event]
+  createVehicle(data: VehicleCreateInput!): Vehicle
+  createVehicles(data: [VehicleCreateInput!]!): [Vehicle]
+  updateVehicle(
+    where: VehicleWhereUniqueInput!
+    data: VehicleUpdateInput!
+  ): Vehicle
+  updateVehicles(data: [VehicleUpdateArgs!]!): [Vehicle]
+  deleteVehicle(where: VehicleWhereUniqueInput!): Vehicle
+  deleteVehicles(where: [VehicleWhereUniqueInput!]!): [Vehicle]
+  createVehicleUser(data: VehicleUserCreateInput!): VehicleUser
+  createVehicleUsers(data: [VehicleUserCreateInput!]!): [VehicleUser]
+  updateVehicleUser(
+    where: VehicleUserWhereUniqueInput!
+    data: VehicleUserUpdateInput!
+  ): VehicleUser
+  updateVehicleUsers(data: [VehicleUserUpdateArgs!]!): [VehicleUser]
+  deleteVehicleUser(where: VehicleUserWhereUniqueInput!): VehicleUser
+  deleteVehicleUsers(where: [VehicleUserWhereUniqueInput!]!): [VehicleUser]
+  createBid(data: BidCreateInput!): Bid
+  createBids(data: [BidCreateInput!]!): [Bid]
+  updateBid(where: BidWhereUniqueInput!, data: BidUpdateInput!): Bid
+  updateBids(data: [BidUpdateArgs!]!): [Bid]
+  deleteBid(where: BidWhereUniqueInput!): Bid
+  deleteBids(where: [BidWhereUniqueInput!]!): [Bid]
   createEventType(data: EventTypeCreateInput!): EventType
   createEventTypes(data: [EventTypeCreateInput!]!): [EventType]
   updateEventType(
@@ -1514,6 +1667,12 @@ type Mutation {
   updateLocations(data: [LocationUpdateArgs!]!): [Location]
   deleteLocation(where: LocationWhereUniqueInput!): Location
   deleteLocations(where: [LocationWhereUniqueInput!]!): [Location]
+  createState(data: StateCreateInput!): State
+  createStates(data: [StateCreateInput!]!): [State]
+  updateState(where: StateWhereUniqueInput!, data: StateUpdateInput!): State
+  updateStates(data: [StateUpdateArgs!]!): [State]
+  deleteState(where: StateWhereUniqueInput!): State
+  deleteStates(where: [StateWhereUniqueInput!]!): [State]
   createEventCategory(data: EventCategoryCreateInput!): EventCategory
   createEventCategories(data: [EventCategoryCreateInput!]!): [EventCategory]
   updateEventCategory(
@@ -1525,24 +1684,6 @@ type Mutation {
   deleteEventCategories(
     where: [EventCategoryWhereUniqueInput!]!
   ): [EventCategory]
-  createVehicle(data: VehicleCreateInput!): Vehicle
-  createVehicles(data: [VehicleCreateInput!]!): [Vehicle]
-  updateVehicle(
-    where: VehicleWhereUniqueInput!
-    data: VehicleUpdateInput!
-  ): Vehicle
-  updateVehicles(data: [VehicleUpdateArgs!]!): [Vehicle]
-  deleteVehicle(where: VehicleWhereUniqueInput!): Vehicle
-  deleteVehicles(where: [VehicleWhereUniqueInput!]!): [Vehicle]
-  createEventUser(data: EventUserCreateInput!): EventUser
-  createEventUsers(data: [EventUserCreateInput!]!): [EventUser]
-  updateEventUser(
-    where: EventUserWhereUniqueInput!
-    data: EventUserUpdateInput!
-  ): EventUser
-  updateEventUsers(data: [EventUserUpdateArgs!]!): [EventUser]
-  deleteEventUser(where: EventUserWhereUniqueInput!): EventUser
-  deleteEventUsers(where: [EventUserWhereUniqueInput!]!): [EventUser]
   createExcelUpload(data: ExcelUploadCreateInput!): ExcelUpload
   createExcelUploads(data: [ExcelUploadCreateInput!]!): [ExcelUpload]
   updateExcelUpload(
@@ -1558,12 +1699,6 @@ type Mutation {
   updateSellers(data: [SellerUpdateArgs!]!): [Seller]
   deleteSeller(where: SellerWhereUniqueInput!): Seller
   deleteSellers(where: [SellerWhereUniqueInput!]!): [Seller]
-  createBid(data: BidCreateInput!): Bid
-  createBids(data: [BidCreateInput!]!): [Bid]
-  updateBid(where: BidWhereUniqueInput!, data: BidUpdateInput!): Bid
-  updateBids(data: [BidUpdateArgs!]!): [Bid]
-  deleteBid(where: BidWhereUniqueInput!): Bid
-  deleteBids(where: [BidWhereUniqueInput!]!): [Bid]
   createBidCountUpdate(data: BidCountUpdateCreateInput!): BidCountUpdate
   createBidCountUpdates(data: [BidCountUpdateCreateInput!]!): [BidCountUpdate]
   updateBidCountUpdate(
@@ -1647,6 +1782,30 @@ type Query {
   ): [Event!]
   event(where: EventWhereUniqueInput!): Event
   eventsCount(where: EventWhereInput! = {}): Int
+  vehicles(
+    where: VehicleWhereInput! = {}
+    orderBy: [VehicleOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Vehicle!]
+  vehicle(where: VehicleWhereUniqueInput!): Vehicle
+  vehiclesCount(where: VehicleWhereInput! = {}): Int
+  vehicleUsers(
+    where: VehicleUserWhereInput! = {}
+    orderBy: [VehicleUserOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [VehicleUser!]
+  vehicleUser(where: VehicleUserWhereUniqueInput!): VehicleUser
+  vehicleUsersCount(where: VehicleUserWhereInput! = {}): Int
+  bids(
+    where: BidWhereInput! = {}
+    orderBy: [BidOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Bid!]
+  bid(where: BidWhereUniqueInput!): Bid
+  bidsCount(where: BidWhereInput! = {}): Int
   eventTypes(
     where: EventTypeWhereInput! = {}
     orderBy: [EventTypeOrderByInput!]! = []
@@ -1663,6 +1822,14 @@ type Query {
   ): [Location!]
   location(where: LocationWhereUniqueInput!): Location
   locationsCount(where: LocationWhereInput! = {}): Int
+  states(
+    where: StateWhereInput! = {}
+    orderBy: [StateOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [State!]
+  state(where: StateWhereUniqueInput!): State
+  statesCount(where: StateWhereInput! = {}): Int
   eventCategories(
     where: EventCategoryWhereInput! = {}
     orderBy: [EventCategoryOrderByInput!]! = []
@@ -1671,22 +1838,6 @@ type Query {
   ): [EventCategory!]
   eventCategory(where: EventCategoryWhereUniqueInput!): EventCategory
   eventCategoriesCount(where: EventCategoryWhereInput! = {}): Int
-  vehicles(
-    where: VehicleWhereInput! = {}
-    orderBy: [VehicleOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [Vehicle!]
-  vehicle(where: VehicleWhereUniqueInput!): Vehicle
-  vehiclesCount(where: VehicleWhereInput! = {}): Int
-  eventUsers(
-    where: EventUserWhereInput! = {}
-    orderBy: [EventUserOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [EventUser!]
-  eventUser(where: EventUserWhereUniqueInput!): EventUser
-  eventUsersCount(where: EventUserWhereInput! = {}): Int
   excelUploads(
     where: ExcelUploadWhereInput! = {}
     orderBy: [ExcelUploadOrderByInput!]! = []
@@ -1703,14 +1854,6 @@ type Query {
   ): [Seller!]
   seller(where: SellerWhereUniqueInput!): Seller
   sellersCount(where: SellerWhereInput! = {}): Int
-  bids(
-    where: BidWhereInput! = {}
-    orderBy: [BidOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [Bid!]
-  bid(where: BidWhereUniqueInput!): Bid
-  bidsCount(where: BidWhereInput! = {}): Int
   bidCountUpdates(
     where: BidCountUpdateWhereInput! = {}
     orderBy: [BidCountUpdateOrderByInput!]! = []

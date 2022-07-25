@@ -40,12 +40,7 @@ const { withAuth } = createAuth({
     email
     mobile
     role
-    userEvents{
-      id
-      event{
-        id
-      }
-    }`,
+    status`,
   secretField: "password",
   initFirstItem: {
     // If there are no items in the database, keystone will ask you to create
