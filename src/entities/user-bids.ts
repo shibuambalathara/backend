@@ -41,7 +41,7 @@ export const Bid = list({
         context.prisma.vehicleUser.findFirst({
           where: {
             vehicle: { id: resolvedData?.vehicle?.connect?.id },
-            user: { id: resolvedData?.user?.connect?.id },
+            user: { id: resolvedData?.user?.connect?.id?? context?.session?.itemId },
           },
         }),
       ]);
