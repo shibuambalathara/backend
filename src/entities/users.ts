@@ -63,11 +63,6 @@ export const User = list({
         createView: { fieldMode: isAdminCreate },
         itemView: { fieldMode: isAdminEdit },
       },
-      access: {
-        read: isSignedIn,
-        create: isSuperAdmin,
-        update: isSuperAdmin,
-      },
     }),
     password: password({
       // validation: {
@@ -106,22 +101,12 @@ export const User = list({
         createView: { fieldMode: isAdminCreate },
         itemView: { fieldMode: isAdminEdit },
       },
-      access: {
-        read: isSignedIn,
-        create: isSuperAdmin,
-        update: isSuperAdmin,
-      },
     }),
     bidEnabledVehicles: relationship({
       ref: "VehicleUser.user",
       many: true,
     }),
     emdBalance: integer({
-      access: {
-        read: isSignedIn,
-        create: isSuperAdmin,
-        update: isSuperAdmin,
-      },
       defaultValue: 0,
     }),
     status: select({
@@ -137,11 +122,6 @@ export const User = list({
         displayMode: "segmented-control",
         createView: { fieldMode: isAdminCreate },
         itemView: { fieldMode: isAdminEdit },
-      },
-      access: {
-        read: isSignedIn,
-        create: isSuperAdmin,
-        update: isSuperAdmin,
       },
     }),
     states: relationship({
