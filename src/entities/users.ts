@@ -109,6 +109,10 @@ export const User = list({
     emdBalance: integer({
       defaultValue: 0,
     }),
+    watchList: relationship({
+      ref: "Vehicle.watchedBy",
+      many: true,
+    }),
     status: select({
       type: "enum",
       options: [

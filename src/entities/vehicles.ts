@@ -167,6 +167,10 @@ export const Vehicle = list({
         itemView: { fieldMode: "read" },
       },
     }),
+    watchedBy: relationship({
+      ref: "User.watchList",
+      many: true,
+    }),
     ExcelFile: relationship({
       ref: "ExcelUpload.vehicles",
       many: false,
