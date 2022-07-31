@@ -37,6 +37,20 @@ type User {
     skip: Int! = 0
   ): [Vehicle!]
   watchListCount(where: VehicleWhereInput! = {}): Int
+  emdUpdates(
+    where: EmdUpdateWhereInput! = {}
+    orderBy: [EmdUpdateOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [EmdUpdate!]
+  emdUpdatesCount(where: EmdUpdateWhereInput! = {}): Int
+  emdUpdatesByAdmin(
+    where: EmdUpdateWhereInput! = {}
+    orderBy: [EmdUpdateOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [EmdUpdate!]
+  emdUpdatesByAdminCount(where: EmdUpdateWhereInput! = {}): Int
   status: UserStatusType
   states(
     where: StateWhereInput! = {}
@@ -45,13 +59,6 @@ type User {
     skip: Int! = 0
   ): [State!]
   statesCount(where: StateWhereInput! = {}): Int
-  bidCountUpdates(
-    where: BidCountUpdateWhereInput! = {}
-    orderBy: [BidCountUpdateOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [BidCountUpdate!]
-  bidCountUpdatesCount(where: BidCountUpdateWhereInput! = {}): Int
   activeBids(
     where: VehicleWhereInput! = {}
     orderBy: [VehicleOrderByInput!]! = []
@@ -144,9 +151,10 @@ input UserWhereInput {
   bidEnabledVehicles: VehicleUserManyRelationFilter
   emdBalance: IntNullableFilter
   watchList: VehicleManyRelationFilter
+  emdUpdates: EmdUpdateManyRelationFilter
+  emdUpdatesByAdmin: EmdUpdateManyRelationFilter
   status: UserStatusTypeNullableFilter
   states: StateManyRelationFilter
-  bidCountUpdates: BidCountUpdateManyRelationFilter
   activeBids: VehicleManyRelationFilter
   quotedBids: BidManyRelationFilter
   createdAt: DateTimeNullableFilter
@@ -242,6 +250,12 @@ input VehicleManyRelationFilter {
   none: VehicleWhereInput
 }
 
+input EmdUpdateManyRelationFilter {
+  every: EmdUpdateWhereInput
+  some: EmdUpdateWhereInput
+  none: EmdUpdateWhereInput
+}
+
 input UserStatusTypeNullableFilter {
   equals: UserStatusType
   in: [UserStatusType!]
@@ -253,12 +267,6 @@ input StateManyRelationFilter {
   every: StateWhereInput
   some: StateWhereInput
   none: StateWhereInput
-}
-
-input BidCountUpdateManyRelationFilter {
-  every: BidCountUpdateWhereInput
-  some: BidCountUpdateWhereInput
-  none: BidCountUpdateWhereInput
 }
 
 input BidManyRelationFilter {
@@ -329,9 +337,10 @@ input UserUpdateInput {
   bidEnabledVehicles: VehicleUserRelateToManyForUpdateInput
   emdBalance: Int
   watchList: VehicleRelateToManyForUpdateInput
+  emdUpdates: EmdUpdateRelateToManyForUpdateInput
+  emdUpdatesByAdmin: EmdUpdateRelateToManyForUpdateInput
   status: UserStatusType
   states: StateRelateToManyForUpdateInput
-  bidCountUpdates: BidCountUpdateRelateToManyForUpdateInput
   activeBids: VehicleRelateToManyForUpdateInput
   quotedBids: BidRelateToManyForUpdateInput
   magicAuthToken: String
@@ -362,18 +371,18 @@ input VehicleRelateToManyForUpdateInput {
   connect: [VehicleWhereUniqueInput!]
 }
 
+input EmdUpdateRelateToManyForUpdateInput {
+  disconnect: [EmdUpdateWhereUniqueInput!]
+  set: [EmdUpdateWhereUniqueInput!]
+  create: [EmdUpdateCreateInput!]
+  connect: [EmdUpdateWhereUniqueInput!]
+}
+
 input StateRelateToManyForUpdateInput {
   disconnect: [StateWhereUniqueInput!]
   set: [StateWhereUniqueInput!]
   create: [StateCreateInput!]
   connect: [StateWhereUniqueInput!]
-}
-
-input BidCountUpdateRelateToManyForUpdateInput {
-  disconnect: [BidCountUpdateWhereUniqueInput!]
-  set: [BidCountUpdateWhereUniqueInput!]
-  create: [BidCountUpdateCreateInput!]
-  connect: [BidCountUpdateWhereUniqueInput!]
 }
 
 input BidRelateToManyForUpdateInput {
@@ -411,9 +420,10 @@ input UserCreateInput {
   bidEnabledVehicles: VehicleUserRelateToManyForCreateInput
   emdBalance: Int
   watchList: VehicleRelateToManyForCreateInput
+  emdUpdates: EmdUpdateRelateToManyForCreateInput
+  emdUpdatesByAdmin: EmdUpdateRelateToManyForCreateInput
   status: UserStatusType
   states: StateRelateToManyForCreateInput
-  bidCountUpdates: BidCountUpdateRelateToManyForCreateInput
   activeBids: VehicleRelateToManyForCreateInput
   quotedBids: BidRelateToManyForCreateInput
   magicAuthToken: String
@@ -431,14 +441,14 @@ input VehicleRelateToManyForCreateInput {
   connect: [VehicleWhereUniqueInput!]
 }
 
+input EmdUpdateRelateToManyForCreateInput {
+  create: [EmdUpdateCreateInput!]
+  connect: [EmdUpdateWhereUniqueInput!]
+}
+
 input StateRelateToManyForCreateInput {
   create: [StateCreateInput!]
   connect: [StateWhereUniqueInput!]
-}
-
-input BidCountUpdateRelateToManyForCreateInput {
-  create: [BidCountUpdateCreateInput!]
-  connect: [BidCountUpdateWhereUniqueInput!]
 }
 
 input BidRelateToManyForCreateInput {
@@ -1047,13 +1057,6 @@ type VehicleUser {
   vehicle: Vehicle
   user: User
   remainingBids: Int
-  bidCountUpdates(
-    where: BidCountUpdateWhereInput! = {}
-    orderBy: [BidCountUpdateOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [BidCountUpdate!]
-  bidCountUpdatesCount(where: BidCountUpdateWhereInput! = {}): Int
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -1071,7 +1074,6 @@ input VehicleUserWhereInput {
   vehicle: VehicleWhereInput
   user: UserWhereInput
   remainingBids: IntNullableFilter
-  bidCountUpdates: BidCountUpdateManyRelationFilter
   createdAt: DateTimeNullableFilter
   updatedAt: DateTimeNullableFilter
 }
@@ -1089,7 +1091,6 @@ input VehicleUserUpdateInput {
   vehicle: VehicleRelateToOneForUpdateInput
   user: UserRelateToOneForUpdateInput
   remainingBids: Int
-  bidCountUpdates: BidCountUpdateRelateToManyForUpdateInput
 }
 
 input VehicleRelateToOneForUpdateInput {
@@ -1108,7 +1109,6 @@ input VehicleUserCreateInput {
   vehicle: VehicleRelateToOneForCreateInput
   user: UserRelateToOneForCreateInput
   remainingBids: Int
-  bidCountUpdates: BidCountUpdateRelateToManyForCreateInput
 }
 
 input VehicleRelateToOneForCreateInput {
@@ -1564,64 +1564,53 @@ input SellerCreateInput {
   events: EventRelateToManyForCreateInput
 }
 
-type BidCountUpdate {
+type EmdUpdate {
   id: ID!
-  vehicleUser: VehicleUser
-  incrementBidCount: Int
-  createdFor: User
+  incrementEmdAmount: Int
+  user: User
   createdAt: DateTime
   updatedAt: DateTime
+  createdBy: User
 }
 
-input BidCountUpdateWhereUniqueInput {
+input EmdUpdateWhereUniqueInput {
   id: ID
 }
 
-input BidCountUpdateWhereInput {
-  AND: [BidCountUpdateWhereInput!]
-  OR: [BidCountUpdateWhereInput!]
-  NOT: [BidCountUpdateWhereInput!]
+input EmdUpdateWhereInput {
+  AND: [EmdUpdateWhereInput!]
+  OR: [EmdUpdateWhereInput!]
+  NOT: [EmdUpdateWhereInput!]
   id: IDFilter
-  vehicleUser: VehicleUserWhereInput
-  incrementBidCount: IntNullableFilter
-  createdFor: UserWhereInput
+  incrementEmdAmount: IntNullableFilter
+  user: UserWhereInput
   createdAt: DateTimeNullableFilter
   updatedAt: DateTimeNullableFilter
+  createdBy: UserWhereInput
 }
 
-input BidCountUpdateOrderByInput {
+input EmdUpdateOrderByInput {
   id: OrderDirection
-  incrementBidCount: OrderDirection
+  incrementEmdAmount: OrderDirection
   createdAt: OrderDirection
   updatedAt: OrderDirection
 }
 
-input BidCountUpdateUpdateInput {
-  vehicleUser: VehicleUserRelateToOneForUpdateInput
-  incrementBidCount: Int
-  createdFor: UserRelateToOneForUpdateInput
+input EmdUpdateUpdateInput {
+  incrementEmdAmount: Int
+  user: UserRelateToOneForUpdateInput
+  createdBy: UserRelateToOneForUpdateInput
 }
 
-input VehicleUserRelateToOneForUpdateInput {
-  create: VehicleUserCreateInput
-  connect: VehicleUserWhereUniqueInput
-  disconnect: Boolean
+input EmdUpdateUpdateArgs {
+  where: EmdUpdateWhereUniqueInput!
+  data: EmdUpdateUpdateInput!
 }
 
-input BidCountUpdateUpdateArgs {
-  where: BidCountUpdateWhereUniqueInput!
-  data: BidCountUpdateUpdateInput!
-}
-
-input BidCountUpdateCreateInput {
-  vehicleUser: VehicleUserRelateToOneForCreateInput
-  incrementBidCount: Int
-  createdFor: UserRelateToOneForCreateInput
-}
-
-input VehicleUserRelateToOneForCreateInput {
-  create: VehicleUserCreateInput
-  connect: VehicleUserWhereUniqueInput
+input EmdUpdateCreateInput {
+  incrementEmdAmount: Int
+  user: UserRelateToOneForCreateInput
+  createdBy: UserRelateToOneForCreateInput
 }
 
 """
@@ -1719,17 +1708,15 @@ type Mutation {
   updateSellers(data: [SellerUpdateArgs!]!): [Seller]
   deleteSeller(where: SellerWhereUniqueInput!): Seller
   deleteSellers(where: [SellerWhereUniqueInput!]!): [Seller]
-  createBidCountUpdate(data: BidCountUpdateCreateInput!): BidCountUpdate
-  createBidCountUpdates(data: [BidCountUpdateCreateInput!]!): [BidCountUpdate]
-  updateBidCountUpdate(
-    where: BidCountUpdateWhereUniqueInput!
-    data: BidCountUpdateUpdateInput!
-  ): BidCountUpdate
-  updateBidCountUpdates(data: [BidCountUpdateUpdateArgs!]!): [BidCountUpdate]
-  deleteBidCountUpdate(where: BidCountUpdateWhereUniqueInput!): BidCountUpdate
-  deleteBidCountUpdates(
-    where: [BidCountUpdateWhereUniqueInput!]!
-  ): [BidCountUpdate]
+  createEmdUpdate(data: EmdUpdateCreateInput!): EmdUpdate
+  createEmdUpdates(data: [EmdUpdateCreateInput!]!): [EmdUpdate]
+  updateEmdUpdate(
+    where: EmdUpdateWhereUniqueInput!
+    data: EmdUpdateUpdateInput!
+  ): EmdUpdate
+  updateEmdUpdates(data: [EmdUpdateUpdateArgs!]!): [EmdUpdate]
+  deleteEmdUpdate(where: EmdUpdateWhereUniqueInput!): EmdUpdate
+  deleteEmdUpdates(where: [EmdUpdateWhereUniqueInput!]!): [EmdUpdate]
   endSession: Boolean!
   authenticateUserWithPassword(
     mobile: String!
@@ -1874,14 +1861,14 @@ type Query {
   ): [Seller!]
   seller(where: SellerWhereUniqueInput!): Seller
   sellersCount(where: SellerWhereInput! = {}): Int
-  bidCountUpdates(
-    where: BidCountUpdateWhereInput! = {}
-    orderBy: [BidCountUpdateOrderByInput!]! = []
+  emdUpdates(
+    where: EmdUpdateWhereInput! = {}
+    orderBy: [EmdUpdateOrderByInput!]! = []
     take: Int
     skip: Int! = 0
-  ): [BidCountUpdate!]
-  bidCountUpdate(where: BidCountUpdateWhereUniqueInput!): BidCountUpdate
-  bidCountUpdatesCount(where: BidCountUpdateWhereInput! = {}): Int
+  ): [EmdUpdate!]
+  emdUpdate(where: EmdUpdateWhereUniqueInput!): EmdUpdate
+  emdUpdatesCount(where: EmdUpdateWhereInput! = {}): Int
   keystone: KeystoneMeta!
   authenticatedItem: AuthenticatedItem
 

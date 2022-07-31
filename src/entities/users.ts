@@ -113,6 +113,25 @@ export const User = list({
       ref: "Vehicle.watchedBy",
       many: true,
     }),
+    emdUpdates: relationship({
+      ref: "EmdUpdate.user",
+      many: true,
+    }),
+    emdUpdatesByAdmin: relationship({
+      ref: "EmdUpdate.createdBy",
+      many: true,
+      ui: {
+        listView: {
+          fieldMode: "read",
+        },
+        itemView: {
+          fieldMode: "read",
+        },
+        createView: {
+          fieldMode: "hidden",
+        },
+      },
+    }),
     status: select({
       type: "enum",
       options: [
@@ -132,14 +151,14 @@ export const User = list({
       ref: "State.users",
       many: true,
     }),
-    bidCountUpdates: relationship({
-      ref: "BidCountUpdate.createdFor",
-      many: true,
-      ui: {
-        createView: { fieldMode: "hidden" },
-        itemView: { fieldMode: "read" },
-      },
-    }),
+    // bidCountUpdates: relationship({
+    //   ref: "BidCountUpdate.createdFor",
+    //   many: true,
+    //   ui: {
+    //     createView: { fieldMode: "hidden" },
+    //     itemView: { fieldMode: "read" },
+    //   },
+    // }),
     activeBids: relationship({
       ref: "Vehicle.currentBidUser",
       many: true,

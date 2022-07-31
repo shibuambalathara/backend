@@ -7,7 +7,7 @@ import {
 import { list } from "@keystone-6/core";
 import { fieldOptions, isNotAdmin, isSuperAdmin } from "../application/access";
 
-export const BidCountUpdate = list({
+export const EmdUpdate = list({
   access: {
     operation: {
       query: ({ session }) => !!session?.itemId,
@@ -27,34 +27,56 @@ export const BidCountUpdate = list({
       if (operation !== "create") {
         return;
       }
-      await context.db.VehicleUser.updateOne({
+      await context.db.User.updateOne({
         where: {
-          id: resolvedData?.vehicleUser?.connect?.id,
+          id: resolvedData?.User?.connect?.id,
         },
         data: {
           remainingBids: {
-            increment: resolvedData.incrementBidCount,
+            increment: resolvedData?.incrementEmdAmount,
           },
         },
       });
     },
   },
   fields: {
-    vehicleUser: relationship({
-      ref: "VehicleUser.bidCountUpdates",
+    incrementEmdAmount: integer({
+      defaultValue: 10000,
     }),
 
-    incrementBidCount: integer({
-      defaultValue: 5,
-    }),
-
-    createdFor: relationship({
-      ref: "User.bidCountUpdates",
+    user: relationship({
+      ref: "User.emdUpdates",
+      many: false,
     }),
     createdAt: timestamp({
       ...fieldOptions,
       defaultValue: { kind: "now" },
     }),
     updatedAt: timestamp({ ...fieldOptions, db: { updatedAt: true } }),
+    createdBy: relationship({
+      ref: "User.emdUpdatesByAdmin",
+      many: false,
+      ui: {
+        listView: {
+          fieldMode: "read",
+        },
+        itemView: {
+          fieldMode: "read",
+        },
+        createView: {
+          fieldMode: "hidden",
+        },
+      },
+      hooks: {
+        resolveInput: ({ resolvedData, context }) => {
+          resolvedData.createdBy = {
+            connect: {
+              id: context?.session?.ItemId,
+            },
+          };
+          return resolvedData;
+        },
+      },
+    }),
   },
 });

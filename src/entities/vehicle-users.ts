@@ -100,7 +100,7 @@ export const VehicleUser = list({
         data: {
           emdBalance: {
             increment: -10000,
-          } ,
+          },
         },
       });
     },
@@ -132,14 +132,14 @@ export const VehicleUser = list({
         update: isSuperAdmin,
       },
     }),
-    bidCountUpdates: relationship({
-      ref: "BidCountUpdate.vehicleUser",
-      many: true,
-      ui: {
-        createView: { fieldMode: "hidden" },
-        itemView: { fieldMode: "read" },
-      },
-    }),
+    // bidCountUpdates: relationship({
+    //   ref: "BidCountUpdate.vehicleUser",
+    //   many: true,
+    //   ui: {
+    //     createView: { fieldMode: "hidden" },
+    //     itemView: { fieldMode: "read" },
+    //   },
+    // }),
     createdAt: timestamp({
       ...fieldOptions,
       defaultValue: { kind: "now" },

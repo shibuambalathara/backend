@@ -56,9 +56,10 @@ model User {
   bidEnabledVehicles    VehicleUser[]        @relation("VehicleUser_user")
   emdBalance            Int?                 @default(0)
   watchList             Vehicle[]            @relation("User_watchList")
+  emdUpdates            EmdUpdate[]          @relation("EmdUpdate_user")
+  emdUpdatesByAdmin     EmdUpdate[]          @relation("EmdUpdate_createdBy")
   status                UserStatusType?      @default(pending)
   states                State[]              @relation("State_users")
-  bidCountUpdates       BidCountUpdate[]     @relation("BidCountUpdate_createdFor")
   activeBids            Vehicle[]            @relation("Vehicle_currentBidUser")
   quotedBids            Bid[]                @relation("Bid_user")
   createdAt             DateTime?            @default(now())
@@ -162,16 +163,15 @@ model Vehicle {
 }
 
 model VehicleUser {
-  id              String           @id @default(cuid())
-  name            String           @default("")
-  vehicle         Vehicle?         @relation("VehicleUser_vehicle", fields: [vehicleId], references: [id])
-  vehicleId       String?          @map("vehicle")
-  user            User?            @relation("VehicleUser_user", fields: [userId], references: [id])
-  userId          String?          @map("user")
-  remainingBids   Int?
-  bidCountUpdates BidCountUpdate[] @relation("BidCountUpdate_vehicleUser")
-  createdAt       DateTime?        @default(now())
-  updatedAt       DateTime?        @updatedAt
+  id            String    @id @default(cuid())
+  name          String    @default("")
+  vehicle       Vehicle?  @relation("VehicleUser_vehicle", fields: [vehicleId], references: [id])
+  vehicleId     String?   @map("vehicle")
+  user          User?     @relation("VehicleUser_user", fields: [userId], references: [id])
+  userId        String?   @map("user")
+  remainingBids Int?
+  createdAt     DateTime? @default(now())
+  updatedAt     DateTime? @updatedAt
 
   @@index([vehicleId])
   @@index([userId])
@@ -250,18 +250,18 @@ model Seller {
   updatedAt DateTime? @updatedAt
 }
 
-model BidCountUpdate {
-  id                String       @id @default(cuid())
-  vehicleUser       VehicleUser? @relation("BidCountUpdate_vehicleUser", fields: [vehicleUserId], references: [id])
-  vehicleUserId     String?      @map("vehicleUser")
-  incrementBidCount Int?         @default(5)
-  createdFor        User?        @relation("BidCountUpdate_createdFor", fields: [createdForId], references: [id])
-  createdForId      String?      @map("createdFor")
-  createdAt         DateTime?    @default(now())
-  updatedAt         DateTime?    @updatedAt
+model EmdUpdate {
+  id                 String    @id @default(cuid())
+  incrementEmdAmount Int?      @default(10000)
+  user               User?     @relation("EmdUpdate_user", fields: [userId], references: [id])
+  userId             String?   @map("user")
+  createdAt          DateTime? @default(now())
+  updatedAt          DateTime? @updatedAt
+  createdBy          User?     @relation("EmdUpdate_createdBy", fields: [createdById], references: [id])
+  createdById        String?   @map("createdBy")
 
-  @@index([vehicleUserId])
-  @@index([createdForId])
+  @@index([userId])
+  @@index([createdById])
 }
 
 enum UserIdProofTypeType {
