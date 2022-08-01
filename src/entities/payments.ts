@@ -7,7 +7,7 @@ import {
   image,
 } from "@keystone-6/core/fields";
 import { list } from "@keystone-6/core";
-import { fieldOptions, isNotAdmin, isSuperAdmin } from "../application/access";
+import { fieldOptions } from "../application/access";
 
 const ownerFilter = ({ session, context, listKey, operation }) => {
   if (session.data.role === "admin") {
@@ -63,9 +63,18 @@ export const Payment = list({
         { value: "registrations", label: "Registrations" },
         { value: "emd", label: "EMD" },
         { value: "refund", label: "Refund" },
+        { value: "other", label: "Other" },
       ],
     }),
     description: text(),
+    status: select({
+      defaultValue: "pending",
+      options: [
+        { value: "pending", label: "Pending" },
+        { value: "success", label: "Success" },
+        { value: "failed", label: "Failed" },
+      ],
+    }),
     user: relationship({
       ref: "User.payments",
       many: false,

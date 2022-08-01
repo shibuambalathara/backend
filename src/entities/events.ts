@@ -56,7 +56,7 @@ export const Event = list({
         ...resolvedData,
         name: `${seller?.name} - ${
           category?.name
-        } on ${resolvedData?.startDate?.toDateString()} to ${resolvedData?.endDate?.toDateString()} @ ${
+        } on ${resolvedData?.startDate?.toLocaleDateString()} to ${resolvedData?.endDate?.toLocaleDateString()} @ ${
           location?.name
         }`,
       };

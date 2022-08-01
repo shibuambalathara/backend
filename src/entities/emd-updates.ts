@@ -23,6 +23,19 @@ export const EmdUpdate = list({
     hideDelete: true,
   },
   hooks: {
+    resolveInput: ({ resolvedData, context, operation }) => {
+      if (operation !== "create") {
+        return resolvedData;
+      }
+      return {
+        ...resolvedData,
+        createdBy: {
+          connect: {
+            id: context?.session?.itemId,
+          },
+        },
+      };
+    },
     afterOperation: async ({ resolvedData, context, operation }) => {
       if (operation !== "create") {
         return;
@@ -65,16 +78,6 @@ export const EmdUpdate = list({
         },
         createView: {
           fieldMode: "hidden",
-        },
-      },
-      hooks: {
-        resolveInput: ({ resolvedData, context }) => {
-          resolvedData.createdBy = {
-            connect: {
-              id: context?.session?.ItemId,
-            },
-          };
-          return resolvedData;
         },
       },
     }),

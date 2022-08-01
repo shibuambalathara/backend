@@ -1646,6 +1646,7 @@ type Payment {
   amount: Int
   paymentFor: String
   description: String
+  status: String
   user: User
   image: ImageFieldOutput
   createdAt: DateTime
@@ -1664,9 +1665,39 @@ input PaymentWhereInput {
   amount: IntNullableFilter
   paymentFor: StringFilter
   description: StringFilter
+  status: StringNullableFilter
   user: UserWhereInput
   createdAt: DateTimeNullableFilter
   updatedAt: DateTimeNullableFilter
+}
+
+input StringNullableFilter {
+  equals: String
+  in: [String!]
+  notIn: [String!]
+  lt: String
+  lte: String
+  gt: String
+  gte: String
+  contains: String
+  startsWith: String
+  endsWith: String
+  mode: QueryMode
+  not: NestedStringNullableFilter
+}
+
+input NestedStringNullableFilter {
+  equals: String
+  in: [String!]
+  notIn: [String!]
+  lt: String
+  lte: String
+  gt: String
+  gte: String
+  contains: String
+  startsWith: String
+  endsWith: String
+  not: NestedStringNullableFilter
 }
 
 input PaymentOrderByInput {
@@ -1674,6 +1705,7 @@ input PaymentOrderByInput {
   amount: OrderDirection
   paymentFor: OrderDirection
   description: OrderDirection
+  status: OrderDirection
   createdAt: OrderDirection
   updatedAt: OrderDirection
 }
@@ -1682,6 +1714,7 @@ input PaymentUpdateInput {
   amount: Int
   paymentFor: String
   description: String
+  status: String
   user: UserRelateToOneForUpdateInput
   image: ImageFieldInput
 }
@@ -1695,6 +1728,7 @@ input PaymentCreateInput {
   amount: Int
   paymentFor: String
   description: String
+  status: String
   user: UserRelateToOneForCreateInput
   image: ImageFieldInput
 }
