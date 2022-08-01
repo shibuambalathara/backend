@@ -44,6 +44,13 @@ type User {
     skip: Int! = 0
   ): [EmdUpdate!]
   emdUpdatesCount(where: EmdUpdateWhereInput! = {}): Int
+  payments(
+    where: PaymentWhereInput! = {}
+    orderBy: [PaymentOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Payment!]
+  paymentsCount(where: PaymentWhereInput! = {}): Int
   emdUpdatesByAdmin(
     where: EmdUpdateWhereInput! = {}
     orderBy: [EmdUpdateOrderByInput!]! = []
@@ -152,6 +159,7 @@ input UserWhereInput {
   emdBalance: IntNullableFilter
   watchList: VehicleManyRelationFilter
   emdUpdates: EmdUpdateManyRelationFilter
+  payments: PaymentManyRelationFilter
   emdUpdatesByAdmin: EmdUpdateManyRelationFilter
   status: UserStatusTypeNullableFilter
   states: StateManyRelationFilter
@@ -256,6 +264,12 @@ input EmdUpdateManyRelationFilter {
   none: EmdUpdateWhereInput
 }
 
+input PaymentManyRelationFilter {
+  every: PaymentWhereInput
+  some: PaymentWhereInput
+  none: PaymentWhereInput
+}
+
 input UserStatusTypeNullableFilter {
   equals: UserStatusType
   in: [UserStatusType!]
@@ -338,6 +352,7 @@ input UserUpdateInput {
   emdBalance: Int
   watchList: VehicleRelateToManyForUpdateInput
   emdUpdates: EmdUpdateRelateToManyForUpdateInput
+  payments: PaymentRelateToManyForUpdateInput
   emdUpdatesByAdmin: EmdUpdateRelateToManyForUpdateInput
   status: UserStatusType
   states: StateRelateToManyForUpdateInput
@@ -376,6 +391,13 @@ input EmdUpdateRelateToManyForUpdateInput {
   set: [EmdUpdateWhereUniqueInput!]
   create: [EmdUpdateCreateInput!]
   connect: [EmdUpdateWhereUniqueInput!]
+}
+
+input PaymentRelateToManyForUpdateInput {
+  disconnect: [PaymentWhereUniqueInput!]
+  set: [PaymentWhereUniqueInput!]
+  create: [PaymentCreateInput!]
+  connect: [PaymentWhereUniqueInput!]
 }
 
 input StateRelateToManyForUpdateInput {
@@ -421,6 +443,7 @@ input UserCreateInput {
   emdBalance: Int
   watchList: VehicleRelateToManyForCreateInput
   emdUpdates: EmdUpdateRelateToManyForCreateInput
+  payments: PaymentRelateToManyForCreateInput
   emdUpdatesByAdmin: EmdUpdateRelateToManyForCreateInput
   status: UserStatusType
   states: StateRelateToManyForCreateInput
@@ -444,6 +467,11 @@ input VehicleRelateToManyForCreateInput {
 input EmdUpdateRelateToManyForCreateInput {
   create: [EmdUpdateCreateInput!]
   connect: [EmdUpdateWhereUniqueInput!]
+}
+
+input PaymentRelateToManyForCreateInput {
+  create: [PaymentCreateInput!]
+  connect: [PaymentWhereUniqueInput!]
 }
 
 input StateRelateToManyForCreateInput {
@@ -1613,6 +1641,51 @@ input EmdUpdateCreateInput {
   createdBy: UserRelateToOneForCreateInput
 }
 
+type Payment {
+  id: ID!
+  amount: Int
+  user: User
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+input PaymentWhereUniqueInput {
+  id: ID
+}
+
+input PaymentWhereInput {
+  AND: [PaymentWhereInput!]
+  OR: [PaymentWhereInput!]
+  NOT: [PaymentWhereInput!]
+  id: IDFilter
+  amount: IntNullableFilter
+  user: UserWhereInput
+  createdAt: DateTimeNullableFilter
+  updatedAt: DateTimeNullableFilter
+}
+
+input PaymentOrderByInput {
+  id: OrderDirection
+  amount: OrderDirection
+  createdAt: OrderDirection
+  updatedAt: OrderDirection
+}
+
+input PaymentUpdateInput {
+  amount: Int
+  user: UserRelateToOneForUpdateInput
+}
+
+input PaymentUpdateArgs {
+  where: PaymentWhereUniqueInput!
+  data: PaymentUpdateInput!
+}
+
+input PaymentCreateInput {
+  amount: Int
+  user: UserRelateToOneForCreateInput
+}
+
 """
 The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
@@ -1717,6 +1790,15 @@ type Mutation {
   updateEmdUpdates(data: [EmdUpdateUpdateArgs!]!): [EmdUpdate]
   deleteEmdUpdate(where: EmdUpdateWhereUniqueInput!): EmdUpdate
   deleteEmdUpdates(where: [EmdUpdateWhereUniqueInput!]!): [EmdUpdate]
+  createPayment(data: PaymentCreateInput!): Payment
+  createPayments(data: [PaymentCreateInput!]!): [Payment]
+  updatePayment(
+    where: PaymentWhereUniqueInput!
+    data: PaymentUpdateInput!
+  ): Payment
+  updatePayments(data: [PaymentUpdateArgs!]!): [Payment]
+  deletePayment(where: PaymentWhereUniqueInput!): Payment
+  deletePayments(where: [PaymentWhereUniqueInput!]!): [Payment]
   endSession: Boolean!
   authenticateUserWithPassword(
     mobile: String!
@@ -1869,6 +1951,14 @@ type Query {
   ): [EmdUpdate!]
   emdUpdate(where: EmdUpdateWhereUniqueInput!): EmdUpdate
   emdUpdatesCount(where: EmdUpdateWhereInput! = {}): Int
+  payments(
+    where: PaymentWhereInput! = {}
+    orderBy: [PaymentOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Payment!]
+  payment(where: PaymentWhereUniqueInput!): Payment
+  paymentsCount(where: PaymentWhereInput! = {}): Int
   keystone: KeystoneMeta!
   authenticatedItem: AuthenticatedItem
 

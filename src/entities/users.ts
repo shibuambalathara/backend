@@ -117,6 +117,10 @@ export const User = list({
       ref: "EmdUpdate.user",
       many: true,
     }),
+    payments: relationship({
+      ref: "Payment.user",
+      many: true,
+    }),
     emdUpdatesByAdmin: relationship({
       ref: "EmdUpdate.createdBy",
       many: true,

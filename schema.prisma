@@ -57,6 +57,7 @@ model User {
   emdBalance            Int?                 @default(0)
   watchList             Vehicle[]            @relation("User_watchList")
   emdUpdates            EmdUpdate[]          @relation("EmdUpdate_user")
+  payments              Payment[]            @relation("Payment_user")
   emdUpdatesByAdmin     EmdUpdate[]          @relation("EmdUpdate_createdBy")
   status                UserStatusType?      @default(pending)
   states                State[]              @relation("State_users")
@@ -262,6 +263,17 @@ model EmdUpdate {
 
   @@index([userId])
   @@index([createdById])
+}
+
+model Payment {
+  id        String    @id @default(cuid())
+  amount    Int?      @default(10000)
+  user      User?     @relation("Payment_user", fields: [userId], references: [id])
+  userId    String?   @map("user")
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+
+  @@index([userId])
 }
 
 enum UserIdProofTypeType {

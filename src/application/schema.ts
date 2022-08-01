@@ -10,6 +10,7 @@ import { EmdUpdate } from "../entities/emd-updates";
 import { Bid } from "../entities/user-bids";
 import { State } from "../entities/states";
 import { VehicleUser } from "../entities/vehicle-users";
+import { Payment } from "../entities/payments";
 export { router } from "./restRoutes";
 export { extendGraphqlSchema } from "./graphqlRoutes";
 export const lists = {
@@ -25,4 +26,5 @@ export const lists = {
   ExcelUpload,
   Seller,
   EmdUpdate,
+  Payment,
 };
