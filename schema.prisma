@@ -71,25 +71,26 @@ model User {
 }
 
 model Event {
-  id                 String           @id @default(cuid())
-  name               String           @default("")
-  seller             Seller?          @relation("Event_seller", fields: [sellerId], references: [id])
-  sellerId           String?          @map("seller")
-  eventType          EventType[]      @relation("Event_eventType")
-  eventCategory      EventCategory?   @relation("Event_eventCategory", fields: [eventCategoryId], references: [id])
-  eventCategoryId    String?          @map("eventCategory")
-  location           Location?        @relation("Event_location", fields: [locationId], references: [id])
-  locationId         String?          @map("location")
-  vehicles           Vehicle[]        @relation("Vehicle_event")
-  startDate          DateTime
-  endDate            DateTime
-  noOfBids           Int
-  status             EventStatusType? @default(active)
-  ExcelFile          ExcelUpload?     @relation("Event_ExcelFile", fields: [ExcelFileId], references: [id])
-  ExcelFileId        String?          @unique @map("ExcelFile")
-  termsAndConditions Json             @default("[{\"type\":\"paragraph\",\"children\":[{\"text\":\"\"}]}]")
-  createdAt          DateTime?        @default(now())
-  updatedAt          DateTime?        @updatedAt
+  id                     String           @id @default(cuid())
+  name                   String           @default("")
+  seller                 Seller?          @relation("Event_seller", fields: [sellerId], references: [id])
+  sellerId               String?          @map("seller")
+  eventType              EventType[]      @relation("Event_eventType")
+  eventCategory          EventCategory?   @relation("Event_eventCategory", fields: [eventCategoryId], references: [id])
+  eventCategoryId        String?          @map("eventCategory")
+  location               Location?        @relation("Event_location", fields: [locationId], references: [id])
+  locationId             String?          @map("location")
+  vehicles               Vehicle[]        @relation("Vehicle_event")
+  startDate              DateTime
+  endDate                DateTime
+  noOfBids               Int
+  emdAmountPerBidVehicle Int              @default(10000)
+  status                 EventStatusType? @default(active)
+  ExcelFile              ExcelUpload?     @relation("Event_ExcelFile", fields: [ExcelFileId], references: [id])
+  ExcelFileId            String?          @unique @map("ExcelFile")
+  termsAndConditions     Json             @default("[{\"type\":\"paragraph\",\"children\":[{\"text\":\"\"}]}]")
+  createdAt              DateTime?        @default(now())
+  updatedAt              DateTime?        @updatedAt
 
   @@index([sellerId])
   @@index([eventCategoryId])

@@ -31,8 +31,13 @@ export const Event = list({
     },
   },
   hooks: {
-    validateInput: async ({ resolvedData, context, operation, addValidationError,  }) => {
-      if(new Date(resolvedData.endDate) < new Date()){
+    validateInput: async ({
+      resolvedData,
+      context,
+      operation,
+      addValidationError,
+    }) => {
+      if (new Date(resolvedData.endDate) < new Date()) {
         addValidationError("End date must be in the future");
       }
     },
@@ -63,7 +68,7 @@ export const Event = list({
     },
     afterOperation: async ({ context, operation, resolvedData }) => {
       if (operation !== "update") {
-        return
+        return;
       }
       await context.prisma.vehicle.updateMany({
         where: {
@@ -71,9 +76,9 @@ export const Event = list({
         },
         data: {
           bidTimeExpire: resolvedData?.endDate,
-        }
-      })
-     }
+        },
+      });
+    },
   },
 
   fields: {
@@ -117,6 +122,12 @@ export const Event = list({
         isRequired: true,
       },
     }),
+    emdAmountPerBidVehicle: integer({
+      defaultValue:10000,
+      validation: {
+        isRequired: true,
+      },
+    }),
     status: select({
       type: "enum",
       options: [
@@ -138,7 +149,7 @@ export const Event = list({
     }),
     termsAndConditions: document({
       links: true,
-      dividers: true, 
+      dividers: true,
     }),
     createdAt: timestamp({ ...fieldOptions, defaultValue: { kind: "now" } }),
     updatedAt: timestamp({ ...fieldOptions, db: { updatedAt: true } }),

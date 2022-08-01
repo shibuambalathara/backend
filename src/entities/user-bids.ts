@@ -37,69 +37,72 @@ export const Bid = list({
   },
   hooks: {
     validateInput: async ({ resolvedData, context, addValidationError }) => {
-      const { amount } = resolvedData;
-      console.log("rrrr: ", resolvedData?.bidVehicle?.connect?.id)
-      const [bidVehicle, vehicleUser] = await Promise.all([
-        context.query.Vehicle.findOne({
-          where: { id: resolvedData?.bidVehicle?.connect?.id },
-          query: `id currentBidAmount bidTimeExpire event { startDate } `,
-        }),
-        context.prisma.vehicleUser.findFirst({
-          where: {
-                vehicle: {
-                  id:  resolvedData?.bidVehicle?.connect?.id,
-                },
-                user: {
-                  id: 
-                      resolvedData?.user?.connect?.id ??
-                      context?.session?.itemId
-                },
-          },
-          // query: `remainingBids`,
-        }),
-      ]);
-      console.log("eef: ", vehicleUser);
-
-      if (!bidVehicle) {
-        addValidationError("vehicle not found");
-      }
-      if (new Date(bidVehicle.bidTimeExpire) < new Date()) {
-        addValidationError("Auction has ended");
-      }
-      if (new Date(bidVehicle.event.startDate) > new Date()) {
-        addValidationError("Auction yet to start");
-      }
-      if (
-        !bidVehicle.currentBidAmount ||
-        bidVehicle.currentBidAmount >= amount
-      ) {
-        addValidationError(
-          "Bid Amount smaller than current bid amount, Current Bid Amount: " +
-            bidVehicle.currentBidAmount
-        );
-      }
-
-      if (vehicleUser) {
-        if (vehicleUser?.remainingBids < 1)
-          addValidationError("No Bids Left");
-      } else {
-        const newVehicleUser = await context.query.VehicleUser.createOne({
-          data: {
-            vehicle: { connect: { id: resolvedData?.bidVehicle?.connect?.id } },
-            user: {
-              connect: {
-                id: resolvedData?.user?.connect?.id ?? context?.session?.itemId,
+      try {
+        const { amount } = resolvedData;
+        const userId =
+          context.session.data.role === "admin"
+            ? resolvedData.user.connect.id
+            : context.session.itemId;
+        const [bidVehicle, bidCount, emdBalance] = await Promise.all([
+          context.query.Vehicle.findOne({
+            where: { id: resolvedData?.bidVehicle?.connect?.id },
+            query: `id currentBidAmount bidTimeExpire event { startDate emdAmountPerBidVehicle noOfBids } `,
+          }),
+          context.query.Bid.count({
+            where: {
+              bidVehicle: {
+                id: { equals: resolvedData?.bidVehicle?.connect?.id },
               },
+              user: { id: { equals: userId } },
             },
-          },
-          query: `id remainingBids user { emdBalance }`,
-        });
-        console.log("newVehicleUser: ", newVehicleUser);
-        if(newVehicleUser?.user?.emdBalance < 10000) {
-          addValidationError("Insufficient EMD Balance");
+          }),
+          context.query.User.findOne({
+            where: { id: userId },
+            query: `emdBalance`,
+          }),
+          // context.prisma.bid.groupBy({
+          //   by: ["bidVehicleId"],
+          //   where: {
+          //     userId: resolvedData.user.connect.id,
+          //   },
+          //   _count: true,
+          // }),
+        ]);
+
+        if (!bidVehicle) {
+          addValidationError("vehicle not found");
         }
-        if (newVehicleUser?.remainingBids < 1)
+        if (new Date(bidVehicle.bidTimeExpire) < new Date()) {
+          addValidationError("Auction has ended");
+        }
+        if (new Date(bidVehicle.event.startDate) > new Date()) {
+          addValidationError("Auction yet to start");
+        }
+        if (bidCount >= bidVehicle.event.noOfBids) {
           addValidationError("No Bids Left");
+        }
+        if (
+          !bidVehicle.currentBidAmount ||
+          bidVehicle.currentBidAmount >= amount
+        ) {
+          addValidationError(
+            "Bid Amount smaller than current bid amount, Current Bid Amount: " +
+              bidVehicle.currentBidAmount
+          );
+        }
+
+        if (
+          !bidCount &&
+          bidVehicle.event.emdAmountPerBidVehicle > emdBalance?.emdBalance
+        ) {
+          addValidationError(
+            "Insufficient EMD Balance, minimum required EMD Balance: " +
+              bidVehicle.event.emdAmountPerBidVehicle
+          );
+        }
+      } catch (e) {
+        console.log("e: ", e);
+        addValidationError(e.message);
       }
     },
     resolveInput: async ({ resolvedData, context, operation }) => {
@@ -118,14 +121,11 @@ export const Bid = list({
           query: ` username `,
         }),
       ]);
-      return {
-        ...resolvedData,
-        name: `${user?.username} : ${bidVehicle?.registrationNumber}`,
-        user:
-          context?.session?.data?.role === "admin"
-            ? resolvedData?.user
-            : { connect: { id: context?.session?.itemId } },
-      };
+      resolvedData.name = `${user?.username} : ${bidVehicle?.registrationNumber}`
+      if (context?.session?.data?.role !== "admin") {
+        resolvedData.user = { connect: { id: context?.session?.itemId } }
+      }
+      return resolvedData
     },
     afterOperation: async ({
       listKey,
@@ -137,7 +137,7 @@ export const Bid = list({
       context,
     }) => {
       /**
-       * 1. Update the remaining bids for the event User
+       * 1. Update user emdBalance via emd updates if it is first bid //
        * 2 .Update the current bid amount for the vehicle
        * 3. Update the bid time expire for the vehicle if
        *    expire time with in 2 minutes
@@ -146,13 +146,13 @@ export const Bid = list({
       if (operation !== "create") {
         return;
       }
-      const [vehicleUser, bidVehicle] = await Promise.all([
-        context.prisma.vehicleUser.findFirst({
-          where: {
-            vehicle: { id: resolvedData?.vehicle?.connect?.id },
-            user: { id: resolvedData?.user?.connect?.id },
-          },
-        }),
+      const [bidVehicle] = await Promise.all([
+        // context.prisma.vehicleUser.findFirst({
+        //   where: {
+        //     vehicle: { id: resolvedData?.vehicle?.connect?.id },
+        //     user: { id: resolvedData?.user?.connect?.id },
+        //   },
+        // }),
         context.query.Vehicle.findOne({
           where: { id: resolvedData?.bidVehicle?.connect?.id },
           query: `bidTimeExpire`,
@@ -169,12 +169,12 @@ export const Bid = list({
       console.log("bidTimeExpire:", bidTimeExpire);
       console.log("bidTimeExpire Old :", bidVehicle.bidTimeExpire);
       await Promise.all([
-        context.prisma.vehicleUser.update({
-          where: { id: vehicleUser.id },
-          data: {
-            remainingBids: vehicleUser.remainingBids - 1,
-          },
-        }),
+        // context.prisma.vehicleUser.update({
+        //   where: { id: vehicleUser.id },
+        //   data: {
+        //     remainingBids: vehicleUser.remainingBids - 1,
+        //   },
+        // }),
         context.prisma.vehicle.update({
           where: { id: resolvedData?.bidVehicle?.connect?.id },
           data: {

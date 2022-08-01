@@ -507,6 +507,7 @@ type Event {
   startDate: DateTime
   endDate: DateTime
   noOfBids: Int
+  emdAmountPerBidVehicle: Int
   status: EventStatusType
   ExcelFile: ExcelUpload
   termsAndConditions: Event_termsAndConditions_Document
@@ -543,6 +544,7 @@ input EventWhereInput {
   startDate: DateTimeFilter
   endDate: DateTimeFilter
   noOfBids: IntFilter
+  emdAmountPerBidVehicle: IntFilter
   status: EventStatusTypeNullableFilter
   ExcelFile: ExcelUploadWhereInput
   createdAt: DateTimeNullableFilter
@@ -590,6 +592,7 @@ input EventOrderByInput {
   startDate: OrderDirection
   endDate: OrderDirection
   noOfBids: OrderDirection
+  emdAmountPerBidVehicle: OrderDirection
   status: OrderDirection
   createdAt: OrderDirection
   updatedAt: OrderDirection
@@ -605,6 +608,7 @@ input EventUpdateInput {
   startDate: DateTime
   endDate: DateTime
   noOfBids: Int
+  emdAmountPerBidVehicle: Int
   status: EventStatusType
   ExcelFile: ExcelUploadRelateToOneForUpdateInput
   termsAndConditions: JSON
@@ -656,6 +660,7 @@ input EventCreateInput {
   startDate: DateTime
   endDate: DateTime
   noOfBids: Int
+  emdAmountPerBidVehicle: Int
   status: EventStatusType
   ExcelFile: ExcelUploadRelateToOneForCreateInput
   termsAndConditions: JSON

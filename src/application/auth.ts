@@ -40,6 +40,7 @@ const { withAuth } = createAuth({
     email
     mobile
     role
+    emdBalance
     status`,
   secretField: "password",
   initFirstItem: {
