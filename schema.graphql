@@ -1644,7 +1644,10 @@ input EmdUpdateCreateInput {
 type Payment {
   id: ID!
   amount: Int
+  paymentFor: String
+  description: String
   user: User
+  image: ImageFieldOutput
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -1659,6 +1662,8 @@ input PaymentWhereInput {
   NOT: [PaymentWhereInput!]
   id: IDFilter
   amount: IntNullableFilter
+  paymentFor: StringFilter
+  description: StringFilter
   user: UserWhereInput
   createdAt: DateTimeNullableFilter
   updatedAt: DateTimeNullableFilter
@@ -1667,13 +1672,18 @@ input PaymentWhereInput {
 input PaymentOrderByInput {
   id: OrderDirection
   amount: OrderDirection
+  paymentFor: OrderDirection
+  description: OrderDirection
   createdAt: OrderDirection
   updatedAt: OrderDirection
 }
 
 input PaymentUpdateInput {
   amount: Int
+  paymentFor: String
+  description: String
   user: UserRelateToOneForUpdateInput
+  image: ImageFieldInput
 }
 
 input PaymentUpdateArgs {
@@ -1683,7 +1693,10 @@ input PaymentUpdateArgs {
 
 input PaymentCreateInput {
   amount: Int
+  paymentFor: String
+  description: String
   user: UserRelateToOneForCreateInput
+  image: ImageFieldInput
 }
 
 """

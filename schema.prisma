@@ -266,12 +266,19 @@ model EmdUpdate {
 }
 
 model Payment {
-  id        String    @id @default(cuid())
-  amount    Int?      @default(10000)
-  user      User?     @relation("Payment_user", fields: [userId], references: [id])
-  userId    String?   @map("user")
-  createdAt DateTime? @default(now())
-  updatedAt DateTime? @updatedAt
+  id              String    @id @default(cuid())
+  amount          Int?      @default(10000)
+  paymentFor      String
+  description     String    @default("")
+  user            User?     @relation("Payment_user", fields: [userId], references: [id])
+  userId          String?   @map("user")
+  image_filesize  Int?
+  image_extension String?
+  image_width     Int?
+  image_height    Int?
+  image_id        String?
+  createdAt       DateTime? @default(now())
+  updatedAt       DateTime? @updatedAt
 
   @@index([userId])
 }

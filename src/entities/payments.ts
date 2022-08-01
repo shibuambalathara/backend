@@ -3,6 +3,8 @@ import {
   relationship,
   select,
   timestamp,
+  text,
+  image,
 } from "@keystone-6/core/fields";
 import { list } from "@keystone-6/core";
 import { fieldOptions, isNotAdmin, isSuperAdmin } from "../application/access";
@@ -24,6 +26,23 @@ export const Payment = list({
     },
     filter: {
       query: ownerFilter,
+      update: ownerFilter,
+    },
+  },
+  hooks: {
+    resolveInput: ({ resolvedData, context, operation }) => {
+      if (operation !== "create") {
+        return resolvedData;
+      }
+
+      return {
+        ...resolvedData,
+        user: {
+          connect: {
+            id: context?.session?.itemId,
+          },
+        },
+      };
     },
   },
 
@@ -36,7 +55,17 @@ export const Payment = list({
     amount: integer({
       defaultValue: 10000,
     }),
-
+    paymentFor: select({
+      validation: {
+        isRequired: true,
+      },
+      options: [
+        { value: "registrations", label: "Registrations" },
+        { value: "emd", label: "EMD" },
+        { value: "refund", label: "Refund" },
+      ],
+    }),
+    description: text(),
     user: relationship({
       ref: "User.payments",
       many: false,
@@ -51,17 +80,8 @@ export const Payment = list({
           fieldMode: "hidden",
         },
       },
-      hooks: {
-        resolveInput: ({ resolvedData, context }) => {
-          resolvedData.createdBy = {
-            connect: {
-              id: context?.session?.ItemId,
-            },
-          };
-          return resolvedData;
-        },
-      },
     }),
+    image: image({ storage: "local_images" }),
     createdAt: timestamp({
       ...fieldOptions,
       defaultValue: { kind: "now" },
