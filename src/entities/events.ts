@@ -21,6 +21,7 @@ export const Event = list({
     hideDelete: isNotAdmin,
     itemView: { defaultFieldMode: isAdminEdit },
     createView: { defaultFieldMode: isAdminCreate },
+    labelField: "eventNo",
   },
   access: {
     operation: {
@@ -41,31 +42,6 @@ export const Event = list({
         addValidationError("End date must be in the future");
       }
     },
-    resolveInput: async ({ resolvedData, context, operation }) => {
-      if (operation !== "create" && operation !== "update") {
-        return resolvedData;
-      }
-      console.log("resolveInput: ", resolvedData);
-      const [category, seller, location] = await Promise.all([
-        context.db.EventCategory.findOne({
-          where: { id: resolvedData?.eventCategory?.connect?.id },
-        }),
-        context.db.Seller.findOne({
-          where: { id: resolvedData?.seller?.connect?.id },
-        }),
-        context.db.Location.findOne({
-          where: { id: resolvedData?.location?.connect?.id },
-        }),
-      ]);
-      return {
-        ...resolvedData,
-        name: `${seller?.name} - ${
-          category?.name
-        } on ${resolvedData?.startDate?.toLocaleDateString()} to ${resolvedData?.endDate?.toLocaleDateString()} @ ${
-          location?.name
-        }`,
-      };
-    },
     afterOperation: async ({ context, operation, resolvedData }) => {
       if (operation !== "update") {
         return;
@@ -82,9 +58,18 @@ export const Event = list({
   },
 
   fields: {
-    name: text({
+    eventNo: integer({
+      isIndexed: true,
+      defaultValue: {
+        kind: "autoincrement",
+      },
+      db: {
+        isNullable: false,
+      },
       ui: {
         createView: { fieldMode: "hidden" },
+        itemView: { fieldMode: "read" },
+        listView: { fieldMode: "read" },
       },
     }),
     seller: relationship({
@@ -123,7 +108,7 @@ export const Event = list({
       },
     }),
     emdAmountPerBidVehicle: integer({
-      defaultValue:10000,
+      defaultValue: 10000,
       validation: {
         isRequired: true,
       },

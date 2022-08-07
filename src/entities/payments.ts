@@ -61,6 +61,11 @@ export const Payment = list({
       db: {
         isNullable: false,
       },
+      ui: {
+        createView: { fieldMode: "hidden" },
+        itemView: { fieldMode: "read" },
+        listView: { fieldMode: "read" },
+      },
     }),
     amount: integer({
       defaultValue: 10000,
@@ -98,12 +103,32 @@ export const Payment = list({
         createView: {
           fieldMode: "hidden",
         },
+        displayMode: "cards",
+        cardFields: [
+          "firstName",
+          "lastName",
+          "mobile",
+          "vehicleBuyingLimit",
+          "status",
+          "specialVehicleBuyingLimit",
+        ],
       },
     }),
     image: image({ storage: "local_images" }),
     emdUpdate: relationship({
       ref: "EmdUpdate.payment",
-      many: false,
+      many: true,
+      ui: {
+        listView: {
+          fieldMode: "read",
+        },
+        itemView: {
+          fieldMode: "read",
+        },
+        createView: {
+          fieldMode: "hidden",
+        },
+      },
     }),
     createdAt: timestamp({
       ...fieldOptions,

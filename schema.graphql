@@ -494,9 +494,207 @@ input BidRelateToManyForCreateInput {
   connect: [BidWhereUniqueInput!]
 }
 
+type Payment {
+  id: ID!
+  refNo: Int
+  amount: Int
+  paymentFor: String
+  description: String
+  status: String
+  user: User
+  image: ImageFieldOutput
+  emdUpdate(
+    where: EmdUpdateWhereInput! = {}
+    orderBy: [EmdUpdateOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [EmdUpdate!]
+  emdUpdateCount(where: EmdUpdateWhereInput! = {}): Int
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+input PaymentWhereUniqueInput {
+  id: ID
+}
+
+input PaymentWhereInput {
+  AND: [PaymentWhereInput!]
+  OR: [PaymentWhereInput!]
+  NOT: [PaymentWhereInput!]
+  id: IDFilter
+  refNo: IntFilter
+  amount: IntNullableFilter
+  paymentFor: StringFilter
+  description: StringFilter
+  status: StringNullableFilter
+  user: UserWhereInput
+  emdUpdate: EmdUpdateManyRelationFilter
+  createdAt: DateTimeNullableFilter
+  updatedAt: DateTimeNullableFilter
+}
+
+input IntFilter {
+  equals: Int
+  in: [Int!]
+  notIn: [Int!]
+  lt: Int
+  lte: Int
+  gt: Int
+  gte: Int
+  not: IntFilter
+}
+
+input StringNullableFilter {
+  equals: String
+  in: [String!]
+  notIn: [String!]
+  lt: String
+  lte: String
+  gt: String
+  gte: String
+  contains: String
+  startsWith: String
+  endsWith: String
+  mode: QueryMode
+  not: NestedStringNullableFilter
+}
+
+input NestedStringNullableFilter {
+  equals: String
+  in: [String!]
+  notIn: [String!]
+  lt: String
+  lte: String
+  gt: String
+  gte: String
+  contains: String
+  startsWith: String
+  endsWith: String
+  not: NestedStringNullableFilter
+}
+
+input PaymentOrderByInput {
+  id: OrderDirection
+  refNo: OrderDirection
+  amount: OrderDirection
+  paymentFor: OrderDirection
+  description: OrderDirection
+  status: OrderDirection
+  createdAt: OrderDirection
+  updatedAt: OrderDirection
+}
+
+input PaymentUpdateInput {
+  refNo: Int
+  amount: Int
+  paymentFor: String
+  description: String
+  status: String
+  user: UserRelateToOneForUpdateInput
+  image: ImageFieldInput
+  emdUpdate: EmdUpdateRelateToManyForUpdateInput
+}
+
+input UserRelateToOneForUpdateInput {
+  create: UserCreateInput
+  connect: UserWhereUniqueInput
+  disconnect: Boolean
+}
+
+input PaymentUpdateArgs {
+  where: PaymentWhereUniqueInput!
+  data: PaymentUpdateInput!
+}
+
+input PaymentCreateInput {
+  refNo: Int
+  amount: Int
+  paymentFor: String
+  description: String
+  status: String
+  user: UserRelateToOneForCreateInput
+  image: ImageFieldInput
+  emdUpdate: EmdUpdateRelateToManyForCreateInput
+}
+
+input UserRelateToOneForCreateInput {
+  create: UserCreateInput
+  connect: UserWhereUniqueInput
+}
+
+type EmdUpdate {
+  id: ID!
+  vehicleBuyingLimitIncrement: Int
+  specialVehicleBuyingLimitIncrement: Int
+  payment: Payment
+  user: User
+  createdAt: DateTime
+  updatedAt: DateTime
+  createdBy: User
+}
+
+input EmdUpdateWhereUniqueInput {
+  id: ID
+}
+
+input EmdUpdateWhereInput {
+  AND: [EmdUpdateWhereInput!]
+  OR: [EmdUpdateWhereInput!]
+  NOT: [EmdUpdateWhereInput!]
+  id: IDFilter
+  vehicleBuyingLimitIncrement: IntNullableFilter
+  specialVehicleBuyingLimitIncrement: IntNullableFilter
+  payment: PaymentWhereInput
+  user: UserWhereInput
+  createdAt: DateTimeNullableFilter
+  updatedAt: DateTimeNullableFilter
+  createdBy: UserWhereInput
+}
+
+input EmdUpdateOrderByInput {
+  id: OrderDirection
+  vehicleBuyingLimitIncrement: OrderDirection
+  specialVehicleBuyingLimitIncrement: OrderDirection
+  createdAt: OrderDirection
+  updatedAt: OrderDirection
+}
+
+input EmdUpdateUpdateInput {
+  vehicleBuyingLimitIncrement: Int
+  specialVehicleBuyingLimitIncrement: Int
+  payment: PaymentRelateToOneForUpdateInput
+  user: UserRelateToOneForUpdateInput
+  createdBy: UserRelateToOneForUpdateInput
+}
+
+input PaymentRelateToOneForUpdateInput {
+  create: PaymentCreateInput
+  connect: PaymentWhereUniqueInput
+  disconnect: Boolean
+}
+
+input EmdUpdateUpdateArgs {
+  where: EmdUpdateWhereUniqueInput!
+  data: EmdUpdateUpdateInput!
+}
+
+input EmdUpdateCreateInput {
+  vehicleBuyingLimitIncrement: Int
+  specialVehicleBuyingLimitIncrement: Int
+  payment: PaymentRelateToOneForCreateInput
+  user: UserRelateToOneForCreateInput
+  createdBy: UserRelateToOneForCreateInput
+}
+
+input PaymentRelateToOneForCreateInput {
+  create: PaymentCreateInput
+  connect: PaymentWhereUniqueInput
+}
+
 type Event {
   id: ID!
-  name: String
+  eventNo: Int
   seller: Seller
   eventType(
     where: EventTypeWhereInput! = {}
@@ -545,7 +743,7 @@ input EventWhereInput {
   OR: [EventWhereInput!]
   NOT: [EventWhereInput!]
   id: IDFilter
-  name: StringFilter
+  eventNo: IntFilter
   seller: SellerWhereInput
   eventType: EventTypeManyRelationFilter
   eventCategory: EventCategoryWhereInput
@@ -578,17 +776,6 @@ input DateTimeFilter {
   not: DateTimeFilter
 }
 
-input IntFilter {
-  equals: Int
-  in: [Int!]
-  notIn: [Int!]
-  lt: Int
-  lte: Int
-  gt: Int
-  gte: Int
-  not: IntFilter
-}
-
 input EventStatusTypeNullableFilter {
   equals: EventStatusType
   in: [EventStatusType!]
@@ -598,7 +785,7 @@ input EventStatusTypeNullableFilter {
 
 input EventOrderByInput {
   id: OrderDirection
-  name: OrderDirection
+  eventNo: OrderDirection
   startDate: OrderDirection
   endDate: OrderDirection
   noOfBids: OrderDirection
@@ -609,7 +796,7 @@ input EventOrderByInput {
 }
 
 input EventUpdateInput {
-  name: String
+  eventNo: Int
   seller: SellerRelateToOneForUpdateInput
   eventType: EventTypeRelateToManyForUpdateInput
   eventCategory: EventCategoryRelateToOneForUpdateInput
@@ -661,7 +848,7 @@ input EventUpdateArgs {
 }
 
 input EventCreateInput {
-  name: String
+  eventNo: Int
   seller: SellerRelateToOneForCreateInput
   eventType: EventTypeRelateToManyForCreateInput
   eventCategory: EventCategoryRelateToOneForCreateInput
@@ -999,12 +1186,6 @@ input VehicleUpdateInput {
   ExcelFile: ExcelUploadRelateToOneForUpdateInput
 }
 
-input UserRelateToOneForUpdateInput {
-  create: UserCreateInput
-  connect: UserWhereUniqueInput
-  disconnect: Boolean
-}
-
 input EventRelateToOneForUpdateInput {
   create: EventCreateInput
   connect: EventWhereUniqueInput
@@ -1077,11 +1258,6 @@ input VehicleCreateInput {
   vehicleUsers: VehicleUserRelateToManyForCreateInput
   watchedBy: UserRelateToManyForCreateInput
   ExcelFile: ExcelUploadRelateToOneForCreateInput
-}
-
-input UserRelateToOneForCreateInput {
-  create: UserCreateInput
-  connect: UserWhereUniqueInput
 }
 
 input EventRelateToOneForCreateInput {
@@ -1607,187 +1783,6 @@ input SellerCreateInput {
   events: EventRelateToManyForCreateInput
 }
 
-type EmdUpdate {
-  id: ID!
-  vehicleBuyingLimitIncrement: Int
-  specialVehicleBuyingLimitIncrement: Int
-  payment: Payment
-  user: User
-  createdAt: DateTime
-  updatedAt: DateTime
-  createdBy: User
-}
-
-input EmdUpdateWhereUniqueInput {
-  id: ID
-}
-
-input EmdUpdateWhereInput {
-  AND: [EmdUpdateWhereInput!]
-  OR: [EmdUpdateWhereInput!]
-  NOT: [EmdUpdateWhereInput!]
-  id: IDFilter
-  vehicleBuyingLimitIncrement: IntNullableFilter
-  specialVehicleBuyingLimitIncrement: IntNullableFilter
-  payment: PaymentWhereInput
-  user: UserWhereInput
-  createdAt: DateTimeNullableFilter
-  updatedAt: DateTimeNullableFilter
-  createdBy: UserWhereInput
-}
-
-input EmdUpdateOrderByInput {
-  id: OrderDirection
-  vehicleBuyingLimitIncrement: OrderDirection
-  specialVehicleBuyingLimitIncrement: OrderDirection
-  createdAt: OrderDirection
-  updatedAt: OrderDirection
-}
-
-input EmdUpdateUpdateInput {
-  vehicleBuyingLimitIncrement: Int
-  specialVehicleBuyingLimitIncrement: Int
-  payment: PaymentRelateToOneForUpdateInput
-  user: UserRelateToOneForUpdateInput
-  createdBy: UserRelateToOneForUpdateInput
-}
-
-input PaymentRelateToOneForUpdateInput {
-  create: PaymentCreateInput
-  connect: PaymentWhereUniqueInput
-  disconnect: Boolean
-}
-
-input EmdUpdateUpdateArgs {
-  where: EmdUpdateWhereUniqueInput!
-  data: EmdUpdateUpdateInput!
-}
-
-input EmdUpdateCreateInput {
-  vehicleBuyingLimitIncrement: Int
-  specialVehicleBuyingLimitIncrement: Int
-  payment: PaymentRelateToOneForCreateInput
-  user: UserRelateToOneForCreateInput
-  createdBy: UserRelateToOneForCreateInput
-}
-
-input PaymentRelateToOneForCreateInput {
-  create: PaymentCreateInput
-  connect: PaymentWhereUniqueInput
-}
-
-type Payment {
-  id: ID!
-  refNo: Int
-  amount: Int
-  paymentFor: String
-  description: String
-  status: String
-  user: User
-  image: ImageFieldOutput
-  emdUpdate: EmdUpdate
-  createdAt: DateTime
-  updatedAt: DateTime
-}
-
-input PaymentWhereUniqueInput {
-  id: ID
-}
-
-input PaymentWhereInput {
-  AND: [PaymentWhereInput!]
-  OR: [PaymentWhereInput!]
-  NOT: [PaymentWhereInput!]
-  id: IDFilter
-  refNo: IntFilter
-  amount: IntNullableFilter
-  paymentFor: StringFilter
-  description: StringFilter
-  status: StringNullableFilter
-  user: UserWhereInput
-  emdUpdate: EmdUpdateWhereInput
-  createdAt: DateTimeNullableFilter
-  updatedAt: DateTimeNullableFilter
-}
-
-input StringNullableFilter {
-  equals: String
-  in: [String!]
-  notIn: [String!]
-  lt: String
-  lte: String
-  gt: String
-  gte: String
-  contains: String
-  startsWith: String
-  endsWith: String
-  mode: QueryMode
-  not: NestedStringNullableFilter
-}
-
-input NestedStringNullableFilter {
-  equals: String
-  in: [String!]
-  notIn: [String!]
-  lt: String
-  lte: String
-  gt: String
-  gte: String
-  contains: String
-  startsWith: String
-  endsWith: String
-  not: NestedStringNullableFilter
-}
-
-input PaymentOrderByInput {
-  id: OrderDirection
-  refNo: OrderDirection
-  amount: OrderDirection
-  paymentFor: OrderDirection
-  description: OrderDirection
-  status: OrderDirection
-  createdAt: OrderDirection
-  updatedAt: OrderDirection
-}
-
-input PaymentUpdateInput {
-  refNo: Int
-  amount: Int
-  paymentFor: String
-  description: String
-  status: String
-  user: UserRelateToOneForUpdateInput
-  image: ImageFieldInput
-  emdUpdate: EmdUpdateRelateToOneForUpdateInput
-}
-
-input EmdUpdateRelateToOneForUpdateInput {
-  create: EmdUpdateCreateInput
-  connect: EmdUpdateWhereUniqueInput
-  disconnect: Boolean
-}
-
-input PaymentUpdateArgs {
-  where: PaymentWhereUniqueInput!
-  data: PaymentUpdateInput!
-}
-
-input PaymentCreateInput {
-  refNo: Int
-  amount: Int
-  paymentFor: String
-  description: String
-  status: String
-  user: UserRelateToOneForCreateInput
-  image: ImageFieldInput
-  emdUpdate: EmdUpdateRelateToOneForCreateInput
-}
-
-input EmdUpdateRelateToOneForCreateInput {
-  create: EmdUpdateCreateInput
-  connect: EmdUpdateWhereUniqueInput
-}
-
 """
 The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
@@ -1803,6 +1798,24 @@ type Mutation {
   updateUsers(data: [UserUpdateArgs!]!): [User]
   deleteUser(where: UserWhereUniqueInput!): User
   deleteUsers(where: [UserWhereUniqueInput!]!): [User]
+  createPayment(data: PaymentCreateInput!): Payment
+  createPayments(data: [PaymentCreateInput!]!): [Payment]
+  updatePayment(
+    where: PaymentWhereUniqueInput!
+    data: PaymentUpdateInput!
+  ): Payment
+  updatePayments(data: [PaymentUpdateArgs!]!): [Payment]
+  deletePayment(where: PaymentWhereUniqueInput!): Payment
+  deletePayments(where: [PaymentWhereUniqueInput!]!): [Payment]
+  createEmdUpdate(data: EmdUpdateCreateInput!): EmdUpdate
+  createEmdUpdates(data: [EmdUpdateCreateInput!]!): [EmdUpdate]
+  updateEmdUpdate(
+    where: EmdUpdateWhereUniqueInput!
+    data: EmdUpdateUpdateInput!
+  ): EmdUpdate
+  updateEmdUpdates(data: [EmdUpdateUpdateArgs!]!): [EmdUpdate]
+  deleteEmdUpdate(where: EmdUpdateWhereUniqueInput!): EmdUpdate
+  deleteEmdUpdates(where: [EmdUpdateWhereUniqueInput!]!): [EmdUpdate]
   createEvent(data: EventCreateInput!): Event
   createEvents(data: [EventCreateInput!]!): [Event]
   updateEvent(where: EventWhereUniqueInput!, data: EventUpdateInput!): Event
@@ -1883,24 +1896,6 @@ type Mutation {
   updateSellers(data: [SellerUpdateArgs!]!): [Seller]
   deleteSeller(where: SellerWhereUniqueInput!): Seller
   deleteSellers(where: [SellerWhereUniqueInput!]!): [Seller]
-  createEmdUpdate(data: EmdUpdateCreateInput!): EmdUpdate
-  createEmdUpdates(data: [EmdUpdateCreateInput!]!): [EmdUpdate]
-  updateEmdUpdate(
-    where: EmdUpdateWhereUniqueInput!
-    data: EmdUpdateUpdateInput!
-  ): EmdUpdate
-  updateEmdUpdates(data: [EmdUpdateUpdateArgs!]!): [EmdUpdate]
-  deleteEmdUpdate(where: EmdUpdateWhereUniqueInput!): EmdUpdate
-  deleteEmdUpdates(where: [EmdUpdateWhereUniqueInput!]!): [EmdUpdate]
-  createPayment(data: PaymentCreateInput!): Payment
-  createPayments(data: [PaymentCreateInput!]!): [Payment]
-  updatePayment(
-    where: PaymentWhereUniqueInput!
-    data: PaymentUpdateInput!
-  ): Payment
-  updatePayments(data: [PaymentUpdateArgs!]!): [Payment]
-  deletePayment(where: PaymentWhereUniqueInput!): Payment
-  deletePayments(where: [PaymentWhereUniqueInput!]!): [Payment]
   endSession: Boolean!
   authenticateUserWithPassword(
     mobile: String!
@@ -1965,6 +1960,22 @@ type Query {
   ): [User!]
   user(where: UserWhereUniqueInput!): User
   usersCount(where: UserWhereInput! = {}): Int
+  payments(
+    where: PaymentWhereInput! = {}
+    orderBy: [PaymentOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Payment!]
+  payment(where: PaymentWhereUniqueInput!): Payment
+  paymentsCount(where: PaymentWhereInput! = {}): Int
+  emdUpdates(
+    where: EmdUpdateWhereInput! = {}
+    orderBy: [EmdUpdateOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [EmdUpdate!]
+  emdUpdate(where: EmdUpdateWhereUniqueInput!): EmdUpdate
+  emdUpdatesCount(where: EmdUpdateWhereInput! = {}): Int
   events(
     where: EventWhereInput! = {}
     orderBy: [EventOrderByInput!]! = []
@@ -2045,22 +2056,6 @@ type Query {
   ): [Seller!]
   seller(where: SellerWhereUniqueInput!): Seller
   sellersCount(where: SellerWhereInput! = {}): Int
-  emdUpdates(
-    where: EmdUpdateWhereInput! = {}
-    orderBy: [EmdUpdateOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [EmdUpdate!]
-  emdUpdate(where: EmdUpdateWhereUniqueInput!): EmdUpdate
-  emdUpdatesCount(where: EmdUpdateWhereInput! = {}): Int
-  payments(
-    where: PaymentWhereInput! = {}
-    orderBy: [PaymentOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [Payment!]
-  payment(where: PaymentWhereUniqueInput!): Payment
-  paymentsCount(where: PaymentWhereInput! = {}): Int
   keystone: KeystoneMeta!
   authenticatedItem: AuthenticatedItem
 

@@ -7,7 +7,7 @@ import { Vehicle } from '../entities/vehicles'
 import { ExcelUpload } from '../entities/excel-upload'
 import { Seller } from '../entities/sellers'
 import { EmdUpdate } from "../entities/emd-updates";
-import { Bid } from "../entities/user-bids";
+import { Bid } from "../entities/bids";
 import { State } from "../entities/states";
 import { VehicleUser } from "../entities/vehicle-users";
 import { Payment } from "../entities/payments";
@@ -15,6 +15,8 @@ export { router } from "./restRoutes";
 export { extendGraphqlSchema } from "./graphqlRoutes";
 export const lists = {
   User,
+  Payment,
+  EmdUpdate,
   Event,
   Vehicle,
   VehicleUser,
@@ -25,6 +27,4 @@ export const lists = {
   EventCategory,
   ExcelUpload,
   Seller,
-  EmdUpdate,
-  Payment,
 };

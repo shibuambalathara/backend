@@ -120,6 +120,17 @@ export const User = list({
     bidEnabledVehicles: relationship({
       ref: "VehicleUser.user",
       many: true,
+      ui: {
+        listView: {
+          fieldMode: "read",
+        },
+        itemView: {
+          fieldMode: "read",
+        },
+        createView: {
+          fieldMode: "hidden",
+        },
+      },
     }),
     emdBalance: integer({
       defaultValue: 0,
@@ -131,10 +142,32 @@ export const User = list({
     emdUpdates: relationship({
       ref: "EmdUpdate.user",
       many: true,
+      ui: {
+        listView: {
+          fieldMode: "read",
+        },
+        itemView: {
+          fieldMode: "read",
+        },
+        createView: {
+          fieldMode: "hidden",
+        },
+      },
     }),
     payments: relationship({
       ref: "Payment.user",
       many: true,
+      ui: {
+        listView: {
+          fieldMode: "read",
+        },
+        itemView: {
+          fieldMode: "read",
+        },
+        createView: {
+          fieldMode: "hidden",
+        },
+      },
     }),
     emdUpdatesByAdmin: relationship({
       ref: "EmdUpdate.createdBy",

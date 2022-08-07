@@ -72,9 +72,49 @@ model User {
   magicAuthRedeemedAt       DateTime?
 }
 
+model Payment {
+  id              String      @id @default(cuid())
+  refNo           Int         @default(autoincrement())
+  amount          Int?        @default(10000)
+  paymentFor      String
+  description     String      @default("")
+  status          String?     @default("pending")
+  user            User?       @relation("Payment_user", fields: [userId], references: [id])
+  userId          String?     @map("user")
+  image_filesize  Int?
+  image_extension String?
+  image_width     Int?
+  image_height    Int?
+  image_id        String?
+  emdUpdate       EmdUpdate[] @relation("EmdUpdate_payment")
+  createdAt       DateTime?   @default(now())
+  updatedAt       DateTime?   @updatedAt
+
+  @@index([refNo])
+  @@index([userId])
+}
+
+model EmdUpdate {
+  id                                 String    @id @default(cuid())
+  vehicleBuyingLimitIncrement        Int?      @default(1)
+  specialVehicleBuyingLimitIncrement Int?      @default(0)
+  payment                            Payment?  @relation("EmdUpdate_payment", fields: [paymentId], references: [id])
+  paymentId                          String?   @map("payment")
+  user                               User?     @relation("EmdUpdate_user", fields: [userId], references: [id])
+  userId                             String?   @map("user")
+  createdAt                          DateTime? @default(now())
+  updatedAt                          DateTime? @updatedAt
+  createdBy                          User?     @relation("EmdUpdate_createdBy", fields: [createdById], references: [id])
+  createdById                        String?   @map("createdBy")
+
+  @@index([paymentId])
+  @@index([userId])
+  @@index([createdById])
+}
+
 model Event {
   id                     String           @id @default(cuid())
-  name                   String           @default("")
+  eventNo                Int              @default(autoincrement())
   seller                 Seller?          @relation("Event_seller", fields: [sellerId], references: [id])
   sellerId               String?          @map("seller")
   eventType              EventType[]      @relation("Event_eventType")
@@ -94,6 +134,7 @@ model Event {
   createdAt              DateTime?        @default(now())
   updatedAt              DateTime?        @updatedAt
 
+  @@index([eventNo])
   @@index([sellerId])
   @@index([eventCategoryId])
   @@index([locationId])
@@ -252,45 +293,6 @@ model Seller {
   events    Event[]   @relation("Event_seller")
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
-}
-
-model EmdUpdate {
-  id                                 String    @id @default(cuid())
-  vehicleBuyingLimitIncrement        Int?      @default(1)
-  specialVehicleBuyingLimitIncrement Int?      @default(0)
-  payment                            Payment?  @relation("EmdUpdate_payment", fields: [paymentId], references: [id])
-  paymentId                          String?   @unique @map("payment")
-  user                               User?     @relation("EmdUpdate_user", fields: [userId], references: [id])
-  userId                             String?   @map("user")
-  createdAt                          DateTime? @default(now())
-  updatedAt                          DateTime? @updatedAt
-  createdBy                          User?     @relation("EmdUpdate_createdBy", fields: [createdById], references: [id])
-  createdById                        String?   @map("createdBy")
-
-  @@index([userId])
-  @@index([createdById])
-}
-
-model Payment {
-  id              String     @id @default(cuid())
-  refNo           Int        @default(autoincrement())
-  amount          Int?       @default(10000)
-  paymentFor      String
-  description     String     @default("")
-  status          String?    @default("pending")
-  user            User?      @relation("Payment_user", fields: [userId], references: [id])
-  userId          String?    @map("user")
-  image_filesize  Int?
-  image_extension String?
-  image_width     Int?
-  image_height    Int?
-  image_id        String?
-  emdUpdate       EmdUpdate? @relation("EmdUpdate_payment")
-  createdAt       DateTime?  @default(now())
-  updatedAt       DateTime?  @updatedAt
-
-  @@index([refNo])
-  @@index([userId])
 }
 
 enum UserIdProofTypeType {
