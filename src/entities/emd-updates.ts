@@ -21,6 +21,7 @@ export const EmdUpdate = list({
     createView: { defaultFieldMode: "edit" },
     itemView: { defaultFieldMode: "read" },
     hideDelete: true,
+    labelField: "emdNo",
   },
   hooks: {
     resolveInput: async ({ resolvedData, context, operation }) => {
@@ -49,22 +50,37 @@ export const EmdUpdate = list({
       if (operation !== "create") {
         return;
       }
-      await context.db.User.updateOne({
+      console.log(resolvedData);
+      await context.prisma.user.update({
         where: {
           id: resolvedData?.user?.connect?.id,
         },
         data: {
           vehicleBuyingLimit: {
-            increment: resolvedData?.vehicleBuyingLimitIncrement,
+            increment: resolvedData?.vehicleBuyingLimitIncrement ?? 0,
           },
           specialVehicleBuyingLimit: {
-            increment: resolvedData?.specialVehicleBuyingLimitIncrement,
+            increment: resolvedData?.specialVehicleBuyingLimitIncrement ?? 0,
           },
         },
       });
     },
   },
   fields: {
+    emdNo: integer({
+      isIndexed: true,
+      defaultValue: {
+        kind: "autoincrement",
+      },
+      db: {
+        isNullable: false,
+      },
+      ui: {
+        createView: { fieldMode: "hidden" },
+        itemView: { fieldMode: "read" },
+        listView: { fieldMode: "read" },
+      },
+    }),
     vehicleBuyingLimitIncrement: integer({
       defaultValue: 1,
     }),

@@ -14,15 +14,44 @@ export const vehicleBuyingLimitField = virtual({
       },
     }),
     async resolve(item: any, args, context) {
-      const user = await context.query.User.findOne({
-        where: { id: item.id },
-        query: "vehicleBuyingLimit specialVehicleBuyingLimit",
-      });
+
+
+      const [user, specialCount, normalCount] = await Promise.all([
+        context.query.User.findOne({
+          where: { id: item.id },
+          query: `vehicleBuyingLimit specialVehicleBuyingLimit`,
+        }),
+        context.query.Vehicle.count({
+          where: {
+            currentBidUser: { id: { equals: item.id } },
+            event: {
+              isSpecialEvent: { equals: true },
+            },
+            bidStatus: {
+              in: ["pending", "approved"],
+            },
+          },
+        }),
+        context.query.Vehicle.count({
+          where: {
+            currentBidUser: { id: { equals: item.id } },
+            event: {
+              isSpecialEvent: { equals: false },
+            },
+            bidStatus: {
+              in: ["pending", "approved"],
+            },
+          },
+        }),
+      ]);
       return {
-        vehicleBuyingLimit: user.vehicleBuyingLimit,
-        specialVehicleBuyingLimit: user.specialVehicleBuyingLimit,
+        vehicleBuyingLimit: user.vehicleBuyingLimit - normalCount,
+        specialVehicleBuyingLimit:
+          user.specialVehicleBuyingLimit - specialCount,
       };
     },
   }),
-  ui: { query: "{ vehicleBuyingLimit specialVehicleBuyingLimit }" },
+  ui: {
+    query: `{ vehicleBuyingLimit specialVehicleBuyingLimit }`,
+  },
 });

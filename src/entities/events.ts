@@ -1,4 +1,5 @@
 import {
+  checkbox,
   integer,
   relationship,
   select,
@@ -138,13 +139,16 @@ export const Event = list({
     }),
     createdAt: timestamp({ ...fieldOptions, defaultValue: { kind: "now" } }),
     updatedAt: timestamp({ ...fieldOptions, db: { updatedAt: true } }),
-
+    /**
+     * Bellow items for define the behavior of the event
+     */
     bidLock: select({
       label: "Bids on Amount Smaller than the Winning bid amount is",
       type: "enum",
       defaultValue: "unlocked",
       options: ["locked", "unlocked"],
     }),
+    isSpecialEvent: checkbox(),
   },
   graphql: {
     cacheHint: { maxAge: 600 },

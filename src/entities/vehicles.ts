@@ -95,7 +95,7 @@ export const Vehicle = list({
     bidStatus: select({
       type: "enum",
       defaultValue: "pending",
-      options: ["pending", "blocked", "live", "closed"],
+      options: ["pending", "approved", "fulfilled", "declined"],
       ui: {
         createView: { fieldMode: isAdminCreate },
         itemView: { fieldMode: "read" },

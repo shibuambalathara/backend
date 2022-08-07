@@ -108,10 +108,10 @@ export const Payment = list({
           "firstName",
           "lastName",
           "mobile",
-          "vehicleBuyingLimit",
+          "currentVehicleBuyingLimit",
           "status",
-          "specialVehicleBuyingLimit",
         ],
+        linkToItem: true,
       },
     }),
     image: image({ storage: "local_images" }),
@@ -123,7 +123,7 @@ export const Payment = list({
           fieldMode: "read",
         },
         itemView: {
-          fieldMode: "read",
+          fieldMode: isAdminEdit,
         },
         createView: {
           fieldMode: "hidden",

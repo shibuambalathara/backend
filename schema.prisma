@@ -55,7 +55,7 @@ model User {
   state                     String               @default("")
   city                      String               @default("")
   role                      UserRoleType?        @default(dealer)
-  bidEnabledVehicles        VehicleUser[]        @relation("VehicleUser_user")
+  biddedVehicles            VehicleUser[]        @relation("VehicleUser_user")
   watchList                 Vehicle[]            @relation("User_watchList")
   emdUpdates                EmdUpdate[]          @relation("EmdUpdate_user")
   payments                  Payment[]            @relation("Payment_user")
@@ -95,6 +95,7 @@ model Payment {
 
 model EmdUpdate {
   id                                 String    @id @default(cuid())
+  emdNo                              Int       @default(autoincrement())
   vehicleBuyingLimitIncrement        Int?      @default(1)
   specialVehicleBuyingLimitIncrement Int?      @default(0)
   payment                            Payment?  @relation("EmdUpdate_payment", fields: [paymentId], references: [id])
@@ -106,6 +107,7 @@ model EmdUpdate {
   createdBy                          User?     @relation("EmdUpdate_createdBy", fields: [createdById], references: [id])
   createdById                        String?   @map("createdBy")
 
+  @@index([emdNo])
   @@index([paymentId])
   @@index([userId])
   @@index([createdById])
@@ -133,6 +135,7 @@ model Event {
   createdAt              DateTime?         @default(now())
   updatedAt              DateTime?         @updatedAt
   bidLock                EventBidLockType? @default(unlocked)
+  isSpecialEvent         Boolean           @default(false)
 
   @@index([eventNo])
   @@index([sellerId])
@@ -329,9 +332,9 @@ enum EventBidLockType {
 
 enum VehicleBidStatusType {
   pending
-  blocked
-  live
-  closed
+  approved
+  fulfilled
+  declined
 }
 
 enum VehicleFuelType {

@@ -116,7 +116,7 @@ export const VehicleUser = list({
       many: false,
     }),
     user: relationship({
-      ref: "User.bidEnabledVehicles",
+      ref: "User.biddedVehicles",
       many: false,
     }),
     remainingBids: integer({

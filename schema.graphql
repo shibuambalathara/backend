@@ -25,13 +25,13 @@ type User {
   state: String
   city: String
   role: UserRoleType
-  bidEnabledVehicles(
+  biddedVehicles(
     where: VehicleUserWhereInput! = {}
     orderBy: [VehicleUserOrderByInput!]! = []
     take: Int
     skip: Int! = 0
   ): [VehicleUser!]
-  bidEnabledVehiclesCount(where: VehicleUserWhereInput! = {}): Int
+  biddedVehiclesCount(where: VehicleUserWhereInput! = {}): Int
   watchList(
     where: VehicleWhereInput! = {}
     orderBy: [VehicleOrderByInput!]! = []
@@ -164,7 +164,7 @@ input UserWhereInput {
   state: StringFilter
   city: StringFilter
   role: UserRoleTypeNullableFilter
-  bidEnabledVehicles: VehicleUserManyRelationFilter
+  biddedVehicles: VehicleUserManyRelationFilter
   watchList: VehicleManyRelationFilter
   emdUpdates: EmdUpdateManyRelationFilter
   payments: PaymentManyRelationFilter
@@ -359,7 +359,7 @@ input UserUpdateInput {
   state: String
   city: String
   role: UserRoleType
-  bidEnabledVehicles: VehicleUserRelateToManyForUpdateInput
+  biddedVehicles: VehicleUserRelateToManyForUpdateInput
   watchList: VehicleRelateToManyForUpdateInput
   emdUpdates: EmdUpdateRelateToManyForUpdateInput
   payments: PaymentRelateToManyForUpdateInput
@@ -451,7 +451,7 @@ input UserCreateInput {
   state: String
   city: String
   role: UserRoleType
-  bidEnabledVehicles: VehicleUserRelateToManyForCreateInput
+  biddedVehicles: VehicleUserRelateToManyForCreateInput
   watchList: VehicleRelateToManyForCreateInput
   emdUpdates: EmdUpdateRelateToManyForCreateInput
   payments: PaymentRelateToManyForCreateInput
@@ -626,6 +626,7 @@ input UserRelateToOneForCreateInput {
 
 type EmdUpdate {
   id: ID!
+  emdNo: Int
   vehicleBuyingLimitIncrement: Int
   specialVehicleBuyingLimitIncrement: Int
   payment: Payment
@@ -644,6 +645,7 @@ input EmdUpdateWhereInput {
   OR: [EmdUpdateWhereInput!]
   NOT: [EmdUpdateWhereInput!]
   id: IDFilter
+  emdNo: IntFilter
   vehicleBuyingLimitIncrement: IntNullableFilter
   specialVehicleBuyingLimitIncrement: IntNullableFilter
   payment: PaymentWhereInput
@@ -655,6 +657,7 @@ input EmdUpdateWhereInput {
 
 input EmdUpdateOrderByInput {
   id: OrderDirection
+  emdNo: OrderDirection
   vehicleBuyingLimitIncrement: OrderDirection
   specialVehicleBuyingLimitIncrement: OrderDirection
   createdAt: OrderDirection
@@ -662,6 +665,7 @@ input EmdUpdateOrderByInput {
 }
 
 input EmdUpdateUpdateInput {
+  emdNo: Int
   vehicleBuyingLimitIncrement: Int
   specialVehicleBuyingLimitIncrement: Int
   payment: PaymentRelateToOneForUpdateInput
@@ -681,6 +685,7 @@ input EmdUpdateUpdateArgs {
 }
 
 input EmdUpdateCreateInput {
+  emdNo: Int
   vehicleBuyingLimitIncrement: Int
   specialVehicleBuyingLimitIncrement: Int
   payment: PaymentRelateToOneForCreateInput
@@ -723,6 +728,7 @@ type Event {
   createdAt: DateTime
   updatedAt: DateTime
   bidLock: EventBidLockType
+  isSpecialEvent: Boolean
 }
 
 enum EventStatusType {
@@ -765,6 +771,7 @@ input EventWhereInput {
   createdAt: DateTimeNullableFilter
   updatedAt: DateTimeNullableFilter
   bidLock: EventBidLockTypeNullableFilter
+  isSpecialEvent: BooleanFilter
 }
 
 input EventTypeManyRelationFilter {
@@ -798,6 +805,11 @@ input EventBidLockTypeNullableFilter {
   not: EventBidLockTypeNullableFilter
 }
 
+input BooleanFilter {
+  equals: Boolean
+  not: BooleanFilter
+}
+
 input EventOrderByInput {
   id: OrderDirection
   eventNo: OrderDirection
@@ -809,6 +821,7 @@ input EventOrderByInput {
   createdAt: OrderDirection
   updatedAt: OrderDirection
   bidLock: OrderDirection
+  isSpecialEvent: OrderDirection
 }
 
 input EventUpdateInput {
@@ -826,6 +839,7 @@ input EventUpdateInput {
   ExcelFile: ExcelUploadRelateToOneForUpdateInput
   termsAndConditions: JSON
   bidLock: EventBidLockType
+  isSpecialEvent: Boolean
 }
 
 input SellerRelateToOneForUpdateInput {
@@ -879,6 +893,7 @@ input EventCreateInput {
   ExcelFile: ExcelUploadRelateToOneForCreateInput
   termsAndConditions: JSON
   bidLock: EventBidLockType
+  isSpecialEvent: Boolean
 }
 
 input SellerRelateToOneForCreateInput {
@@ -985,9 +1000,9 @@ type Vehicle {
 
 enum VehicleBidStatusType {
   pending
-  blocked
-  live
-  closed
+  approved
+  fulfilled
+  declined
 }
 
 enum VehicleFuelType {

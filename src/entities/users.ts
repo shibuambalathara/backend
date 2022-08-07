@@ -75,14 +75,16 @@ export const User = list({
       defaultValue: 0,
       ui: {
         createView: { fieldMode: "hidden" },
-        itemView: { fieldMode: "read" },
+        itemView: { fieldMode: "hidden" },
+        listView: { fieldMode: "hidden" },
       },
     }),
     specialVehicleBuyingLimit: integer({
       defaultValue: 0,
       ui: {
         createView: { fieldMode: "hidden" },
-        itemView: { fieldMode: "read" },
+        itemView: { fieldMode: "hidden" },
+        listView: { fieldMode: "hidden" },
       },
     }),
     image: image({ storage: "local_images" }),
@@ -118,7 +120,7 @@ export const User = list({
         itemView: { fieldMode: isAdminEdit },
       },
     }),
-    bidEnabledVehicles: relationship({
+    biddedVehicles: relationship({
       ref: "VehicleUser.user",
       many: true,
       ui: {
@@ -201,14 +203,6 @@ export const User = list({
       ref: "State.users",
       many: true,
     }),
-    // bidCountUpdates: relationship({
-    //   ref: "BidCountUpdate.createdFor",
-    //   many: true,
-    //   ui: {
-    //     createView: { fieldMode: "hidden" },
-    //     itemView: { fieldMode: "read" },
-    //   },
-    // }),
     activeBids: relationship({
       ref: "Vehicle.currentBidUser",
       many: true,
