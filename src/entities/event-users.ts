@@ -58,7 +58,7 @@ export const EventUser = list({
       const [event, user] = await Promise.all([
         context.query.Event.findOne({
           where: { id: resolvedData?.event?.connect?.id },
-          query: "id name noOfBids",
+          query: "id eventNo noOfBids",
         }),
         context.query.User.findOne({
           where: { id: resolvedData?.user?.connect?.id },
@@ -67,7 +67,7 @@ export const EventUser = list({
       ]);
       return {
         ...resolvedData,
-        name: `${user?.firstName ?? user?.username}: ${event?.name}`,
+        name: `${user?.firstName ?? user?.username}: ${event?.eventNo}`,
         remainingBids: event?.noOfBids,
       };
     },
@@ -86,22 +86,6 @@ export const EventUser = list({
       ref: "User.userEvents",
       many: false,
     }),
-    // remainingBids: integer({
-    //   ui: {
-    //     createView: { fieldMode: "hidden" },
-    //     itemView: {
-    //       fieldMode: "read",
-    //     },
-    //   },
-    // }),
-    // bidCountUpdates: relationship({
-    //   ref: "BidCountUpdate.eventUser",
-    //   many: true,
-    //   ui: {
-    //     createView: { fieldMode: "hidden" },
-    //     itemView: { fieldMode: "read" },
-    //   },
-    // }),
 
     status: select({
       type: "enum",

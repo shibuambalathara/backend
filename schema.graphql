@@ -10,6 +10,7 @@ type User {
   phone: String
   mobile: String
   password: PasswordState
+  currentVehicleBuyingLimit: vehicleBuyingLimits
   vehicleBuyingLimit: Int
   specialVehicleBuyingLimit: Int
   image: ImageFieldOutput
@@ -31,7 +32,6 @@ type User {
     skip: Int! = 0
   ): [VehicleUser!]
   bidEnabledVehiclesCount(where: VehicleUserWhereInput! = {}): Int
-  emdBalance: Int
   watchList(
     where: VehicleWhereInput! = {}
     orderBy: [VehicleOrderByInput!]! = []
@@ -91,6 +91,11 @@ type User {
 
 type PasswordState {
   isSet: Boolean!
+}
+
+type vehicleBuyingLimits {
+  vehicleBuyingLimit: Int
+  specialVehicleBuyingLimit: Int
 }
 
 type ImageFieldOutput {
@@ -160,7 +165,6 @@ input UserWhereInput {
   city: StringFilter
   role: UserRoleTypeNullableFilter
   bidEnabledVehicles: VehicleUserManyRelationFilter
-  emdBalance: IntNullableFilter
   watchList: VehicleManyRelationFilter
   emdUpdates: EmdUpdateManyRelationFilter
   payments: PaymentManyRelationFilter
@@ -321,7 +325,6 @@ input UserOrderByInput {
   state: OrderDirection
   city: OrderDirection
   role: OrderDirection
-  emdBalance: OrderDirection
   status: OrderDirection
   createdAt: OrderDirection
   updatedAt: OrderDirection
@@ -357,7 +360,6 @@ input UserUpdateInput {
   city: String
   role: UserRoleType
   bidEnabledVehicles: VehicleUserRelateToManyForUpdateInput
-  emdBalance: Int
   watchList: VehicleRelateToManyForUpdateInput
   emdUpdates: EmdUpdateRelateToManyForUpdateInput
   payments: PaymentRelateToManyForUpdateInput
@@ -450,7 +452,6 @@ input UserCreateInput {
   city: String
   role: UserRoleType
   bidEnabledVehicles: VehicleUserRelateToManyForCreateInput
-  emdBalance: Int
   watchList: VehicleRelateToManyForCreateInput
   emdUpdates: EmdUpdateRelateToManyForCreateInput
   payments: PaymentRelateToManyForCreateInput
@@ -721,6 +722,7 @@ type Event {
   termsAndConditions: Event_termsAndConditions_Document
   createdAt: DateTime
   updatedAt: DateTime
+  bidLock: EventBidLockType
 }
 
 enum EventStatusType {
@@ -732,6 +734,11 @@ enum EventStatusType {
 
 type Event_termsAndConditions_Document {
   document(hydrateRelationships: Boolean! = false): JSON!
+}
+
+enum EventBidLockType {
+  locked
+  unlocked
 }
 
 input EventWhereUniqueInput {
@@ -757,6 +764,7 @@ input EventWhereInput {
   ExcelFile: ExcelUploadWhereInput
   createdAt: DateTimeNullableFilter
   updatedAt: DateTimeNullableFilter
+  bidLock: EventBidLockTypeNullableFilter
 }
 
 input EventTypeManyRelationFilter {
@@ -783,6 +791,13 @@ input EventStatusTypeNullableFilter {
   not: EventStatusTypeNullableFilter
 }
 
+input EventBidLockTypeNullableFilter {
+  equals: EventBidLockType
+  in: [EventBidLockType!]
+  notIn: [EventBidLockType!]
+  not: EventBidLockTypeNullableFilter
+}
+
 input EventOrderByInput {
   id: OrderDirection
   eventNo: OrderDirection
@@ -793,6 +808,7 @@ input EventOrderByInput {
   status: OrderDirection
   createdAt: OrderDirection
   updatedAt: OrderDirection
+  bidLock: OrderDirection
 }
 
 input EventUpdateInput {
@@ -809,6 +825,7 @@ input EventUpdateInput {
   status: EventStatusType
   ExcelFile: ExcelUploadRelateToOneForUpdateInput
   termsAndConditions: JSON
+  bidLock: EventBidLockType
 }
 
 input SellerRelateToOneForUpdateInput {
@@ -861,6 +878,7 @@ input EventCreateInput {
   status: EventStatusType
   ExcelFile: ExcelUploadRelateToOneForCreateInput
   termsAndConditions: JSON
+  bidLock: EventBidLockType
 }
 
 input SellerRelateToOneForCreateInput {

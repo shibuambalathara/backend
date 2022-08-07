@@ -56,7 +56,6 @@ model User {
   city                      String               @default("")
   role                      UserRoleType?        @default(dealer)
   bidEnabledVehicles        VehicleUser[]        @relation("VehicleUser_user")
-  emdBalance                Int?                 @default(0)
   watchList                 Vehicle[]            @relation("User_watchList")
   emdUpdates                EmdUpdate[]          @relation("EmdUpdate_user")
   payments                  Payment[]            @relation("Payment_user")
@@ -113,26 +112,27 @@ model EmdUpdate {
 }
 
 model Event {
-  id                     String           @id @default(cuid())
-  eventNo                Int              @default(autoincrement())
-  seller                 Seller?          @relation("Event_seller", fields: [sellerId], references: [id])
-  sellerId               String?          @map("seller")
-  eventType              EventType[]      @relation("Event_eventType")
-  eventCategory          EventCategory?   @relation("Event_eventCategory", fields: [eventCategoryId], references: [id])
-  eventCategoryId        String?          @map("eventCategory")
-  location               Location?        @relation("Event_location", fields: [locationId], references: [id])
-  locationId             String?          @map("location")
-  vehicles               Vehicle[]        @relation("Vehicle_event")
+  id                     String            @id @default(cuid())
+  eventNo                Int               @default(autoincrement())
+  seller                 Seller?           @relation("Event_seller", fields: [sellerId], references: [id])
+  sellerId               String?           @map("seller")
+  eventType              EventType[]       @relation("Event_eventType")
+  eventCategory          EventCategory?    @relation("Event_eventCategory", fields: [eventCategoryId], references: [id])
+  eventCategoryId        String?           @map("eventCategory")
+  location               Location?         @relation("Event_location", fields: [locationId], references: [id])
+  locationId             String?           @map("location")
+  vehicles               Vehicle[]         @relation("Vehicle_event")
   startDate              DateTime
   endDate                DateTime
   noOfBids               Int
-  emdAmountPerBidVehicle Int              @default(10000)
-  status                 EventStatusType? @default(active)
-  ExcelFile              ExcelUpload?     @relation("Event_ExcelFile", fields: [ExcelFileId], references: [id])
-  ExcelFileId            String?          @unique @map("ExcelFile")
-  termsAndConditions     Json             @default("[{\"type\":\"paragraph\",\"children\":[{\"text\":\"\"}]}]")
-  createdAt              DateTime?        @default(now())
-  updatedAt              DateTime?        @updatedAt
+  emdAmountPerBidVehicle Int               @default(10000)
+  status                 EventStatusType?  @default(active)
+  ExcelFile              ExcelUpload?      @relation("Event_ExcelFile", fields: [ExcelFileId], references: [id])
+  ExcelFileId            String?           @unique @map("ExcelFile")
+  termsAndConditions     Json              @default("[{\"type\":\"paragraph\",\"children\":[{\"text\":\"\"}]}]")
+  createdAt              DateTime?         @default(now())
+  updatedAt              DateTime?         @updatedAt
+  bidLock                EventBidLockType? @default(unlocked)
 
   @@index([eventNo])
   @@index([sellerId])
@@ -320,6 +320,11 @@ enum EventStatusType {
   blocked
   active
   inactive
+}
+
+enum EventBidLockType {
+  locked
+  unlocked
 }
 
 enum VehicleBidStatusType {

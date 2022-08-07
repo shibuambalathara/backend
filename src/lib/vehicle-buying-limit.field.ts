@@ -14,13 +14,13 @@ export const vehicleBuyingLimitField = virtual({
       },
     }),
     async resolve(item: any, args, context) {
-      const { author } = await context.query.User.findOne({
+      const user = await context.query.User.findOne({
         where: { id: item.id },
-        query: "author { name }",
+        query: "vehicleBuyingLimit specialVehicleBuyingLimit",
       });
       return {
-        vehicleBuyingLimit: 10,
-        specialVehicleBuyingLimit: 1,
+        vehicleBuyingLimit: user.vehicleBuyingLimit,
+        specialVehicleBuyingLimit: user.specialVehicleBuyingLimit,
       };
     },
   }),

@@ -16,6 +16,7 @@ import {
   isSignedIn,
   isSuperAdmin,
 } from "../application/access";
+import { vehicleBuyingLimitField } from "../lib/vehicle-buying-limit.field";
 
 const ownerFilter = ({ session, context, listKey, operation }) => {
   if (session?.data?.role === "admin") {
@@ -69,7 +70,7 @@ export const User = list({
       //   isRequired: true,
       // },
     }),
-    // vehicleBuyingLimit: vehicleBuyingLimitField,
+    currentVehicleBuyingLimit: vehicleBuyingLimitField,
     vehicleBuyingLimit: integer({
       defaultValue: 0,
       ui: {
@@ -131,9 +132,6 @@ export const User = list({
           fieldMode: "hidden",
         },
       },
-    }),
-    emdBalance: integer({
-      defaultValue: 0,
     }),
     watchList: relationship({
       ref: "Vehicle.watchedBy",

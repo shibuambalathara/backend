@@ -138,6 +138,13 @@ export const Event = list({
     }),
     createdAt: timestamp({ ...fieldOptions, defaultValue: { kind: "now" } }),
     updatedAt: timestamp({ ...fieldOptions, db: { updatedAt: true } }),
+
+    bidLock: select({
+      label: "Bids on Amount Smaller than the Winning bid amount is",
+      type: "enum",
+      defaultValue: "unlocked",
+      options: ["locked", "unlocked"],
+    }),
   },
   graphql: {
     cacheHint: { maxAge: 600 },

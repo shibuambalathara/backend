@@ -40,8 +40,8 @@ const { withAuth } = createAuth({
     email
     mobile
     role
-    emdBalance
-    status`,
+    status
+    currentVehicleBuyingLimit { vehicleBuyingLimit specialVehicleBuyingLimit } `,
   secretField: "password",
   initFirstItem: {
     // If there are no items in the database, keystone will ask you to create

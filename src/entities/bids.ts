@@ -9,6 +9,7 @@ import {
   fieldOptions,
   isAdminCreate,
   isAdminEdit,
+  isSignedIn,
   isSuperAdmin,
 } from "../application/access";
 
@@ -26,8 +27,8 @@ const ownerFilter = ({ session, context, listKey, operation }) => {
 export const Bid = list({
   access: {
     operation: {
-      query: ({ session }) => !!session?.itemId,
-      create: ({ session }) => !!session?.itemId,
+      query: isSignedIn,
+      create: isSignedIn,
       update: isSuperAdmin,
       delete: isSuperAdmin,
     },
@@ -121,11 +122,11 @@ export const Bid = list({
           query: ` username `,
         }),
       ]);
-      resolvedData.name = `${user?.username} : ${bidVehicle?.registrationNumber}`
+      resolvedData.name = `${user?.username} : ${bidVehicle?.registrationNumber}`;
       if (context?.session?.data?.role !== "admin") {
-        resolvedData.user = { connect: { id: context?.session?.itemId } }
+        resolvedData.user = { connect: { id: context?.session?.itemId } };
       }
-      return resolvedData
+      return resolvedData;
     },
     afterOperation: async ({
       listKey,
