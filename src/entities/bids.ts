@@ -15,12 +15,12 @@ import {
 } from "../application/access";
 
 const ownerFilter = ({ session, context, listKey, operation }) => {
-  if (session.data.role === "admin") {
+  if (session?.data?.role === "admin") {
     return true;
   }
   return {
     vehicle: {
-      event: { id: { in: session.data?.userEvents?.map((e) => e.event.id) } },
+      event: { id: { in: session?.data?.userEvents?.map((e) => e.event.id) } },
     },
   };
 };

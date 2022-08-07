@@ -16,10 +16,9 @@ import {
   isSignedIn,
   isSuperAdmin,
 } from "../application/access";
-import { vehicleBuyingLimitField } from "../lib/vehicle-buying-limit.field";
 
 const ownerFilter = ({ session, context, listKey, operation }) => {
-  if (session.data.role === "admin") {
+  if (session?.data?.role === "admin") {
     return true;
   }
   return { id: { equals: session?.itemId } };
@@ -28,8 +27,8 @@ const ownerFilter = ({ session, context, listKey, operation }) => {
 export const User = list({
   access: {
     operation: {
-      query: () => true, //!!session?.itemId,
-      create: ({ session }) => true, //!session?.itemId || isSuperAdmin({ session }),
+      query: isSignedIn,
+      create: () => true, //!session?.itemId || isSuperAdmin({ session }),
       update: isSignedIn,
       delete: isSuperAdmin,
     },
@@ -70,7 +69,21 @@ export const User = list({
       //   isRequired: true,
       // },
     }),
-    vehicleBuyingLimit: vehicleBuyingLimitField,
+    // vehicleBuyingLimit: vehicleBuyingLimitField,
+    vehicleBuyingLimit: integer({
+      defaultValue: 0,
+      ui: {
+        createView: { fieldMode: "hidden" },
+        itemView: { fieldMode: "read" },
+      },
+    }),
+    specialVehicleBuyingLimit: integer({
+      defaultValue: 0,
+      ui: {
+        createView: { fieldMode: "hidden" },
+        itemView: { fieldMode: "read" },
+      },
+    }),
     image: image({ storage: "local_images" }),
     pancard: image({ storage: "local_images" }),
     pancardNo: text({}),

@@ -13,7 +13,7 @@ import {
 } from "../application/access";
 
 const ownerFilter = ({ session, context, listKey, operation }) => {
-  if (session.data.role === "admin") {
+  if (session?.data?.role === "admin") {
     return true;
   }
   return {
@@ -40,9 +40,9 @@ export const Bid = list({
       try {
         const { amount } = resolvedData;
         const userId =
-          context.session.data.role === "admin"
+          context?.session?.data?.role === "admin"
             ? resolvedData.user.connect.id
-            : context.session.itemId;
+            : context?.session?.itemId;
         const [bidVehicle, bidCount, emdBalance] = await Promise.all([
           context.query.Vehicle.findOne({
             where: { id: resolvedData?.bidVehicle?.connect?.id },

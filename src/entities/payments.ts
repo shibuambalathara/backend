@@ -7,10 +7,10 @@ import {
   image,
 } from "@keystone-6/core/fields";
 import { list } from "@keystone-6/core";
-import { fieldOptions } from "../application/access";
+import { fieldOptions, isAdminEdit } from "../application/access";
 
 const ownerFilter = ({ session, context, listKey, operation }) => {
-  if (session.data.role === "admin") {
+  if (session?.data?.role === "admin") {
     return true;
   }
   return { user: { id: { equals: session?.itemId } } };
@@ -48,10 +48,20 @@ export const Payment = list({
 
   ui: {
     createView: { defaultFieldMode: "edit" },
-    itemView: { defaultFieldMode: "read" },
+    itemView: { defaultFieldMode: isAdminEdit },
+    labelField: "refNo",
   },
 
   fields: {
+    refNo: integer({
+      isIndexed: true,
+      defaultValue: {
+        kind: "autoincrement",
+      },
+      db: {
+        isNullable: false,
+      },
+    }),
     amount: integer({
       defaultValue: 10000,
     }),
@@ -91,6 +101,10 @@ export const Payment = list({
       },
     }),
     image: image({ storage: "local_images" }),
+    emdUpdate: relationship({
+      ref: "EmdUpdate.payment",
+      many: false,
+    }),
     createdAt: timestamp({
       ...fieldOptions,
       defaultValue: { kind: "now" },

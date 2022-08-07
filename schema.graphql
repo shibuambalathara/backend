@@ -10,7 +10,8 @@ type User {
   phone: String
   mobile: String
   password: PasswordState
-  vehicleBuyingLimit: vehicleBuyingLimits
+  vehicleBuyingLimit: Int
+  specialVehicleBuyingLimit: Int
   image: ImageFieldOutput
   pancard: ImageFieldOutput
   pancardNo: String
@@ -92,11 +93,6 @@ type PasswordState {
   isSet: Boolean!
 }
 
-type vehicleBuyingLimits {
-  vehicleBuyingLimit: Int
-  specialVehicleBuyingLimit: Int
-}
-
 type ImageFieldOutput {
   id: ID!
   filesize: Int!
@@ -154,6 +150,8 @@ input UserWhereInput {
   phone: StringFilter
   mobile: StringFilter
   password: PasswordFilter
+  vehicleBuyingLimit: IntNullableFilter
+  specialVehicleBuyingLimit: IntNullableFilter
   pancardNo: StringFilter
   idProofType: UserIdProofTypeTypeNullableFilter
   idProofNo: StringFilter
@@ -227,6 +225,17 @@ input PasswordFilter {
   isSet: Boolean!
 }
 
+input IntNullableFilter {
+  equals: Int
+  in: [Int!]
+  notIn: [Int!]
+  lt: Int
+  lte: Int
+  gt: Int
+  gte: Int
+  not: IntNullableFilter
+}
+
 input UserIdProofTypeTypeNullableFilter {
   equals: UserIdProofTypeType
   in: [UserIdProofTypeType!]
@@ -245,17 +254,6 @@ input VehicleUserManyRelationFilter {
   every: VehicleUserWhereInput
   some: VehicleUserWhereInput
   none: VehicleUserWhereInput
-}
-
-input IntNullableFilter {
-  equals: Int
-  in: [Int!]
-  notIn: [Int!]
-  lt: Int
-  lte: Int
-  gt: Int
-  gte: Int
-  not: IntNullableFilter
 }
 
 input VehicleManyRelationFilter {
@@ -314,6 +312,8 @@ input UserOrderByInput {
   username: OrderDirection
   phone: OrderDirection
   mobile: OrderDirection
+  vehicleBuyingLimit: OrderDirection
+  specialVehicleBuyingLimit: OrderDirection
   pancardNo: OrderDirection
   idProofType: OrderDirection
   idProofNo: OrderDirection
@@ -342,6 +342,8 @@ input UserUpdateInput {
   phone: String
   mobile: String
   password: String
+  vehicleBuyingLimit: Int
+  specialVehicleBuyingLimit: Int
   image: ImageFieldInput
   pancard: ImageFieldInput
   pancardNo: String
@@ -433,6 +435,8 @@ input UserCreateInput {
   phone: String
   mobile: String
   password: String
+  vehicleBuyingLimit: Int
+  specialVehicleBuyingLimit: Int
   image: ImageFieldInput
   pancard: ImageFieldInput
   pancardNo: String
@@ -1605,7 +1609,9 @@ input SellerCreateInput {
 
 type EmdUpdate {
   id: ID!
-  incrementEmdAmount: Int
+  vehicleBuyingLimitIncrement: Int
+  specialVehicleBuyingLimitIncrement: Int
+  payment: Payment
   user: User
   createdAt: DateTime
   updatedAt: DateTime
@@ -1621,7 +1627,9 @@ input EmdUpdateWhereInput {
   OR: [EmdUpdateWhereInput!]
   NOT: [EmdUpdateWhereInput!]
   id: IDFilter
-  incrementEmdAmount: IntNullableFilter
+  vehicleBuyingLimitIncrement: IntNullableFilter
+  specialVehicleBuyingLimitIncrement: IntNullableFilter
+  payment: PaymentWhereInput
   user: UserWhereInput
   createdAt: DateTimeNullableFilter
   updatedAt: DateTimeNullableFilter
@@ -1630,15 +1638,24 @@ input EmdUpdateWhereInput {
 
 input EmdUpdateOrderByInput {
   id: OrderDirection
-  incrementEmdAmount: OrderDirection
+  vehicleBuyingLimitIncrement: OrderDirection
+  specialVehicleBuyingLimitIncrement: OrderDirection
   createdAt: OrderDirection
   updatedAt: OrderDirection
 }
 
 input EmdUpdateUpdateInput {
-  incrementEmdAmount: Int
+  vehicleBuyingLimitIncrement: Int
+  specialVehicleBuyingLimitIncrement: Int
+  payment: PaymentRelateToOneForUpdateInput
   user: UserRelateToOneForUpdateInput
   createdBy: UserRelateToOneForUpdateInput
+}
+
+input PaymentRelateToOneForUpdateInput {
+  create: PaymentCreateInput
+  connect: PaymentWhereUniqueInput
+  disconnect: Boolean
 }
 
 input EmdUpdateUpdateArgs {
@@ -1647,19 +1664,28 @@ input EmdUpdateUpdateArgs {
 }
 
 input EmdUpdateCreateInput {
-  incrementEmdAmount: Int
+  vehicleBuyingLimitIncrement: Int
+  specialVehicleBuyingLimitIncrement: Int
+  payment: PaymentRelateToOneForCreateInput
   user: UserRelateToOneForCreateInput
   createdBy: UserRelateToOneForCreateInput
 }
 
+input PaymentRelateToOneForCreateInput {
+  create: PaymentCreateInput
+  connect: PaymentWhereUniqueInput
+}
+
 type Payment {
   id: ID!
+  refNo: Int
   amount: Int
   paymentFor: String
   description: String
   status: String
   user: User
   image: ImageFieldOutput
+  emdUpdate: EmdUpdate
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -1673,11 +1699,13 @@ input PaymentWhereInput {
   OR: [PaymentWhereInput!]
   NOT: [PaymentWhereInput!]
   id: IDFilter
+  refNo: IntFilter
   amount: IntNullableFilter
   paymentFor: StringFilter
   description: StringFilter
   status: StringNullableFilter
   user: UserWhereInput
+  emdUpdate: EmdUpdateWhereInput
   createdAt: DateTimeNullableFilter
   updatedAt: DateTimeNullableFilter
 }
@@ -1713,6 +1741,7 @@ input NestedStringNullableFilter {
 
 input PaymentOrderByInput {
   id: OrderDirection
+  refNo: OrderDirection
   amount: OrderDirection
   paymentFor: OrderDirection
   description: OrderDirection
@@ -1722,12 +1751,20 @@ input PaymentOrderByInput {
 }
 
 input PaymentUpdateInput {
+  refNo: Int
   amount: Int
   paymentFor: String
   description: String
   status: String
   user: UserRelateToOneForUpdateInput
   image: ImageFieldInput
+  emdUpdate: EmdUpdateRelateToOneForUpdateInput
+}
+
+input EmdUpdateRelateToOneForUpdateInput {
+  create: EmdUpdateCreateInput
+  connect: EmdUpdateWhereUniqueInput
+  disconnect: Boolean
 }
 
 input PaymentUpdateArgs {
@@ -1736,12 +1773,19 @@ input PaymentUpdateArgs {
 }
 
 input PaymentCreateInput {
+  refNo: Int
   amount: Int
   paymentFor: String
   description: String
   status: String
   user: UserRelateToOneForCreateInput
   image: ImageFieldInput
+  emdUpdate: EmdUpdateRelateToOneForCreateInput
+}
+
+input EmdUpdateRelateToOneForCreateInput {
+  create: EmdUpdateCreateInput
+  connect: EmdUpdateWhereUniqueInput
 }
 
 """

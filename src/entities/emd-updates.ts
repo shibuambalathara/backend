@@ -23,12 +23,21 @@ export const EmdUpdate = list({
     hideDelete: true,
   },
   hooks: {
-    resolveInput: ({ resolvedData, context, operation }) => {
+    resolveInput: async ({ resolvedData, context, operation }) => {
       if (operation !== "create") {
         return resolvedData;
       }
+      const { user } = await context.query.Payment.findOne({
+        where: { id: resolvedData.payment.connect.id },
+        query: `user { id }`,
+      });
       return {
         ...resolvedData,
+        user: {
+          connect: {
+            id: user.id,
+          },
+        },
         createdBy: {
           connect: {
             id: context?.session?.itemId,
@@ -42,24 +51,45 @@ export const EmdUpdate = list({
       }
       await context.db.User.updateOne({
         where: {
-          id: resolvedData?.User?.connect?.id,
+          id: resolvedData?.user?.connect?.id,
         },
         data: {
-          remainingBids: {
-            increment: resolvedData?.incrementEmdAmount,
+          vehicleBuyingLimit: {
+            increment: resolvedData?.vehicleBuyingLimitIncrement,
+          },
+          specialVehicleBuyingLimit: {
+            increment: resolvedData?.specialVehicleBuyingLimitIncrement,
           },
         },
       });
     },
   },
   fields: {
-    incrementEmdAmount: integer({
-      defaultValue: 10000,
+    vehicleBuyingLimitIncrement: integer({
+      defaultValue: 1,
     }),
-
+    specialVehicleBuyingLimitIncrement: integer({
+      defaultValue: 0,
+    }),
+    payment: relationship({
+      ref: "Payment.emdUpdate",
+      many: false,
+      db: { foreignKey: true },
+    }),
     user: relationship({
       ref: "User.emdUpdates",
       many: false,
+      ui: {
+        listView: {
+          fieldMode: "read",
+        },
+        itemView: {
+          fieldMode: "read",
+        },
+        createView: {
+          fieldMode: "hidden",
+        },
+      },
     }),
     createdAt: timestamp({
       ...fieldOptions,

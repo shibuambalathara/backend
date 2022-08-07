@@ -14,7 +14,7 @@ import {
 } from "../application/access";
 
 const ownerFilter = ({ session, context, listKey, operation }) => {
-  if (session.data.role === "admin") {
+  if (session?.data?.role === "admin") {
     return true;
   }
   return { user: { id: { equals: session?.itemId } } };

@@ -17,7 +17,7 @@ import {
 } from "../application/access";
 
 const ownerFilter = ({ session, context, listKey, operation }) => {
-  if (session.data.status === "active") {
+  if (session?.data?.status === "active") {
     return true;
   }
   return false

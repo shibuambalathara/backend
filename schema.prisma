@@ -13,61 +13,63 @@ generator client {
 }
 
 model User {
-  id                    String               @id @default(cuid())
-  firstName             String               @default("")
-  lastName              String               @default("")
-  email                 String               @default("")
-  username              String               @unique @default("")
-  phone                 String               @default("")
-  mobile                String               @unique @default("")
-  password              String?
-  image_filesize        Int?
-  image_extension       String?
-  image_width           Int?
-  image_height          Int?
-  image_id              String?
-  pancard_filesize      Int?
-  pancard_extension     String?
-  pancard_width         Int?
-  pancard_height        Int?
-  pancard_id            String?
-  pancardNo             String               @default("")
-  idProof_filesize      Int?
-  idProof_extension     String?
-  idProof_width         Int?
-  idProof_height        Int?
-  idProof_id            String?
-  idProofBack_filesize  Int?
-  idProofBack_extension String?
-  idProofBack_width     Int?
-  idProofBack_height    Int?
-  idProofBack_id        String?
-  idProofType           UserIdProofTypeType?
-  idProofNo             String               @default("")
-  dealership_filesize   Int?
-  dealership_extension  String?
-  dealership_width      Int?
-  dealership_height     Int?
-  dealership_id         String?
-  country               String               @default("")
-  state                 String               @default("")
-  city                  String               @default("")
-  role                  UserRoleType?        @default(dealer)
-  bidEnabledVehicles    VehicleUser[]        @relation("VehicleUser_user")
-  emdBalance            Int?                 @default(0)
-  watchList             Vehicle[]            @relation("User_watchList")
-  emdUpdates            EmdUpdate[]          @relation("EmdUpdate_user")
-  payments              Payment[]            @relation("Payment_user")
-  emdUpdatesByAdmin     EmdUpdate[]          @relation("EmdUpdate_createdBy")
-  status                UserStatusType?      @default(pending)
-  states                State[]              @relation("State_users")
-  activeBids            Vehicle[]            @relation("Vehicle_currentBidUser")
-  quotedBids            Bid[]                @relation("Bid_user")
-  createdAt             DateTime?            @default(now())
-  updatedAt             DateTime?            @updatedAt
-  magicAuthToken        String?
-  magicAuthIssuedAt     DateTime?
-  magicAuthRedeemedAt   DateTime?
+  id                        String               @id @default(cuid())
+  firstName                 String               @default("")
+  lastName                  String               @default("")
+  email                     String               @default("")
+  username                  String               @unique @default("")
+  phone                     String               @default("")
+  mobile                    String               @unique @default("")
+  password                  String?
+  vehicleBuyingLimit        Int?                 @default(0)
+  specialVehicleBuyingLimit Int?                 @default(0)
+  image_filesize            Int?
+  image_extension           String?
+  image_width               Int?
+  image_height              Int?
+  image_id                  String?
+  pancard_filesize          Int?
+  pancard_extension         String?
+  pancard_width             Int?
+  pancard_height            Int?
+  pancard_id                String?
+  pancardNo                 String               @default("")
+  idProof_filesize          Int?
+  idProof_extension         String?
+  idProof_width             Int?
+  idProof_height            Int?
+  idProof_id                String?
+  idProofBack_filesize      Int?
+  idProofBack_extension     String?
+  idProofBack_width         Int?
+  idProofBack_height        Int?
+  idProofBack_id            String?
+  idProofType               UserIdProofTypeType?
+  idProofNo                 String               @default("")
+  dealership_filesize       Int?
+  dealership_extension      String?
+  dealership_width          Int?
+  dealership_height         Int?
+  dealership_id             String?
+  country                   String               @default("")
+  state                     String               @default("")
+  city                      String               @default("")
+  role                      UserRoleType?        @default(dealer)
+  bidEnabledVehicles        VehicleUser[]        @relation("VehicleUser_user")
+  emdBalance                Int?                 @default(0)
+  watchList                 Vehicle[]            @relation("User_watchList")
+  emdUpdates                EmdUpdate[]          @relation("EmdUpdate_user")
+  payments                  Payment[]            @relation("Payment_user")
+  emdUpdatesByAdmin         EmdUpdate[]          @relation("EmdUpdate_createdBy")
+  status                    UserStatusType?      @default(pending)
+  states                    State[]              @relation("State_users")
+  activeBids                Vehicle[]            @relation("Vehicle_currentBidUser")
+  quotedBids                Bid[]                @relation("Bid_user")
+  createdAt                 DateTime?            @default(now())
+  updatedAt                 DateTime?            @updatedAt
+  magicAuthToken            String?
+  magicAuthIssuedAt         DateTime?
+  magicAuthRedeemedAt       DateTime?
 }
 
 model Event {
@@ -253,35 +255,41 @@ model Seller {
 }
 
 model EmdUpdate {
-  id                 String    @id @default(cuid())
-  incrementEmdAmount Int?      @default(10000)
-  user               User?     @relation("EmdUpdate_user", fields: [userId], references: [id])
-  userId             String?   @map("user")
-  createdAt          DateTime? @default(now())
-  updatedAt          DateTime? @updatedAt
-  createdBy          User?     @relation("EmdUpdate_createdBy", fields: [createdById], references: [id])
-  createdById        String?   @map("createdBy")
+  id                                 String    @id @default(cuid())
+  vehicleBuyingLimitIncrement        Int?      @default(1)
+  specialVehicleBuyingLimitIncrement Int?      @default(0)
+  payment                            Payment?  @relation("EmdUpdate_payment", fields: [paymentId], references: [id])
+  paymentId                          String?   @unique @map("payment")
+  user                               User?     @relation("EmdUpdate_user", fields: [userId], references: [id])
+  userId                             String?   @map("user")
+  createdAt                          DateTime? @default(now())
+  updatedAt                          DateTime? @updatedAt
+  createdBy                          User?     @relation("EmdUpdate_createdBy", fields: [createdById], references: [id])
+  createdById                        String?   @map("createdBy")
 
   @@index([userId])
   @@index([createdById])
 }
 
 model Payment {
-  id              String    @id @default(cuid())
-  amount          Int?      @default(10000)
+  id              String     @id @default(cuid())
+  refNo           Int        @default(autoincrement())
+  amount          Int?       @default(10000)
   paymentFor      String
-  description     String    @default("")
-  status          String?   @default("pending")
-  user            User?     @relation("Payment_user", fields: [userId], references: [id])
-  userId          String?   @map("user")
+  description     String     @default("")
+  status          String?    @default("pending")
+  user            User?      @relation("Payment_user", fields: [userId], references: [id])
+  userId          String?    @map("user")
   image_filesize  Int?
   image_extension String?
   image_width     Int?
   image_height    Int?
   image_id        String?
-  createdAt       DateTime? @default(now())
-  updatedAt       DateTime? @updatedAt
+  emdUpdate       EmdUpdate? @relation("EmdUpdate_payment")
+  createdAt       DateTime?  @default(now())
+  updatedAt       DateTime?  @updatedAt
 
+  @@index([refNo])
   @@index([userId])
 }
 
