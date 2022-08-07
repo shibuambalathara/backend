@@ -10,6 +10,7 @@ type User {
   phone: String
   mobile: String
   password: PasswordState
+  vehicleBuyingLimit: vehicleBuyingLimits
   image: ImageFieldOutput
   pancard: ImageFieldOutput
   pancardNo: String
@@ -89,6 +90,11 @@ type User {
 
 type PasswordState {
   isSet: Boolean!
+}
+
+type vehicleBuyingLimits {
+  vehicleBuyingLimit: Int
+  specialVehicleBuyingLimit: Int
 }
 
 type ImageFieldOutput {

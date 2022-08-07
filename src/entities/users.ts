@@ -16,6 +16,7 @@ import {
   isSignedIn,
   isSuperAdmin,
 } from "../application/access";
+import { vehicleBuyingLimitField } from "../lib/vehicle-buying-limit.field";
 
 const ownerFilter = ({ session, context, listKey, operation }) => {
   if (session.data.role === "admin") {
@@ -69,6 +70,7 @@ export const User = list({
       //   isRequired: true,
       // },
     }),
+    vehicleBuyingLimit: vehicleBuyingLimitField,
     image: image({ storage: "local_images" }),
     pancard: image({ storage: "local_images" }),
     pancardNo: text({}),
