@@ -22,7 +22,6 @@ type User {
   idProofNo: String
   dealership: ImageFieldOutput
   country: String
-  state: String
   city: String
   role: UserRoleType
   watchList(
@@ -154,7 +153,6 @@ input UserWhereInput {
   idProofType: UserIdProofTypeTypeNullableFilter
   idProofNo: StringFilter
   country: StringFilter
-  state: StringFilter
   city: StringFilter
   role: UserRoleTypeNullableFilter
   watchList: VehicleManyRelationFilter
@@ -308,7 +306,6 @@ input UserOrderByInput {
   idProofType: OrderDirection
   idProofNo: OrderDirection
   country: OrderDirection
-  state: OrderDirection
   city: OrderDirection
   role: OrderDirection
   status: OrderDirection
@@ -342,7 +339,6 @@ input UserUpdateInput {
   idProofNo: String
   dealership: ImageFieldInput
   country: String
-  state: String
   city: String
   role: UserRoleType
   watchList: VehicleRelateToManyForUpdateInput
@@ -426,7 +422,6 @@ input UserCreateInput {
   idProofNo: String
   dealership: ImageFieldInput
   country: String
-  state: String
   city: String
   role: UserRoleType
   watchList: VehicleRelateToManyForCreateInput

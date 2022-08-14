@@ -47,7 +47,7 @@ export const Bid = list({
         const [bidVehicle, bidCount, user] = await Promise.all([
           context.query.Vehicle.findOne({
             where: { id: resolvedData?.bidVehicle?.connect?.id },
-            query: `id currentBidAmount bidTimeExpire event { startDate emdAmountPerBidVehicle noOfBids isSpecialEvent bidLock  } `,
+            query: `id currentBidAmount bidTimeExpire event { startDate emdAmountPerBidVehicle noOfBids isSpecialEvent bidLock location { state { name } } }`,
           }),
           context.query.Bid.count({
             where: {
@@ -59,7 +59,7 @@ export const Bid = list({
           }),
           context.query.User.findOne({
             where: { id: userId },
-            query: `status currentVehicleBuyingLimit { vehicleBuyingLimit specialVehicleBuyingLimit } states { name }`,
+            query: `status currentVehicleBuyingLimit { vehicleBuyingLimit specialVehicleBuyingLimit } states { id name }`,
           }),
         ]);
 
@@ -74,6 +74,16 @@ export const Bid = list({
         }
         if (!bidCount && bidCount >= bidVehicle.event.noOfBids) {
           addValidationError("No Bids Left");
+        }
+        if (
+          !user?.states
+            ?.map((s:{name:string}) => s?.name)
+            ?.includes(bidVehicle?.event?.location?.state?.name)
+        ) {
+          addValidationError(
+            "You are not allowed to bid on this vehicle in the state: " +
+              bidVehicle?.event?.location?.state?.name
+          );
         }
         if (
           bidVehicle.event.bidLock === "locked" &&
@@ -129,8 +139,26 @@ export const Bid = list({
       resolvedData,
       context,
     }) => {
-      if (operation === "delete") { 
+      if (operation === "delete") {
+        /**
+         * Note: We could'nt update the expire time on delete
+         * replace the current bid user and amount with the
+         * previous bid user and amount
+         */
 
+        const bid = await context.prisma.bid.findFirst({
+          where: {
+            user: {
+              status: { equals: "active" },
+            },
+          },
+          select: {
+            id: true,
+            user: { id: true },
+            amount: true,
+          },
+          orderBy: { amount: "desc" },
+        });
       }
       if (operation === "create") {
         /**
@@ -147,12 +175,12 @@ export const Bid = list({
 
         if (bidVehicle.currentBidAmount < resolvedData.amount) {
           const durationInMinutes = (bidVehicle?.event?.duration ?? 2) * 60000; // 2 minutes
-          const addBiddTime = (bidVehicle?.event?.addingBidTime ?? 2) * 60000; // 2 minutes
+          const addBidTime = (bidVehicle?.event?.addingBidTime ?? 2) * 60000; // 2 minutes
           const bidTimeExpire =
             new Date(bidVehicle.bidTimeExpire).getTime() - durationInMinutes <=
             new Date().getTime()
               ? new Date(
-                  new Date(bidVehicle.bidTimeExpire).getTime() + addBiddTime
+                  new Date(bidVehicle.bidTimeExpire).getTime() + addBidTime
                 )
               : new Date(bidVehicle.bidTimeExpire);
           console.log("bidTimeExpire:", bidTimeExpire);
@@ -166,7 +194,7 @@ export const Bid = list({
                 connect: { id: resolvedData?.user?.connect?.id },
               },
             },
-          })
+          });
         }
       }
     },

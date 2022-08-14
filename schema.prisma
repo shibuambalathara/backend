@@ -52,7 +52,6 @@ model User {
   dealership_height         Int?
   dealership_id             String?
   country                   String               @default("")
-  state                     String               @default("")
   city                      String               @default("")
   role                      UserRoleType?        @default(dealer)
   watchList                 Vehicle[]            @relation("User_watchList")

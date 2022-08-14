@@ -103,7 +103,6 @@ export const User = list({
     idProofNo: text({}),
     dealership: image({ storage: "local_images" }),
     country: text({}),
-    state: text({}),
     city: text({}),
     role: select({
       type: "enum",
