@@ -14,8 +14,6 @@ export const vehicleBuyingLimitField = virtual({
       },
     }),
     async resolve(item: any, args, context) {
-
-
       const [user, specialCount, normalCount] = await Promise.all([
         context.query.User.findOne({
           where: { id: item.id },

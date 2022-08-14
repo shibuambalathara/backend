@@ -33,7 +33,7 @@ export const fieldOptions: TimestampFieldConfig<BaseListTypeInfo> = {
   to the Admin UI, access to your own User and Todo items, and read access to roles.
 */
 export const isSignedIn = ({ session }: ListAccessArgs) => {
-  return !!session;
+  return !!session && session?.data?.status==="active";
 };
 
 export const isOwner = ({ session, context, listKey, operation }) => {

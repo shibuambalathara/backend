@@ -4,7 +4,8 @@ export type Session = {
   data: {
     id: string;
     name: string;
-    role: string;
+    role: "admin" | "staff" | "seller" | "dealer";
+    status: "active" | "pending" | "blocked" | "inactive";
     // role?: {
     //   id: string;
     //   name: string;

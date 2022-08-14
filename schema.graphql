@@ -721,7 +721,6 @@ type Event {
   startDate: DateTime
   endDate: DateTime
   noOfBids: Int
-  emdAmountPerBidVehicle: Int
   status: EventStatusType
   ExcelFile: ExcelUpload
   termsAndConditions: Event_termsAndConditions_Document
@@ -729,6 +728,9 @@ type Event {
   updatedAt: DateTime
   bidLock: EventBidLockType
   isSpecialEvent: Boolean
+  duration: Int
+  addingBidTime: Int
+  vehicleExpireTimeIncrement: Int
 }
 
 enum EventStatusType {
@@ -765,13 +767,15 @@ input EventWhereInput {
   startDate: DateTimeFilter
   endDate: DateTimeFilter
   noOfBids: IntFilter
-  emdAmountPerBidVehicle: IntFilter
   status: EventStatusTypeNullableFilter
   ExcelFile: ExcelUploadWhereInput
   createdAt: DateTimeNullableFilter
   updatedAt: DateTimeNullableFilter
   bidLock: EventBidLockTypeNullableFilter
   isSpecialEvent: BooleanFilter
+  duration: IntNullableFilter
+  addingBidTime: IntNullableFilter
+  vehicleExpireTimeIncrement: IntNullableFilter
 }
 
 input EventTypeManyRelationFilter {
@@ -816,12 +820,14 @@ input EventOrderByInput {
   startDate: OrderDirection
   endDate: OrderDirection
   noOfBids: OrderDirection
-  emdAmountPerBidVehicle: OrderDirection
   status: OrderDirection
   createdAt: OrderDirection
   updatedAt: OrderDirection
   bidLock: OrderDirection
   isSpecialEvent: OrderDirection
+  duration: OrderDirection
+  addingBidTime: OrderDirection
+  vehicleExpireTimeIncrement: OrderDirection
 }
 
 input EventUpdateInput {
@@ -834,12 +840,14 @@ input EventUpdateInput {
   startDate: DateTime
   endDate: DateTime
   noOfBids: Int
-  emdAmountPerBidVehicle: Int
   status: EventStatusType
   ExcelFile: ExcelUploadRelateToOneForUpdateInput
   termsAndConditions: JSON
   bidLock: EventBidLockType
   isSpecialEvent: Boolean
+  duration: Int
+  addingBidTime: Int
+  vehicleExpireTimeIncrement: Int
 }
 
 input SellerRelateToOneForUpdateInput {
@@ -888,12 +896,14 @@ input EventCreateInput {
   startDate: DateTime
   endDate: DateTime
   noOfBids: Int
-  emdAmountPerBidVehicle: Int
   status: EventStatusType
   ExcelFile: ExcelUploadRelateToOneForCreateInput
   termsAndConditions: JSON
   bidLock: EventBidLockType
   isSpecialEvent: Boolean
+  duration: Int
+  addingBidTime: Int
+  vehicleExpireTimeIncrement: Int
 }
 
 input SellerRelateToOneForCreateInput {

@@ -108,12 +108,7 @@ export const Event = list({
         isRequired: true,
       },
     }),
-    emdAmountPerBidVehicle: integer({
-      defaultValue: 10000,
-      validation: {
-        isRequired: true,
-      },
-    }),
+
     status: select({
       type: "enum",
       options: [
@@ -148,7 +143,32 @@ export const Event = list({
       defaultValue: "unlocked",
       options: ["locked", "unlocked"],
     }),
-    isSpecialEvent: checkbox(),
+    isSpecialEvent: checkbox({
+      defaultValue: false,
+      label: "Is this a special event?",
+    }),
+
+    duration: integer({
+      label: "Duration in minutes",
+      defaultValue: 2,
+    }),
+
+    addingBidTime: integer({
+      label: "Adding bid time in minutes",
+      defaultValue: 2,
+    }),
+
+    vehicleExpireTimeIncrement: integer({
+      label: "Vehicle Expire Time Increment in minutes",
+      defaultValue: 0,
+    }),
+
+    // specialEventBuyingLimitReducer: integer({
+    //   defaultValue: 10000,
+    //   validation: {
+    //     isRequired: true,
+    //   },
+    // }),
   },
   graphql: {
     cacheHint: { maxAge: 600 },

@@ -44,10 +44,10 @@ export const Bid = list({
           context?.session?.data?.role === "admin"
             ? resolvedData.user.connect.id
             : context?.session?.itemId;
-        const [bidVehicle, bidCount, emdBalance] = await Promise.all([
+        const [bidVehicle, bidCount, user] = await Promise.all([
           context.query.Vehicle.findOne({
             where: { id: resolvedData?.bidVehicle?.connect?.id },
-            query: `id currentBidAmount bidTimeExpire event { startDate emdAmountPerBidVehicle noOfBids } `,
+            query: `id currentBidAmount bidTimeExpire event { startDate emdAmountPerBidVehicle noOfBids isSpecialEvent bidLock  } `,
           }),
           context.query.Bid.count({
             where: {
@@ -59,15 +59,8 @@ export const Bid = list({
           }),
           context.query.User.findOne({
             where: { id: userId },
-            query: `emdBalance`,
+            query: `status currentVehicleBuyingLimit { vehicleBuyingLimit specialVehicleBuyingLimit } states { name }`,
           }),
-          // context.prisma.bid.groupBy({
-          //   by: ["bidVehicleId"],
-          //   where: {
-          //     userId: resolvedData.user.connect.id,
-          //   },
-          //   _count: true,
-          // }),
         ]);
 
         if (!bidVehicle) {
@@ -79,27 +72,26 @@ export const Bid = list({
         if (new Date(bidVehicle.event.startDate) > new Date()) {
           addValidationError("Auction yet to start");
         }
-        if (bidCount >= bidVehicle.event.noOfBids) {
+        if (!bidCount && bidCount >= bidVehicle.event.noOfBids) {
           addValidationError("No Bids Left");
         }
         if (
-          !bidVehicle.currentBidAmount ||
-          bidVehicle.currentBidAmount >= amount
+          bidVehicle.event.bidLock === "locked" &&
+          (!bidVehicle.currentBidAmount ||
+            bidVehicle.currentBidAmount >= amount)
         ) {
           addValidationError(
             "Bid Amount smaller than current bid amount, Current Bid Amount: " +
               bidVehicle.currentBidAmount
           );
         }
-
         if (
-          !bidCount &&
-          bidVehicle.event.emdAmountPerBidVehicle > emdBalance?.emdBalance
+          bidVehicle.event.isSpecialEvent &&
+          user?.currentVehicleBuyingLimit?.specialVehicleBuyingLimit > 0
         ) {
-          addValidationError(
-            "Insufficient EMD Balance, minimum required EMD Balance: " +
-              bidVehicle.event.emdAmountPerBidVehicle
-          );
+          addValidationError("Insufficient Buying Limit for Special Event");
+        } else if (user?.currentVehicleBuyingLimit?.vehicleBuyingLimit > 0) {
+          addValidationError("Insufficient Buying Limit");
         }
       } catch (e) {
         console.log("e: ", e);
@@ -137,56 +129,46 @@ export const Bid = list({
       resolvedData,
       context,
     }) => {
-      /**
-       * 1. Update user emdBalance via emd updates if it is first bid //
-       * 2 .Update the current bid amount for the vehicle
-       * 3. Update the bid time expire for the vehicle if
-       *    expire time with in 2 minutes
-       * 4. Update the current bid User for the vehicle
-       */
-      if (operation !== "create") {
-        return;
+      if (operation === "delete") { 
+
       }
-      const [bidVehicle] = await Promise.all([
-        // context.prisma.vehicleUser.findFirst({
-        //   where: {
-        //     vehicle: { id: resolvedData?.vehicle?.connect?.id },
-        //     user: { id: resolvedData?.user?.connect?.id },
-        //   },
-        // }),
-        context.query.Vehicle.findOne({
+      if (operation === "create") {
+        /**
+         * 1. if the bid is higher than the current bid amount then
+         *   i .Update the current bid amount for the vehicle
+         *   ii. Update the bid time expire for the vehicle if
+         *    expire time with in given minutes
+         *   iii. Update the current bid User for the vehicle
+         */
+        const bidVehicle = await context.query.Vehicle.findOne({
           where: { id: resolvedData?.bidVehicle?.connect?.id },
-          query: `bidTimeExpire`,
-        }),
-      ]);
-      const durationInMinutes = 2 * 60000; // 2 minutes
-      const bidTimeExpire =
-        new Date(bidVehicle.bidTimeExpire).getTime() - durationInMinutes <=
-        new Date().getTime()
-          ? new Date(
-              new Date(bidVehicle.bidTimeExpire).getTime() + durationInMinutes
-            )
-          : new Date(bidVehicle.bidTimeExpire);
-      console.log("bidTimeExpire:", bidTimeExpire);
-      console.log("bidTimeExpire Old :", bidVehicle.bidTimeExpire);
-      await Promise.all([
-        // context.prisma.vehicleUser.update({
-        //   where: { id: vehicleUser.id },
-        //   data: {
-        //     remainingBids: vehicleUser.remainingBids - 1,
-        //   },
-        // }),
-        context.prisma.vehicle.update({
-          where: { id: resolvedData?.bidVehicle?.connect?.id },
-          data: {
-            currentBidAmount: resolvedData?.amount,
-            bidTimeExpire: bidTimeExpire,
-            currentBidUser: {
-              connect: { id: resolvedData?.user?.connect?.id },
+          query: `bidTimeExpire currentBidAmount event { duration isSpecialEvent addingBidTime } `,
+        });
+
+        if (bidVehicle.currentBidAmount < resolvedData.amount) {
+          const durationInMinutes = (bidVehicle?.event?.duration ?? 2) * 60000; // 2 minutes
+          const addBiddTime = (bidVehicle?.event?.addingBidTime ?? 2) * 60000; // 2 minutes
+          const bidTimeExpire =
+            new Date(bidVehicle.bidTimeExpire).getTime() - durationInMinutes <=
+            new Date().getTime()
+              ? new Date(
+                  new Date(bidVehicle.bidTimeExpire).getTime() + addBiddTime
+                )
+              : new Date(bidVehicle.bidTimeExpire);
+          console.log("bidTimeExpire:", bidTimeExpire);
+          console.log("bidTimeExpire Old :", bidVehicle.bidTimeExpire);
+          await context.prisma.vehicle.update({
+            where: { id: resolvedData?.bidVehicle?.connect?.id },
+            data: {
+              currentBidAmount: resolvedData?.amount,
+              bidTimeExpire: bidTimeExpire,
+              currentBidUser: {
+                connect: { id: resolvedData?.user?.connect?.id },
+              },
             },
-          },
-        }),
-      ]);
+          })
+        }
+      }
     },
   },
   fields: {
