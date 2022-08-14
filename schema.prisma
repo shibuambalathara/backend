@@ -146,7 +146,7 @@ model Event {
 model Vehicle {
   id                  String                @id @default(cuid())
   registrationNumber  String                @default("")
-  bidTimeExpire       String                @default("")
+  bidTimeExpire       DateTime?
   currentBidAmount    Int?
   currentBidUser      User?                 @relation("Vehicle_currentBidUser", fields: [currentBidUserId], references: [id])
   currentBidUserId    String?               @map("currentBidUser")

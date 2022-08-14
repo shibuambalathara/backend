@@ -901,7 +901,7 @@ input ExcelUploadRelateToOneForCreateInput {
 type Vehicle {
   id: ID!
   registrationNumber: String
-  bidTimeExpire: String
+  bidTimeExpire: DateTime
   currentBidAmount: Int
   currentBidUser: User
   event: Event
@@ -993,7 +993,7 @@ input VehicleWhereInput {
   NOT: [VehicleWhereInput!]
   id: IDFilter
   registrationNumber: StringFilter
-  bidTimeExpire: StringFilter
+  bidTimeExpire: DateTimeNullableFilter
   currentBidAmount: IntNullableFilter
   currentBidUser: UserWhereInput
   event: EventWhereInput
@@ -1134,7 +1134,7 @@ input VehicleOrderByInput {
 
 input VehicleUpdateInput {
   registrationNumber: String
-  bidTimeExpire: String
+  bidTimeExpire: DateTime
   currentBidAmount: Int
   currentBidUser: UserRelateToOneForUpdateInput
   event: EventRelateToOneForUpdateInput
@@ -1207,7 +1207,7 @@ input VehicleUpdateArgs {
 
 input VehicleCreateInput {
   registrationNumber: String
-  bidTimeExpire: String
+  bidTimeExpire: DateTime
   currentBidAmount: Int
   currentBidUser: UserRelateToOneForCreateInput
   event: EventRelateToOneForCreateInput

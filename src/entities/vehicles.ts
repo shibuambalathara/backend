@@ -20,7 +20,7 @@ const ownerFilter = ({ session, context, listKey, operation }) => {
   if (session?.data?.status === "active") {
     return true;
   }
-  return false
+  return false;
 };
 
 export const Vehicle = list({
@@ -63,7 +63,7 @@ export const Vehicle = list({
       },
       isIndexed: true,
     }),
-    bidTimeExpire: text({
+    bidTimeExpire: timestamp({
       ui: {
         createView: { fieldMode: "hidden" },
         itemView: { fieldMode: "read" },
