@@ -159,14 +159,6 @@ export const Vehicle = list({
     image10: text(),
     image11: text(),
     image12: text(),
-    vehicleUsers: relationship({
-      ref: "VehicleUser.vehicle",
-      many: true,
-      ui: {
-        createView: { fieldMode: "hidden" },
-        itemView: { fieldMode: "read" },
-      },
-    }),
     watchedBy: relationship({
       ref: "User.watchList",
       many: true,

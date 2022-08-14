@@ -120,21 +120,6 @@ export const User = list({
         itemView: { fieldMode: isAdminEdit },
       },
     }),
-    biddedVehicles: relationship({
-      ref: "VehicleUser.user",
-      many: true,
-      ui: {
-        listView: {
-          fieldMode: "read",
-        },
-        itemView: {
-          fieldMode: "read",
-        },
-        createView: {
-          fieldMode: "hidden",
-        },
-      },
-    }),
     watchList: relationship({
       ref: "Vehicle.watchedBy",
       many: true,

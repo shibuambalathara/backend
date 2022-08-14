@@ -55,7 +55,6 @@ model User {
   state                     String               @default("")
   city                      String               @default("")
   role                      UserRoleType?        @default(dealer)
-  biddedVehicles            VehicleUser[]        @relation("VehicleUser_user")
   watchList                 Vehicle[]            @relation("User_watchList")
   emdUpdates                EmdUpdate[]          @relation("EmdUpdate_user")
   payments                  Payment[]            @relation("Payment_user")
@@ -199,7 +198,6 @@ model Vehicle {
   image10             String                @default("")
   image11             String                @default("")
   image12             String                @default("")
-  vehicleUsers        VehicleUser[]         @relation("VehicleUser_vehicle")
   watchedBy           User[]                @relation("User_watchList")
   ExcelFile           ExcelUpload?          @relation("Vehicle_ExcelFile", fields: [ExcelFileId], references: [id])
   ExcelFileId         String?               @map("ExcelFile")
@@ -210,21 +208,6 @@ model Vehicle {
   @@index([currentBidUserId])
   @@index([eventId])
   @@index([ExcelFileId])
-}
-
-model VehicleUser {
-  id            String    @id @default(cuid())
-  name          String    @default("")
-  vehicle       Vehicle?  @relation("VehicleUser_vehicle", fields: [vehicleId], references: [id])
-  vehicleId     String?   @map("vehicle")
-  user          User?     @relation("VehicleUser_user", fields: [userId], references: [id])
-  userId        String?   @map("user")
-  remainingBids Int?
-  createdAt     DateTime? @default(now())
-  updatedAt     DateTime? @updatedAt
-
-  @@index([vehicleId])
-  @@index([userId])
 }
 
 model Bid {

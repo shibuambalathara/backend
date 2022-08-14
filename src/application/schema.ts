@@ -19,7 +19,6 @@ export const lists = {
   EmdUpdate,
   Event,
   Vehicle,
-  VehicleUser,
   Bid,
   EventType,
   Location,

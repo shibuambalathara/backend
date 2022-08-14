@@ -25,13 +25,6 @@ type User {
   state: String
   city: String
   role: UserRoleType
-  biddedVehicles(
-    where: VehicleUserWhereInput! = {}
-    orderBy: [VehicleUserOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [VehicleUser!]
-  biddedVehiclesCount(where: VehicleUserWhereInput! = {}): Int
   watchList(
     where: VehicleWhereInput! = {}
     orderBy: [VehicleOrderByInput!]! = []
@@ -164,7 +157,6 @@ input UserWhereInput {
   state: StringFilter
   city: StringFilter
   role: UserRoleTypeNullableFilter
-  biddedVehicles: VehicleUserManyRelationFilter
   watchList: VehicleManyRelationFilter
   emdUpdates: EmdUpdateManyRelationFilter
   payments: PaymentManyRelationFilter
@@ -252,12 +244,6 @@ input UserRoleTypeNullableFilter {
   in: [UserRoleType!]
   notIn: [UserRoleType!]
   not: UserRoleTypeNullableFilter
-}
-
-input VehicleUserManyRelationFilter {
-  every: VehicleUserWhereInput
-  some: VehicleUserWhereInput
-  none: VehicleUserWhereInput
 }
 
 input VehicleManyRelationFilter {
@@ -359,7 +345,6 @@ input UserUpdateInput {
   state: String
   city: String
   role: UserRoleType
-  biddedVehicles: VehicleUserRelateToManyForUpdateInput
   watchList: VehicleRelateToManyForUpdateInput
   emdUpdates: EmdUpdateRelateToManyForUpdateInput
   payments: PaymentRelateToManyForUpdateInput
@@ -381,13 +366,6 @@ input ImageFieldInput {
 The `Upload` scalar type represents a file upload.
 """
 scalar Upload
-
-input VehicleUserRelateToManyForUpdateInput {
-  disconnect: [VehicleUserWhereUniqueInput!]
-  set: [VehicleUserWhereUniqueInput!]
-  create: [VehicleUserCreateInput!]
-  connect: [VehicleUserWhereUniqueInput!]
-}
 
 input VehicleRelateToManyForUpdateInput {
   disconnect: [VehicleWhereUniqueInput!]
@@ -451,7 +429,6 @@ input UserCreateInput {
   state: String
   city: String
   role: UserRoleType
-  biddedVehicles: VehicleUserRelateToManyForCreateInput
   watchList: VehicleRelateToManyForCreateInput
   emdUpdates: EmdUpdateRelateToManyForCreateInput
   payments: PaymentRelateToManyForCreateInput
@@ -463,11 +440,6 @@ input UserCreateInput {
   magicAuthToken: String
   magicAuthIssuedAt: DateTime
   magicAuthRedeemedAt: DateTime
-}
-
-input VehicleUserRelateToManyForCreateInput {
-  create: [VehicleUserCreateInput!]
-  connect: [VehicleUserWhereUniqueInput!]
 }
 
 input VehicleRelateToManyForCreateInput {
@@ -989,13 +961,6 @@ type Vehicle {
   image10: String
   image11: String
   image12: String
-  vehicleUsers(
-    where: VehicleUserWhereInput! = {}
-    orderBy: [VehicleUserOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [VehicleUser!]
-  vehicleUsersCount(where: VehicleUserWhereInput! = {}): Int
   watchedBy(
     where: UserWhereInput! = {}
     orderBy: [UserOrderByInput!]! = []
@@ -1082,7 +1047,6 @@ input VehicleWhereInput {
   image10: StringFilter
   image11: StringFilter
   image12: StringFilter
-  vehicleUsers: VehicleUserManyRelationFilter
   watchedBy: UserManyRelationFilter
   ExcelFile: ExcelUploadWhereInput
   createdAt: DateTimeNullableFilter
@@ -1224,7 +1188,6 @@ input VehicleUpdateInput {
   image10: String
   image11: String
   image12: String
-  vehicleUsers: VehicleUserRelateToManyForUpdateInput
   watchedBy: UserRelateToManyForUpdateInput
   ExcelFile: ExcelUploadRelateToOneForUpdateInput
 }
@@ -1298,7 +1261,6 @@ input VehicleCreateInput {
   image10: String
   image11: String
   image12: String
-  vehicleUsers: VehicleUserRelateToManyForCreateInput
   watchedBy: UserRelateToManyForCreateInput
   ExcelFile: ExcelUploadRelateToOneForCreateInput
 }
@@ -1311,71 +1273,6 @@ input EventRelateToOneForCreateInput {
 input UserRelateToManyForCreateInput {
   create: [UserCreateInput!]
   connect: [UserWhereUniqueInput!]
-}
-
-type VehicleUser {
-  id: ID!
-  name: String
-  vehicle: Vehicle
-  user: User
-  remainingBids: Int
-  createdAt: DateTime
-  updatedAt: DateTime
-}
-
-input VehicleUserWhereUniqueInput {
-  id: ID
-}
-
-input VehicleUserWhereInput {
-  AND: [VehicleUserWhereInput!]
-  OR: [VehicleUserWhereInput!]
-  NOT: [VehicleUserWhereInput!]
-  id: IDFilter
-  name: StringFilter
-  vehicle: VehicleWhereInput
-  user: UserWhereInput
-  remainingBids: IntNullableFilter
-  createdAt: DateTimeNullableFilter
-  updatedAt: DateTimeNullableFilter
-}
-
-input VehicleUserOrderByInput {
-  id: OrderDirection
-  name: OrderDirection
-  remainingBids: OrderDirection
-  createdAt: OrderDirection
-  updatedAt: OrderDirection
-}
-
-input VehicleUserUpdateInput {
-  name: String
-  vehicle: VehicleRelateToOneForUpdateInput
-  user: UserRelateToOneForUpdateInput
-  remainingBids: Int
-}
-
-input VehicleRelateToOneForUpdateInput {
-  create: VehicleCreateInput
-  connect: VehicleWhereUniqueInput
-  disconnect: Boolean
-}
-
-input VehicleUserUpdateArgs {
-  where: VehicleUserWhereUniqueInput!
-  data: VehicleUserUpdateInput!
-}
-
-input VehicleUserCreateInput {
-  name: String
-  vehicle: VehicleRelateToOneForCreateInput
-  user: UserRelateToOneForCreateInput
-  remainingBids: Int
-}
-
-input VehicleRelateToOneForCreateInput {
-  create: VehicleCreateInput
-  connect: VehicleWhereUniqueInput
 }
 
 type Bid {
@@ -1420,6 +1317,12 @@ input BidUpdateInput {
   bidVehicle: VehicleRelateToOneForUpdateInput
 }
 
+input VehicleRelateToOneForUpdateInput {
+  create: VehicleCreateInput
+  connect: VehicleWhereUniqueInput
+  disconnect: Boolean
+}
+
 input BidUpdateArgs {
   where: BidWhereUniqueInput!
   data: BidUpdateInput!
@@ -1430,6 +1333,11 @@ input BidCreateInput {
   amount: Int
   user: UserRelateToOneForCreateInput
   bidVehicle: VehicleRelateToOneForCreateInput
+}
+
+input VehicleRelateToOneForCreateInput {
+  create: VehicleCreateInput
+  connect: VehicleWhereUniqueInput
 }
 
 type EventType {
@@ -1874,15 +1782,6 @@ type Mutation {
   updateVehicles(data: [VehicleUpdateArgs!]!): [Vehicle]
   deleteVehicle(where: VehicleWhereUniqueInput!): Vehicle
   deleteVehicles(where: [VehicleWhereUniqueInput!]!): [Vehicle]
-  createVehicleUser(data: VehicleUserCreateInput!): VehicleUser
-  createVehicleUsers(data: [VehicleUserCreateInput!]!): [VehicleUser]
-  updateVehicleUser(
-    where: VehicleUserWhereUniqueInput!
-    data: VehicleUserUpdateInput!
-  ): VehicleUser
-  updateVehicleUsers(data: [VehicleUserUpdateArgs!]!): [VehicleUser]
-  deleteVehicleUser(where: VehicleUserWhereUniqueInput!): VehicleUser
-  deleteVehicleUsers(where: [VehicleUserWhereUniqueInput!]!): [VehicleUser]
   createBid(data: BidCreateInput!): Bid
   createBids(data: [BidCreateInput!]!): [Bid]
   updateBid(where: BidWhereUniqueInput!, data: BidUpdateInput!): Bid
@@ -2035,14 +1934,6 @@ type Query {
   ): [Vehicle!]
   vehicle(where: VehicleWhereUniqueInput!): Vehicle
   vehiclesCount(where: VehicleWhereInput! = {}): Int
-  vehicleUsers(
-    where: VehicleUserWhereInput! = {}
-    orderBy: [VehicleUserOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [VehicleUser!]
-  vehicleUser(where: VehicleUserWhereUniqueInput!): VehicleUser
-  vehicleUsersCount(where: VehicleUserWhereInput! = {}): Int
   bids(
     where: BidWhereInput! = {}
     orderBy: [BidOrderByInput!]! = []
