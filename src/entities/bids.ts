@@ -47,7 +47,7 @@ export const Bid = list({
         const [bidVehicle, bidCount, user] = await Promise.all([
           context.query.Vehicle.findOne({
             where: { id: resolvedData?.bidVehicle?.connect?.id },
-            query: `id currentBidAmount bidTimeExpire event { startDate emdAmountPerBidVehicle noOfBids isSpecialEvent bidLock location { state { name } } }`,
+            query: `id currentBidAmount bidTimeExpire event { startDate noOfBids isSpecialEvent bidLock location { state { name } } }`,
           }),
           context.query.Bid.count({
             where: {
@@ -77,12 +77,18 @@ export const Bid = list({
         }
         if (
           !user?.states
-            ?.map((s:{name:string}) => s?.name)
+            ?.map((s: { name: string }) => s?.name)
             ?.includes(bidVehicle?.event?.location?.state?.name)
         ) {
           addValidationError(
             "You are not allowed to bid on this vehicle in the state: " +
               bidVehicle?.event?.location?.state?.name
+          );
+        }
+        if (bidVehicle.startBidAmount >= amount) {
+          addValidationError(
+            "Bid Amount smaller than start bid amount, Start Bid Amount: " +
+              bidVehicle.startBidAmount
           );
         }
         if (
