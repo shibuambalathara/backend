@@ -20,6 +20,6 @@ export const bidRank = virtual({
     },
   }),
   ui: {
-    query: ` bidRank `,
+    query: ` myBidRank `,
   },
 });
