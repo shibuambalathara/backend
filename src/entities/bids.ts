@@ -102,14 +102,16 @@ export const Bid = list({
           );
         }
         if (
+          !bidCount &&
           bidVehicle.event.isSpecialEvent &&
           user?.currentVehicleBuyingLimit?.specialVehicleBuyingLimit <= 0
         ) {
           addValidationError("Insufficient Buying Limit for Special Event");
         }
         if (
+          !bidCount &&
           !bidVehicle.event.isSpecialEvent &&
-           user?.currentVehicleBuyingLimit?.vehicleBuyingLimit <= 0
+          user?.currentVehicleBuyingLimit?.vehicleBuyingLimit <= 0
         ) {
           addValidationError("Insufficient Buying Limit");
         }

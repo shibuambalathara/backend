@@ -10,6 +10,7 @@ export const bidRank = virtual({
         where: { bidVehicle: { id: { equals: item.id } } },
         orderBy: {
           amount: "desc",
+          createdAt: "asc",
         },
         skip: 0,
         take: 10,
