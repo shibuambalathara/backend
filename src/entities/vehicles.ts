@@ -78,7 +78,7 @@ export const Vehicle = list({
       },
       defaultValue: 0,
     }),
-    bidRank: bidRank,
+    myBidRank: bidRank,
     startBidAmount: integer({
       ui: {
         createView: { fieldMode: "hidden" },

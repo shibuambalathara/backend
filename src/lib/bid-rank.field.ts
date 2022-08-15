@@ -7,13 +7,15 @@ export const bidRank = virtual({
     async resolve(item: any, args, context) {
       const rank = await context.prisma.bid.findMany({
         distinct: ["userId"],
-        where: { vehicle: { id: item.id } },
+        where: { bidVehicle: { id: { equals: item.id } } },
         orderBy: {
-          bidAmount: "desc",
+          amount: "desc",
         },
         skip: 0,
         take: 10,
       });
+      console.log(rank);
+      console.log(context?.session?.itemId);
       return rank.findIndex((x) => x?.userId === context?.session?.itemId) + 1;
     },
   }),

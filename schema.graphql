@@ -903,6 +903,7 @@ type Vehicle {
   registrationNumber: String
   bidTimeExpire: DateTime
   currentBidAmount: Int
+  myBidRank: Int
   startBidAmount: Int
   currentBidUser: User
   event: Event
