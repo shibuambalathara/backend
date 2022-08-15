@@ -14,8 +14,8 @@ export const bidRank = virtual({
         skip: 0,
         take: 10,
       });
-      console.log(rank);
-      console.log(context?.session?.itemId);
+      // console.log(rank);
+      // console.log(context?.session?.itemId);
       return rank.findIndex((x) => x?.userId === context?.session?.itemId) + 1;
     },
   }),
