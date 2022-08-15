@@ -8,10 +8,14 @@ export const bidRank = virtual({
       const rank = await context.prisma.bid.findMany({
         distinct: ["userId"],
         where: { bidVehicle: { id: { equals: item.id } } },
-        orderBy: {
-          amount: "desc",
-          createdAt: "asc",
-        },
+        orderBy: [
+          {
+            amount: "desc",
+          },
+          {
+            createdAt: "asc",
+          },
+        ],
         skip: 0,
         take: 10,
       });
