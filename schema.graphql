@@ -903,6 +903,7 @@ type Vehicle {
   registrationNumber: String
   bidTimeExpire: DateTime
   currentBidAmount: Int
+  startBidAmount: Int
   currentBidUser: User
   event: Event
   bidStatus: VehicleBidStatusType
@@ -993,8 +994,9 @@ input VehicleWhereInput {
   NOT: [VehicleWhereInput!]
   id: IDFilter
   registrationNumber: StringFilter
-  bidTimeExpire: DateTimeNullableFilter
+  bidTimeExpire: DateTimeFilter
   currentBidAmount: IntNullableFilter
+  startBidAmount: IntNullableFilter
   currentBidUser: UserWhereInput
   event: EventWhereInput
   bidStatus: VehicleBidStatusTypeNullableFilter
@@ -1084,6 +1086,7 @@ input VehicleOrderByInput {
   registrationNumber: OrderDirection
   bidTimeExpire: OrderDirection
   currentBidAmount: OrderDirection
+  startBidAmount: OrderDirection
   bidStatus: OrderDirection
   loanAgreementNo: OrderDirection
   registeredOwnerName: OrderDirection
@@ -1136,6 +1139,7 @@ input VehicleUpdateInput {
   registrationNumber: String
   bidTimeExpire: DateTime
   currentBidAmount: Int
+  startBidAmount: Int
   currentBidUser: UserRelateToOneForUpdateInput
   event: EventRelateToOneForUpdateInput
   bidStatus: VehicleBidStatusType
@@ -1209,6 +1213,7 @@ input VehicleCreateInput {
   registrationNumber: String
   bidTimeExpire: DateTime
   currentBidAmount: Int
+  startBidAmount: Int
   currentBidUser: UserRelateToOneForCreateInput
   event: EventRelateToOneForCreateInput
   bidStatus: VehicleBidStatusType

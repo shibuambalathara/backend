@@ -132,7 +132,8 @@ export const ExcelUpload = list({
                     new Date(eventData.endDate).getTime() +
                       eventData.vehicleExpireTimeIncrement * 60000 * i
                   ),
-                  currentBidAmount: vehicleItem.Reserve_Price || 0,
+                  currentBidAmount: 0,
+                  startBidAmount: vehicleItem.Start_Price ?? 0,
                   bidStatus: "pending",
                 };
               }

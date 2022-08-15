@@ -44,8 +44,8 @@ export const Vehicle = list({
         where: { id: resolvedData?.event?.connect?.id },
         query: `endDate`,
       });
-      resolvedData["bidTimeExpire"] = event?.endDate;
-      resolvedData["currentBidAmount"] = resolvedData?.reservePrice;
+      resolvedData.bidTimeExpire =
+        resolvedData?.bidTimeExpire ?? event?.endDate;
       return resolvedData;
     },
   },
@@ -68,12 +68,21 @@ export const Vehicle = list({
         createView: { fieldMode: "hidden" },
         itemView: { fieldMode: "read" },
       },
+      validation: { isRequired: true },
     }),
     currentBidAmount: integer({
       ui: {
         createView: { fieldMode: "hidden" },
         itemView: { fieldMode: "read" },
       },
+      defaultValue: 0,
+    }),
+    startBidAmount :integer({
+      ui: {
+        createView: { fieldMode: "hidden" },
+        itemView: { fieldMode: "read" },
+      },
+      defaultValue: 0,
     }),
     currentBidUser: relationship({
       ref: "User.activeBids",
