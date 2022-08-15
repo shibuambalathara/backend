@@ -15,6 +15,7 @@ import {
   isSignedIn,
   isSuperAdmin,
 } from "../application/access";
+import { bidRank } from "../lib/bid-rank.field";
 
 const ownerFilter = ({ session, context, listKey, operation }) => {
   if (session?.data?.status === "active") {
@@ -77,7 +78,8 @@ export const Vehicle = list({
       },
       defaultValue: 0,
     }),
-    startBidAmount :integer({
+    bidRank: bidRank,
+    startBidAmount: integer({
       ui: {
         createView: { fieldMode: "hidden" },
         itemView: { fieldMode: "read" },
