@@ -155,8 +155,10 @@ model Event {
 
 model Vehicle {
   id                  String                @id @default(cuid())
+  vehicleIndexNo      Int                   @default(autoincrement())
   registrationNumber  String                @default("")
   bidTimeExpire       DateTime
+  bidAmountUpdate     Int?
   currentBidAmount    Int?                  @default(0)
   startBidAmount      Int?                  @default(0)
   currentBidUser      User?                 @relation("Vehicle_currentBidUser", fields: [currentBidUserId], references: [id])
@@ -214,6 +216,7 @@ model Vehicle {
   createdAt           DateTime?             @default(now())
   updatedAt           DateTime?             @updatedAt
 
+  @@index([vehicleIndexNo])
   @@index([registrationNumber])
   @@index([currentBidUserId])
   @@index([eventId])

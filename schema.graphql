@@ -971,8 +971,10 @@ input ExcelUploadRelateToOneForCreateInput {
 
 type Vehicle {
   id: ID!
+  vehicleIndexNo: Int
   registrationNumber: String
   bidTimeExpire: DateTime
+  bidAmountUpdate: Int
   currentBidAmount: Int
   myBidRank: Int
   startBidAmount: Int
@@ -1065,8 +1067,10 @@ input VehicleWhereInput {
   OR: [VehicleWhereInput!]
   NOT: [VehicleWhereInput!]
   id: IDFilter
+  vehicleIndexNo: IntFilter
   registrationNumber: StringFilter
   bidTimeExpire: DateTimeFilter
+  bidAmountUpdate: IntNullableFilter
   currentBidAmount: IntNullableFilter
   startBidAmount: IntNullableFilter
   currentBidUser: UserWhereInput
@@ -1155,8 +1159,10 @@ input UserManyRelationFilter {
 
 input VehicleOrderByInput {
   id: OrderDirection
+  vehicleIndexNo: OrderDirection
   registrationNumber: OrderDirection
   bidTimeExpire: OrderDirection
+  bidAmountUpdate: OrderDirection
   currentBidAmount: OrderDirection
   startBidAmount: OrderDirection
   bidStatus: OrderDirection
@@ -1208,8 +1214,10 @@ input VehicleOrderByInput {
 }
 
 input VehicleUpdateInput {
+  vehicleIndexNo: Int
   registrationNumber: String
   bidTimeExpire: DateTime
+  bidAmountUpdate: Int
   currentBidAmount: Int
   startBidAmount: Int
   currentBidUser: UserRelateToOneForUpdateInput
@@ -1282,8 +1290,10 @@ input VehicleUpdateArgs {
 }
 
 input VehicleCreateInput {
+  vehicleIndexNo: Int
   registrationNumber: String
   bidTimeExpire: DateTime
+  bidAmountUpdate: Int
   currentBidAmount: Int
   startBidAmount: Int
   currentBidUser: UserRelateToOneForCreateInput

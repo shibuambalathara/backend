@@ -85,6 +85,15 @@ export const Vehicle = list({
       },
       validation: { isRequired: true },
     }),
+    bidAmountUpdate: integer({
+      ui: {
+        createView: { fieldMode: "hidden" },
+        itemView: { fieldMode: isAdminEdit },
+      },
+      access: {
+        update: isSignedIn,
+      },
+    }),
     currentBidAmount: integer({
       ui: {
         createView: { fieldMode: "hidden" },
