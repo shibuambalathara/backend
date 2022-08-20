@@ -151,7 +151,7 @@ export const Event = list({
       many: false,
       ui: {
         createView: { fieldMode: "hidden" },
-        itemView: { fieldMode: "read" },
+        itemView: { fieldMode: isAdminEdit },
       },
     }),
     downloadableFile: file({

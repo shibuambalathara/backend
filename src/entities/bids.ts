@@ -47,7 +47,7 @@ export const Bid = list({
         const [bidVehicle, bidCount, user, myBidMaxAmount] = await Promise.all([
           context.query.Vehicle.findOne({
             where: { id: resolvedData?.bidVehicle?.connect?.id },
-            query: `id currentBidAmount bidTimeExpire event { startDate status noOfBids seller { id name } isSpecialEvent bidLock location { state { name } } }`,
+            query: `id currentBidAmount startBidAmount bidTimeExpire event { startDate status noOfBids seller { id name } isSpecialEvent bidLock location { state { name } } }`,
           }),
           context.query.Bid.count({
             where: {
@@ -99,6 +99,12 @@ export const Bid = list({
               bidVehicle?.event?.location?.state?.name
           );
         }
+        if (Number(bidVehicle.startBidAmount) >= amount) {
+          addValidationError(
+            "Bid Amount smaller than start bid amount, Start Bid Amount: " +
+              bidVehicle.startBidAmount
+          );
+        }
         if (
           user?.bannedSellers?.some((s) => s?.id === bidVehicle?.seller?.id)
         ) {
@@ -109,16 +115,11 @@ export const Bid = list({
         }
         if (myBidMaxAmount && myBidMaxAmount?.amount >= amount) {
           addValidationError(
-            "Bid Amount smaller than your previous bid amount" +
+            "Bid Amount smaller than your previous bid amount: " +
               myBidMaxAmount?.amount
           );
         }
-        if (bidVehicle.startBidAmount >= amount) {
-          addValidationError(
-            "Bid Amount smaller than start bid amount, Start Bid Amount: " +
-              bidVehicle.startBidAmount
-          );
-        }
+        
         if (
           bidVehicle.event.bidLock === "locked" &&
           (!bidVehicle.currentBidAmount ||
@@ -185,25 +186,42 @@ export const Bid = list({
          * replace the current bid user and amount with the
          * previous bid user and amount
          */
-
+        console.log("originalItem: ", originalItem);
+        console.log("item: ", item);
+        console.log("resolvedData: ", resolvedData);
         const bid = await context.prisma.bid.findFirst({
           where: {
             user: {
               status: { equals: "active" },
             },
             bidVehicle: {
-              id: { equals: resolvedData?.bidVehicle?.id },
+              id: { equals: originalItem?.bidVehicleId },
             },
           },
           select: {
             id: true,
-            user: { id: true },
+            userId: true,
             amount: true,
           },
           orderBy: { amount: "desc" },
         });
 
-        console.log("bid: ", bid);
+        const userConnection = bid?.userId
+          ? {
+              connect: {
+                id: bid?.userId,
+              },
+            }
+          : {
+              disconnect: true,
+            };
+        await context.prisma.vehicle.update({
+          where: { id: originalItem?.bidVehicleId },
+          data: {
+            currentBidAmount: bid?.amount ?? 0,
+            currentBidUser: userConnection,
+          },
+        });
       }
       if (operation === "create") {
         /**
