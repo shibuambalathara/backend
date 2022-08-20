@@ -58,6 +58,20 @@ export const Vehicle = list({
     createView: { defaultFieldMode: isAdminCreate },
   },
   fields: {
+    vehicleIndexNo: integer({
+      isIndexed: true,
+      defaultValue: {
+        kind: "autoincrement",
+      },
+      db: {
+        isNullable: false,
+      },
+      ui: {
+        createView: { fieldMode: "hidden" },
+        itemView: { fieldMode: "read" },
+        listView: { fieldMode: "read" },
+      },
+    }),
     registrationNumber: text({
       validation: {
         isRequired: true,

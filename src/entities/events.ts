@@ -77,11 +77,17 @@ export const Event = list({
     seller: relationship({
       ref: "Seller.events",
       many: false,
+      ui: {
+        itemView: { fieldMode: isAdminEdit },
+      },
     }),
 
     eventType: relationship({
       ref: "EventType.events",
       many: true,
+      ui: {
+        itemView: { fieldMode: isAdminEdit },
+      },
     }),
     eventCategory: relationship({
       ref: "EventCategory.events",
@@ -89,13 +95,16 @@ export const Event = list({
 
     location: relationship({
       ref: "Location.events",
+      ui: {
+        itemView: { fieldMode: isAdminEdit },
+      },
     }),
     vehicles: relationship({
       ref: "Vehicle.event",
       many: true,
       ui: {
         createView: { fieldMode: "hidden" },
-        itemView: { fieldMode: isAdminEdit },
+        itemView: { fieldMode: "read" },
       },
     }),
     startDate: timestamp({
@@ -123,36 +132,31 @@ export const Event = list({
         { label: "Inactive", value: "inactive" },
       ],
       defaultValue: "active",
-      ui: { displayMode: "segmented-control" },
+      ui: {
+        displayMode: "segmented-control",
+        itemView: { fieldMode: isAdminEdit },
+      },
     }),
     ExcelFile: relationship({
       ref: "ExcelUpload.event",
       many: false,
       ui: {
         createView: { fieldMode: "hidden" },
-        itemView: { fieldMode: isAdminEdit },
+        itemView: { fieldMode: "read" },
       },
     }),
     downloadableFile: file({
       storage: "local_files",
-      hooks: {
-        validateInput: ({
-          addValidationError,
-          resolvedData,
-          fieldKey,
-          operation,
-        }) => {
-          if (operation === "create") {
-            const file = resolvedData[fieldKey];
-            file.filename.split(".").pop() !== "xlsx" &&
-              addValidationError("Only xlsx files are allowed");
-          }
-        },
+      ui: {
+        itemView: { fieldMode: isAdminEdit },
       },
     }),
     termsAndConditions: document({
       links: true,
       dividers: true,
+      ui: {
+        itemView: { fieldMode: isAdminEdit },
+      },
     }),
     createdAt: timestamp({ ...fieldOptions, defaultValue: { kind: "now" } }),
     updatedAt: timestamp({ ...fieldOptions, db: { updatedAt: true } }),
