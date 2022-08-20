@@ -170,10 +170,11 @@ export const Bid = list({
       }
       return resolvedData;
     },
-    beforeOperation: async ({
+    afterOperation: async ({
       listKey,
       operation,
       inputData,
+      originalItem,
       item,
       resolvedData,
       context,
@@ -185,30 +186,25 @@ export const Bid = list({
          * previous bid user and amount
          */
 
-        // const bid = await context.query.Bid.findOne({
-        //   where: {
-        //     id:  item.id ,
-        //   },
-        //   select: {
-        //     id: true,
-        //     user: { id: true },
-        //     amount: true,
-        //   },
-        //   orderBy: { amount: "desc" },
-        // });
+        const bid = await context.prisma.bid.findFirst({
+          where: {
+            user: {
+              status: { equals: "active" },
+            },
+            bidVehicle: {
+              id: { equals: resolvedData?.bidVehicle?.id },
+            },
+          },
+          select: {
+            id: true,
+            user: { id: true },
+            amount: true,
+          },
+          orderBy: { amount: "desc" },
+        });
+
+        console.log("bid: ", bid);
       }
-
-    },
-    afterOperation: async ({
-      listKey,
-      operation,
-      inputData,
-      originalItem,
-      item,
-      resolvedData,
-      context,
-    }) => {
-
       if (operation === "create") {
         /**
          * 1. if the bid is higher than the current bid amount then
