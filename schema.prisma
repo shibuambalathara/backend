@@ -14,11 +14,15 @@ generator client {
 
 model User {
   id                        String               @id @default(cuid())
+  idNo                      Int                  @default(autoincrement())
+  dealerId                  String               @default("")
   firstName                 String               @default("")
   lastName                  String               @default("")
   email                     String               @default("")
   username                  String               @unique @default("")
   phone                     String               @default("")
+  businessName              String               @default("")
+  category                  EventType[]          @relation("EventType_users")
   mobile                    String               @unique @default("")
   password                  String?
   vehicleBuyingLimit        Int?                 @default(0)
@@ -69,6 +73,8 @@ model User {
   magicAuthToken            String?
   magicAuthIssuedAt         DateTime?
   magicAuthRedeemedAt       DateTime?
+
+  @@index([idNo])
 }
 
 model Payment {
@@ -233,8 +239,12 @@ model EventType {
   id        String    @id @default(cuid())
   name      String    @default("")
   events    Event[]   @relation("Event_eventType")
+  users     User?     @relation("EventType_users", fields: [usersId], references: [id])
+  usersId   String?   @map("users")
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
+
+  @@index([usersId])
 }
 
 model Location {

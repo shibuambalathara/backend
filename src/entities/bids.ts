@@ -47,7 +47,7 @@ export const Bid = list({
         const [bidVehicle, bidCount, user, myBidMaxAmount] = await Promise.all([
           context.query.Vehicle.findOne({
             where: { id: resolvedData?.bidVehicle?.connect?.id },
-            query: `id currentBidAmount bidTimeExpire event { startDate noOfBids isSpecialEvent bidLock location { state { name } } }`,
+            query: `id currentBidAmount bidTimeExpire event { startDate noOfBids seller { id name } isSpecialEvent bidLock location { state { name } } }`,
           }),
           context.query.Bid.count({
             where: {
@@ -59,7 +59,7 @@ export const Bid = list({
           }),
           context.query.User.findOne({
             where: { id: userId },
-            query: `status currentVehicleBuyingLimit { vehicleBuyingLimit specialVehicleBuyingLimit } states { id name }`,
+            query: `status currentVehicleBuyingLimit { vehicleBuyingLimit specialVehicleBuyingLimit } states { id name } bannedSellers { id }`,
           }),
           context.prisma.bid.findFirst({
             where: {
@@ -94,6 +94,14 @@ export const Bid = list({
           addValidationError(
             "You are not allowed to bid on this vehicle in the state: " +
               bidVehicle?.event?.location?.state?.name
+          );
+        }
+        if (
+          user?.bannedSellers?.some((s) => s?.id === bidVehicle?.seller?.id)
+        ) {
+          addValidationError(
+            "You are banned from bidding on this vehicle seller: " +
+              bidVehicle?.seller?.name
           );
         }
         if (myBidMaxAmount && myBidMaxAmount?.amount >= amount) {

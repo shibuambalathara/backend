@@ -41,8 +41,41 @@ export const User = list({
   ui: {
     labelField: "username",
     hideCreate: isNotAdmin,
+    listView: {
+      initialColumns: [
+        "mobile",
+        "dealerId",
+        "status",
+        "firstName",
+        "lastName",
+        "email",
+        "createdAt",
+      ],
+      initialSort: { field: "createdAt", direction: "DESC" },
+    },
   },
   fields: {
+    idNo: integer({
+      isIndexed: true,
+      defaultValue: {
+        kind: "autoincrement",
+      },
+      db: {
+        isNullable: false,
+      },
+      ui: {
+        createView: { fieldMode: "hidden" },
+        itemView: { fieldMode: "read" },
+        listView: { fieldMode: "read" },
+      },
+    }),
+    dealerId: text({
+      ui: {
+        createView: { fieldMode: "hidden" },
+        itemView: { fieldMode: "read" },
+        listView: { fieldMode: "read" },
+      },
+    }),
     firstName: text({}),
     lastName: text({}),
     email: text({
@@ -55,6 +88,11 @@ export const User = list({
       isIndexed: "unique",
     }),
     phone: text({}),
+    businessName: text({}),
+    category: relationship({
+      ref: "EventType.users",
+      many: true,
+    }),
     mobile: text({
       isIndexed: "unique",
       validation: {

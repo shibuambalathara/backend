@@ -3,11 +3,21 @@
 
 type User {
   id: ID!
+  idNo: Int
+  dealerId: String
   firstName: String
   lastName: String
   email: String
   username: String
   phone: String
+  businessName: String
+  category(
+    where: EventTypeWhereInput! = {}
+    orderBy: [EventTypeOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [EventType!]
+  categoryCount(where: EventTypeWhereInput! = {}): Int
   mobile: String
   password: PasswordState
   currentVehicleBuyingLimit: vehicleBuyingLimits
@@ -148,11 +158,15 @@ input UserWhereInput {
   OR: [UserWhereInput!]
   NOT: [UserWhereInput!]
   id: IDFilter
+  idNo: IntFilter
+  dealerId: StringFilter
   firstName: StringFilter
   lastName: StringFilter
   email: StringFilter
   username: StringFilter
   phone: StringFilter
+  businessName: StringFilter
+  category: EventTypeManyRelationFilter
   mobile: StringFilter
   password: PasswordFilter
   vehicleBuyingLimit: IntNullableFilter
@@ -191,6 +205,17 @@ input IDFilter {
   not: IDFilter
 }
 
+input IntFilter {
+  equals: Int
+  in: [Int!]
+  notIn: [Int!]
+  lt: Int
+  lte: Int
+  gt: Int
+  gte: Int
+  not: IntFilter
+}
+
 input StringFilter {
   equals: String
   in: [String!]
@@ -223,6 +248,12 @@ input NestedStringFilter {
   startsWith: String
   endsWith: String
   not: NestedStringFilter
+}
+
+input EventTypeManyRelationFilter {
+  every: EventTypeWhereInput
+  some: EventTypeWhereInput
+  none: EventTypeWhereInput
 }
 
 input PasswordFilter {
@@ -310,11 +341,14 @@ input DateTimeNullableFilter {
 
 input UserOrderByInput {
   id: OrderDirection
+  idNo: OrderDirection
+  dealerId: OrderDirection
   firstName: OrderDirection
   lastName: OrderDirection
   email: OrderDirection
   username: OrderDirection
   phone: OrderDirection
+  businessName: OrderDirection
   mobile: OrderDirection
   vehicleBuyingLimit: OrderDirection
   specialVehicleBuyingLimit: OrderDirection
@@ -338,11 +372,15 @@ enum OrderDirection {
 }
 
 input UserUpdateInput {
+  idNo: Int
+  dealerId: String
   firstName: String
   lastName: String
   email: String
   username: String
   phone: String
+  businessName: String
+  category: EventTypeRelateToManyForUpdateInput
   mobile: String
   password: String
   vehicleBuyingLimit: Int
@@ -371,6 +409,13 @@ input UserUpdateInput {
   magicAuthToken: String
   magicAuthIssuedAt: DateTime
   magicAuthRedeemedAt: DateTime
+}
+
+input EventTypeRelateToManyForUpdateInput {
+  disconnect: [EventTypeWhereUniqueInput!]
+  set: [EventTypeWhereUniqueInput!]
+  create: [EventTypeCreateInput!]
+  connect: [EventTypeWhereUniqueInput!]
 }
 
 input ImageFieldInput {
@@ -430,11 +475,15 @@ input UserUpdateArgs {
 }
 
 input UserCreateInput {
+  idNo: Int
+  dealerId: String
   firstName: String
   lastName: String
   email: String
   username: String
   phone: String
+  businessName: String
+  category: EventTypeRelateToManyForCreateInput
   mobile: String
   password: String
   vehicleBuyingLimit: Int
@@ -463,6 +512,11 @@ input UserCreateInput {
   magicAuthToken: String
   magicAuthIssuedAt: DateTime
   magicAuthRedeemedAt: DateTime
+}
+
+input EventTypeRelateToManyForCreateInput {
+  create: [EventTypeCreateInput!]
+  connect: [EventTypeWhereUniqueInput!]
 }
 
 input VehicleRelateToManyForCreateInput {
@@ -533,17 +587,6 @@ input PaymentWhereInput {
   emdUpdate: EmdUpdateManyRelationFilter
   createdAt: DateTimeNullableFilter
   updatedAt: DateTimeNullableFilter
-}
-
-input IntFilter {
-  equals: Int
-  in: [Int!]
-  notIn: [Int!]
-  lt: Int
-  lte: Int
-  gt: Int
-  gte: Int
-  not: IntFilter
 }
 
 input StringNullableFilter {
@@ -785,12 +828,6 @@ input EventWhereInput {
   vehicleExpireTimeIncrement: IntNullableFilter
 }
 
-input EventTypeManyRelationFilter {
-  every: EventTypeWhereInput
-  some: EventTypeWhereInput
-  none: EventTypeWhereInput
-}
-
 input DateTimeFilter {
   equals: DateTime
   in: [DateTime!]
@@ -864,13 +901,6 @@ input SellerRelateToOneForUpdateInput {
   disconnect: Boolean
 }
 
-input EventTypeRelateToManyForUpdateInput {
-  disconnect: [EventTypeWhereUniqueInput!]
-  set: [EventTypeWhereUniqueInput!]
-  create: [EventTypeCreateInput!]
-  connect: [EventTypeWhereUniqueInput!]
-}
-
 input EventCategoryRelateToOneForUpdateInput {
   create: EventCategoryCreateInput
   connect: EventCategoryWhereUniqueInput
@@ -922,11 +952,6 @@ input EventCreateInput {
 input SellerRelateToOneForCreateInput {
   create: SellerCreateInput
   connect: SellerWhereUniqueInput
-}
-
-input EventTypeRelateToManyForCreateInput {
-  create: [EventTypeCreateInput!]
-  connect: [EventTypeWhereUniqueInput!]
 }
 
 input EventCategoryRelateToOneForCreateInput {
@@ -1397,6 +1422,7 @@ type EventType {
     skip: Int! = 0
   ): [Event!]
   eventsCount(where: EventWhereInput! = {}): Int
+  users: User
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -1412,6 +1438,7 @@ input EventTypeWhereInput {
   id: IDFilter
   name: StringFilter
   events: EventManyRelationFilter
+  users: UserWhereInput
   createdAt: DateTimeNullableFilter
   updatedAt: DateTimeNullableFilter
 }
@@ -1432,6 +1459,7 @@ input EventTypeOrderByInput {
 input EventTypeUpdateInput {
   name: String
   events: EventRelateToManyForUpdateInput
+  users: UserRelateToOneForUpdateInput
 }
 
 input EventRelateToManyForUpdateInput {
@@ -1449,6 +1477,7 @@ input EventTypeUpdateArgs {
 input EventTypeCreateInput {
   name: String
   events: EventRelateToManyForCreateInput
+  users: UserRelateToOneForCreateInput
 }
 
 input EventRelateToManyForCreateInput {

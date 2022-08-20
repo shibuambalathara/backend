@@ -38,7 +38,9 @@ import {
             itemView: { fieldMode: "read" },
           },
         }),
-
+        users: relationship({
+          ref: "User.category",
+        }),
         createdAt: timestamp({
           ...fieldOptions,
           defaultValue: { kind: "now" },

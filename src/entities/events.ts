@@ -21,7 +21,7 @@ export const Event = list({
   ui: {
     hideCreate: isNotAdmin,
     hideDelete: isNotAdmin,
-    itemView: { defaultFieldMode: isAdminEdit },
+    itemView: { defaultFieldMode: "read" },
     createView: { defaultFieldMode: isAdminCreate },
     labelField: "eventNo",
   },
@@ -29,7 +29,7 @@ export const Event = list({
     operation: {
       query: () => true,
       create: isSuperAdmin,
-      update: isSuperAdmin,
+      update: () => false,
       delete: isSuperAdmin,
     },
   },
@@ -48,14 +48,14 @@ export const Event = list({
       if (operation !== "update") {
         return;
       }
-      await context.prisma.vehicle.updateMany({
-        where: {
-          event: { id: resolvedData?.id },
-        },
-        data: {
-          bidTimeExpire: resolvedData?.endDate,
-        },
-      });
+      // await context.prisma.vehicle.updateMany({
+      //   where: {
+      //     event: { id: resolvedData?.id },
+      //   },
+      //   data: {
+      //     bidTimeExpire: resolvedData?.endDate,
+      //   },
+      // });
     },
   },
 
@@ -93,6 +93,10 @@ export const Event = list({
     vehicles: relationship({
       ref: "Vehicle.event",
       many: true,
+      ui: {
+        createView: { fieldMode: "hidden" },
+        itemView: { fieldMode: isAdminEdit },
+      },
     }),
     startDate: timestamp({
       validation: {
@@ -167,7 +171,7 @@ export const Event = list({
     }),
 
     duration: integer({
-      label: "Duration in minutes",
+      label: "Time extending before Duration in minutes",
       defaultValue: 2,
     }),
 

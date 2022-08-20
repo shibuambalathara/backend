@@ -45,9 +45,14 @@ export const extendGraphqlSchema = graphQLSchemaExtension<Context>({
           where: {
             ...where,
             startDate: { lte: new Date().toISOString() },
-            endDate: { gte: new Date().toISOString() },
+            // endDate: { gte: new Date().toISOString() },
             status: {
               equals: "active",
+            },
+            vehicles: {
+              some: {
+                bidTimeExpire: { gte: new Date().toISOString() },
+              },
             },
           },
           orderBy,
@@ -64,6 +69,24 @@ export const extendGraphqlSchema = graphQLSchemaExtension<Context>({
           where: {
             ...where,
             startDate: { gt: new Date().toISOString() },
+            status: {
+              equals: "active",
+            },
+          },
+          orderBy,
+          skip,
+          take,
+        });
+      },
+      compliedEvents: (root, { where, orderBy, skip, take }, context) => {
+        // Note we use `context.db.Post` here as we have a return type
+        // of [Post], and this API provides results in the correct format.
+        // If you accidentally use `context.query.Post` here you can expect problems
+        // when accessing the fields in your GraphQL client.
+        return context.db.Event.findMany({
+          where: {
+            ...where,
+            endDate: { lt: new Date().toISOString() },
             status: {
               equals: "active",
             },
