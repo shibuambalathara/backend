@@ -28,7 +28,7 @@ const ownerFilter = ({ session, context, listKey, operation }) => {
 export const User = list({
   access: {
     operation: {
-      query: isSignedIn,
+      query: ({ session }) => !!session,
       create: () => true, //!session?.itemId || isSuperAdmin({ session }),
       update: isSignedIn,
       delete: isSuperAdmin,
