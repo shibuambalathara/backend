@@ -30,7 +30,7 @@ export const User = list({
     operation: {
       query: ({ session }) => !!session,
       create: () => true, //!session?.itemId || isSuperAdmin({ session }),
-      update: isSignedIn,
+      update: ({ session }) => !!session,
       delete: isSuperAdmin,
     },
     filter: {
