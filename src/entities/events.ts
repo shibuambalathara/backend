@@ -1,5 +1,6 @@
 import {
   checkbox,
+  file,
   integer,
   relationship,
   select,
@@ -126,6 +127,23 @@ export const Event = list({
       ui: {
         createView: { fieldMode: "hidden" },
         itemView: { fieldMode: isAdminEdit },
+      },
+    }),
+    downloadableFile: file({
+      storage: "local_files",
+      hooks: {
+        validateInput: ({
+          addValidationError,
+          resolvedData,
+          fieldKey,
+          operation,
+        }) => {
+          if (operation === "create") {
+            const file = resolvedData[fieldKey];
+            file.filename.split(".").pop() !== "xlsx" &&
+              addValidationError("Only xlsx files are allowed");
+          }
+        },
       },
     }),
     termsAndConditions: document({

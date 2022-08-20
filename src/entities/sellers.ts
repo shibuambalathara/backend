@@ -33,6 +33,11 @@ import {
           },
         }),
 
+        bannedUsers: relationship({
+          ref: "User.bannedSellers",
+          many: true,
+        }),
+
         createdAt: timestamp({
           ...fieldOptions,
           defaultValue: { kind: "now" },

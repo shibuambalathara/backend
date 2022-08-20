@@ -44,7 +44,7 @@ export const Bid = list({
           context?.session?.data?.role === "admin"
             ? resolvedData.user.connect.id
             : context?.session?.itemId;
-        const [bidVehicle, bidCount, user] = await Promise.all([
+        const [bidVehicle, bidCount, user, myBidMaxAmount] = await Promise.all([
           context.query.Vehicle.findOne({
             where: { id: resolvedData?.bidVehicle?.connect?.id },
             query: `id currentBidAmount bidTimeExpire event { startDate noOfBids isSpecialEvent bidLock location { state { name } } }`,
@@ -60,6 +60,17 @@ export const Bid = list({
           context.query.User.findOne({
             where: { id: userId },
             query: `status currentVehicleBuyingLimit { vehicleBuyingLimit specialVehicleBuyingLimit } states { id name }`,
+          }),
+          context.prisma.bid.findFirst({
+            where: {
+              bidVehicle: {
+                id: { equals: resolvedData?.bidVehicle?.connect?.id },
+              },
+              user: { id: { equals: userId } },
+            },
+            orderBy: {
+              amount: "desc",
+            },
           }),
         ]);
 
@@ -85,6 +96,12 @@ export const Bid = list({
               bidVehicle?.event?.location?.state?.name
           );
         }
+        if (myBidMaxAmount && myBidMaxAmount?.amount >= amount) {
+          addValidationError(
+            "Bid Amount smaller than your previous bid amount" +
+              myBidMaxAmount?.amount
+          );
+        }
         if (bidVehicle.startBidAmount >= amount) {
           addValidationError(
             "Bid Amount smaller than start bid amount, Start Bid Amount: " +
@@ -102,14 +119,14 @@ export const Bid = list({
           );
         }
         if (
-          !bidCount &&
+          // !bidCount &&
           bidVehicle.event.isSpecialEvent &&
           user?.currentVehicleBuyingLimit?.specialVehicleBuyingLimit <= 0
         ) {
           addValidationError("Insufficient Buying Limit for Special Event");
         }
         if (
-          !bidCount &&
+          // !bidCount &&
           !bidVehicle.event.isSpecialEvent &&
           user?.currentVehicleBuyingLimit?.vehicleBuyingLimit <= 0
         ) {

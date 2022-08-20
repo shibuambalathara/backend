@@ -53,6 +53,7 @@ type User {
   ): [EmdUpdate!]
   emdUpdatesByAdminCount(where: EmdUpdateWhereInput! = {}): Int
   status: UserStatusType
+  nativeState: String
   states(
     where: StateWhereInput! = {}
     orderBy: [StateOrderByInput!]! = []
@@ -74,6 +75,13 @@ type User {
     skip: Int! = 0
   ): [Bid!]
   quotedBidsCount(where: BidWhereInput! = {}): Int
+  bannedSellers(
+    where: SellerWhereInput! = {}
+    orderBy: [SellerOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Seller!]
+  bannedSellersCount(where: SellerWhereInput! = {}): Int
   createdAt: DateTime
   updatedAt: DateTime
   magicAuthToken: PasswordState
@@ -160,9 +168,11 @@ input UserWhereInput {
   payments: PaymentManyRelationFilter
   emdUpdatesByAdmin: EmdUpdateManyRelationFilter
   status: UserStatusTypeNullableFilter
+  nativeState: StringFilter
   states: StateManyRelationFilter
   activeBids: VehicleManyRelationFilter
   quotedBids: BidManyRelationFilter
+  bannedSellers: SellerManyRelationFilter
   createdAt: DateTimeNullableFilter
   updatedAt: DateTimeNullableFilter
   magicAuthToken: PasswordFilter
@@ -281,6 +291,12 @@ input BidManyRelationFilter {
   none: BidWhereInput
 }
 
+input SellerManyRelationFilter {
+  every: SellerWhereInput
+  some: SellerWhereInput
+  none: SellerWhereInput
+}
+
 input DateTimeNullableFilter {
   equals: DateTime
   in: [DateTime!]
@@ -309,6 +325,7 @@ input UserOrderByInput {
   city: OrderDirection
   role: OrderDirection
   status: OrderDirection
+  nativeState: OrderDirection
   createdAt: OrderDirection
   updatedAt: OrderDirection
   magicAuthIssuedAt: OrderDirection
@@ -346,9 +363,11 @@ input UserUpdateInput {
   payments: PaymentRelateToManyForUpdateInput
   emdUpdatesByAdmin: EmdUpdateRelateToManyForUpdateInput
   status: UserStatusType
+  nativeState: String
   states: StateRelateToManyForUpdateInput
   activeBids: VehicleRelateToManyForUpdateInput
   quotedBids: BidRelateToManyForUpdateInput
+  bannedSellers: SellerRelateToManyForUpdateInput
   magicAuthToken: String
   magicAuthIssuedAt: DateTime
   magicAuthRedeemedAt: DateTime
@@ -398,6 +417,13 @@ input BidRelateToManyForUpdateInput {
   connect: [BidWhereUniqueInput!]
 }
 
+input SellerRelateToManyForUpdateInput {
+  disconnect: [SellerWhereUniqueInput!]
+  set: [SellerWhereUniqueInput!]
+  create: [SellerCreateInput!]
+  connect: [SellerWhereUniqueInput!]
+}
+
 input UserUpdateArgs {
   where: UserWhereUniqueInput!
   data: UserUpdateInput!
@@ -429,9 +455,11 @@ input UserCreateInput {
   payments: PaymentRelateToManyForCreateInput
   emdUpdatesByAdmin: EmdUpdateRelateToManyForCreateInput
   status: UserStatusType
+  nativeState: String
   states: StateRelateToManyForCreateInput
   activeBids: VehicleRelateToManyForCreateInput
   quotedBids: BidRelateToManyForCreateInput
+  bannedSellers: SellerRelateToManyForCreateInput
   magicAuthToken: String
   magicAuthIssuedAt: DateTime
   magicAuthRedeemedAt: DateTime
@@ -460,6 +488,11 @@ input StateRelateToManyForCreateInput {
 input BidRelateToManyForCreateInput {
   create: [BidCreateInput!]
   connect: [BidWhereUniqueInput!]
+}
+
+input SellerRelateToManyForCreateInput {
+  create: [SellerCreateInput!]
+  connect: [SellerWhereUniqueInput!]
 }
 
 type Payment {
@@ -690,6 +723,7 @@ type Event {
   noOfBids: Int
   status: EventStatusType
   ExcelFile: ExcelUpload
+  downloadableFile: FileFieldOutput
   termsAndConditions: Event_termsAndConditions_Document
   createdAt: DateTime
   updatedAt: DateTime
@@ -705,6 +739,12 @@ enum EventStatusType {
   blocked
   active
   inactive
+}
+
+type FileFieldOutput {
+  filename: String!
+  filesize: Int!
+  url: String!
 }
 
 type Event_termsAndConditions_Document {
@@ -809,6 +849,7 @@ input EventUpdateInput {
   noOfBids: Int
   status: EventStatusType
   ExcelFile: ExcelUploadRelateToOneForUpdateInput
+  downloadableFile: FileFieldInput
   termsAndConditions: JSON
   bidLock: EventBidLockType
   isSpecialEvent: Boolean
@@ -848,6 +889,10 @@ input ExcelUploadRelateToOneForUpdateInput {
   disconnect: Boolean
 }
 
+input FileFieldInput {
+  upload: Upload!
+}
+
 input EventUpdateArgs {
   where: EventWhereUniqueInput!
   data: EventUpdateInput!
@@ -865,6 +910,7 @@ input EventCreateInput {
   noOfBids: Int
   status: EventStatusType
   ExcelFile: ExcelUploadRelateToOneForCreateInput
+  downloadableFile: FileFieldInput
   termsAndConditions: JSON
   bidLock: EventBidLockType
   isSpecialEvent: Boolean
@@ -1632,12 +1678,6 @@ type ExcelUpload {
   updatedAt: DateTime
 }
 
-type FileFieldOutput {
-  filename: String!
-  filesize: Int!
-  url: String!
-}
-
 input ExcelUploadWhereUniqueInput {
   id: ID
 }
@@ -1668,10 +1708,6 @@ input ExcelUploadUpdateInput {
   vehicles: VehicleRelateToManyForUpdateInput
 }
 
-input FileFieldInput {
-  upload: Upload!
-}
-
 input ExcelUploadUpdateArgs {
   where: ExcelUploadWhereUniqueInput!
   data: ExcelUploadUpdateInput!
@@ -1694,6 +1730,13 @@ type Seller {
     skip: Int! = 0
   ): [Event!]
   eventsCount(where: EventWhereInput! = {}): Int
+  bannedUsers(
+    where: UserWhereInput! = {}
+    orderBy: [UserOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [User!]
+  bannedUsersCount(where: UserWhereInput! = {}): Int
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -1709,6 +1752,7 @@ input SellerWhereInput {
   id: IDFilter
   name: StringFilter
   events: EventManyRelationFilter
+  bannedUsers: UserManyRelationFilter
   createdAt: DateTimeNullableFilter
   updatedAt: DateTimeNullableFilter
 }
@@ -1723,6 +1767,7 @@ input SellerOrderByInput {
 input SellerUpdateInput {
   name: String
   events: EventRelateToManyForUpdateInput
+  bannedUsers: UserRelateToManyForUpdateInput
 }
 
 input SellerUpdateArgs {
@@ -1733,6 +1778,7 @@ input SellerUpdateArgs {
 input SellerCreateInput {
   name: String
   events: EventRelateToManyForCreateInput
+  bannedUsers: UserRelateToManyForCreateInput
 }
 
 """

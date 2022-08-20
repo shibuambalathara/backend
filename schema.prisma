@@ -59,9 +59,11 @@ model User {
   payments                  Payment[]            @relation("Payment_user")
   emdUpdatesByAdmin         EmdUpdate[]          @relation("EmdUpdate_createdBy")
   status                    UserStatusType?      @default(pending)
+  nativeState               String               @default("")
   states                    State[]              @relation("State_users")
   activeBids                Vehicle[]            @relation("Vehicle_currentBidUser")
   quotedBids                Bid[]                @relation("Bid_user")
+  bannedSellers             Seller[]             @relation("Seller_bannedUsers")
   createdAt                 DateTime?            @default(now())
   updatedAt                 DateTime?            @updatedAt
   magicAuthToken            String?
@@ -128,6 +130,8 @@ model Event {
   status                     EventStatusType?  @default(active)
   ExcelFile                  ExcelUpload?      @relation("Event_ExcelFile", fields: [ExcelFileId], references: [id])
   ExcelFileId                String?           @unique @map("ExcelFile")
+  downloadableFile_filesize  Int?
+  downloadableFile_filename  String?
   termsAndConditions         Json              @default("[{\"type\":\"paragraph\",\"children\":[{\"text\":\"\"}]}]")
   createdAt                  DateTime?         @default(now())
   updatedAt                  DateTime?         @updatedAt
@@ -276,11 +280,12 @@ model ExcelUpload {
 }
 
 model Seller {
-  id        String    @id @default(cuid())
-  name      String    @default("")
-  events    Event[]   @relation("Event_seller")
-  createdAt DateTime? @default(now())
-  updatedAt DateTime? @updatedAt
+  id          String    @id @default(cuid())
+  name        String    @default("")
+  events      Event[]   @relation("Event_seller")
+  bannedUsers User[]    @relation("Seller_bannedUsers")
+  createdAt   DateTime? @default(now())
+  updatedAt   DateTime? @updatedAt
 }
 
 enum UserIdProofTypeType {

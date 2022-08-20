@@ -183,6 +183,7 @@ export const User = list({
         itemView: { fieldMode: isAdminEdit },
       },
     }),
+    nativeState: text({}),
     states: relationship({
       ref: "State.users",
       many: true,
@@ -202,6 +203,10 @@ export const User = list({
         createView: { fieldMode: "hidden" },
         itemView: { fieldMode: "read" },
       },
+    }),
+    bannedSellers: relationship({
+      ref: "Seller.bannedUsers",
+      many: true,
     }),
     createdAt: timestamp({ ...fieldOptions, defaultValue: { kind: "now" } }),
     updatedAt: timestamp({ ...fieldOptions, db: { updatedAt: true } }),
