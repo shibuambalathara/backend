@@ -44,6 +44,11 @@ export const Event = list({
         addValidationError("End date must be in the future");
       }
     },
+    resolveInput: async ({ resolvedData, context, operation }) => {
+      if (operation === "create" && resolvedData.eventCategory === "open")
+        resolvedData.bidLock = "locked";
+      return resolvedData;
+    },
     afterOperation: async ({ context, operation, resolvedData }) => {
       if (operation !== "update") {
         return;
@@ -89,8 +94,11 @@ export const Event = list({
         itemView: { fieldMode: isAdminEdit },
       },
     }),
-    eventCategory: relationship({
-      ref: "EventCategory.events",
+    eventCategory: select({
+      options: [
+        { value: "online", label: "Online Auction" },
+        { value: "open", label: "Open Auction" },
+      ],
     }),
 
     location: relationship({
@@ -130,6 +138,7 @@ export const Event = list({
         { label: "Blocked", value: "blocked" },
         { label: "Active", value: "active" },
         { label: "Inactive", value: "inactive" },
+        { label: "Stop", value: "stop" },
       ],
       defaultValue: "active",
       ui: {
@@ -180,7 +189,7 @@ export const Event = list({
     }),
 
     addingBidTime: integer({
-      label: "Adding bid time in minutes",
+      label: "Adding bid time in minutes / gap for opening bids in seconds",
       defaultValue: 2,
     }),
 

@@ -125,8 +125,7 @@ model Event {
   seller                     Seller?           @relation("Event_seller", fields: [sellerId], references: [id])
   sellerId                   String?           @map("seller")
   eventType                  EventType[]       @relation("Event_eventType")
-  eventCategory              EventCategory?    @relation("Event_eventCategory", fields: [eventCategoryId], references: [id])
-  eventCategoryId            String?           @map("eventCategory")
+  eventCategory              String?
   location                   Location?         @relation("Event_location", fields: [locationId], references: [id])
   locationId                 String?           @map("location")
   vehicles                   Vehicle[]         @relation("Vehicle_event")
@@ -149,7 +148,6 @@ model Event {
 
   @@index([eventNo])
   @@index([sellerId])
-  @@index([eventCategoryId])
   @@index([locationId])
 }
 
@@ -158,6 +156,7 @@ model Vehicle {
   vehicleIndexNo      Int                   @default(autoincrement())
   registrationNumber  String                @default("")
   bidTimeExpire       DateTime
+  bidStartTime        DateTime
   bidAmountUpdate     Int?
   currentBidAmount    Int?                  @default(0)
   startBidAmount      Int?                  @default(0)
@@ -273,14 +272,6 @@ model State {
   updatedAt DateTime?  @updatedAt
 }
 
-model EventCategory {
-  id        String    @id @default(cuid())
-  name      String    @default("")
-  events    Event[]   @relation("Event_eventCategory")
-  createdAt DateTime? @default(now())
-  updatedAt DateTime? @updatedAt
-}
-
 model ExcelUpload {
   id            String    @id @default(cuid())
   name          String    @default("")
@@ -326,6 +317,7 @@ enum EventStatusType {
   blocked
   active
   inactive
+  stop
 }
 
 enum EventBidLockType {

@@ -23,7 +23,7 @@ export const lists = {
   EventType,
   Location,
   State,
-  EventCategory,
+  // EventCategory,
   ExcelUpload,
   Seller,
 };

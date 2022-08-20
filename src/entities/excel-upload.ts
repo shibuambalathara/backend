@@ -75,7 +75,7 @@ export const ExcelUpload = list({
             ),
             context.query.Event.findOne({
               where: { id: event.connect.id },
-              query: `endDate vehicleExpireTimeIncrement`,
+              query: `endDate vehicleExpireTimeIncrement startDate eventCategory duration addingBidTime `,
             }),
           ]);
           // console.log("data", data);
@@ -131,6 +131,12 @@ export const ExcelUpload = list({
                   bidTimeExpire: new Date(
                     new Date(eventData.endDate).getTime() +
                       eventData.vehicleExpireTimeIncrement * 60000 * i
+                  ),
+                  bidStartTime: new Date(
+                    new Date(eventData.startDate).getTime() +
+                      (eventData.duration * 60000 +
+                        eventData.addingBidTime * 1000) *
+                        i
                   ),
                   currentBidAmount: 0,
                   startBidAmount: vehicleItem.Start_Price ?? 0,

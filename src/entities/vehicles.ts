@@ -85,6 +85,13 @@ export const Vehicle = list({
       },
       validation: { isRequired: true },
     }),
+    bidStartTime: timestamp({
+      ui: {
+        createView: { fieldMode: "hidden" },
+        itemView: { fieldMode: "read" },
+      },
+      validation: { isRequired: true },
+    }),
     bidAmountUpdate: integer({
       ui: {
         createView: { fieldMode: "hidden" },

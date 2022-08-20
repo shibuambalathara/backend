@@ -47,7 +47,7 @@ export const Bid = list({
         const [bidVehicle, bidCount, user, myBidMaxAmount] = await Promise.all([
           context.query.Vehicle.findOne({
             where: { id: resolvedData?.bidVehicle?.connect?.id },
-            query: `id currentBidAmount bidTimeExpire event { startDate noOfBids seller { id name } isSpecialEvent bidLock location { state { name } } }`,
+            query: `id currentBidAmount bidTimeExpire event { startDate status noOfBids seller { id name } isSpecialEvent bidLock location { state { name } } }`,
           }),
           context.query.Bid.count({
             where: {
@@ -82,6 +82,9 @@ export const Bid = list({
         }
         if (new Date(bidVehicle.event.startDate) > new Date()) {
           addValidationError("Auction yet to start");
+        }
+        if (bidVehicle.event.status !== "active") {
+          addValidationError("Auction not active");
         }
         if (!bidCount && bidCount >= bidVehicle.event.noOfBids) {
           addValidationError("No Bids Left");
@@ -167,11 +170,10 @@ export const Bid = list({
       }
       return resolvedData;
     },
-    afterOperation: async ({
+    beforeOperation: async ({
       listKey,
       operation,
       inputData,
-      originalItem,
       item,
       resolvedData,
       context,
@@ -183,20 +185,30 @@ export const Bid = list({
          * previous bid user and amount
          */
 
-        const bid = await context.prisma.bid.findFirst({
-          where: {
-            user: {
-              status: { equals: "active" },
-            },
-          },
-          select: {
-            id: true,
-            user: { id: true },
-            amount: true,
-          },
-          orderBy: { amount: "desc" },
-        });
+        // const bid = await context.query.Bid.findOne({
+        //   where: {
+        //     id:  item.id ,
+        //   },
+        //   select: {
+        //     id: true,
+        //     user: { id: true },
+        //     amount: true,
+        //   },
+        //   orderBy: { amount: "desc" },
+        // });
       }
+
+    },
+    afterOperation: async ({
+      listKey,
+      operation,
+      inputData,
+      originalItem,
+      item,
+      resolvedData,
+      context,
+    }) => {
+
       if (operation === "create") {
         /**
          * 1. if the bid is higher than the current bid amount then
@@ -207,7 +219,7 @@ export const Bid = list({
          */
         const bidVehicle = await context.query.Vehicle.findOne({
           where: { id: resolvedData?.bidVehicle?.connect?.id },
-          query: `bidTimeExpire currentBidAmount event { duration isSpecialEvent addingBidTime } `,
+          query: `bidTimeExpire currentBidAmount event { duration isSpecialEvent addingBidTime eventCategory } `,
         });
 
         if (bidVehicle.currentBidAmount < resolvedData.amount) {
@@ -215,7 +227,7 @@ export const Bid = list({
           const addBidTime = (bidVehicle?.event?.addingBidTime ?? 2) * 60000; // 2 minutes
           const bidTimeExpire =
             new Date(bidVehicle.bidTimeExpire).getTime() - durationInMinutes <=
-            new Date().getTime()
+              new Date().getTime() && bidVehicle.event.eventCategory !== "open"
               ? new Date(
                   new Date(bidVehicle.bidTimeExpire).getTime() + addBidTime
                 )

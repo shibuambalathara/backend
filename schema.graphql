@@ -752,7 +752,7 @@ type Event {
     skip: Int! = 0
   ): [EventType!]
   eventTypeCount(where: EventTypeWhereInput! = {}): Int
-  eventCategory: EventCategory
+  eventCategory: String
   location: Location
   vehicles(
     where: VehicleWhereInput! = {}
@@ -782,6 +782,7 @@ enum EventStatusType {
   blocked
   active
   inactive
+  stop
 }
 
 type FileFieldOutput {
@@ -811,7 +812,7 @@ input EventWhereInput {
   eventNo: IntFilter
   seller: SellerWhereInput
   eventType: EventTypeManyRelationFilter
-  eventCategory: EventCategoryWhereInput
+  eventCategory: StringNullableFilter
   location: LocationWhereInput
   vehicles: VehicleManyRelationFilter
   startDate: DateTimeFilter
@@ -861,6 +862,7 @@ input BooleanFilter {
 input EventOrderByInput {
   id: OrderDirection
   eventNo: OrderDirection
+  eventCategory: OrderDirection
   startDate: OrderDirection
   endDate: OrderDirection
   noOfBids: OrderDirection
@@ -878,7 +880,7 @@ input EventUpdateInput {
   eventNo: Int
   seller: SellerRelateToOneForUpdateInput
   eventType: EventTypeRelateToManyForUpdateInput
-  eventCategory: EventCategoryRelateToOneForUpdateInput
+  eventCategory: String
   location: LocationRelateToOneForUpdateInput
   vehicles: VehicleRelateToManyForUpdateInput
   startDate: DateTime
@@ -898,12 +900,6 @@ input EventUpdateInput {
 input SellerRelateToOneForUpdateInput {
   create: SellerCreateInput
   connect: SellerWhereUniqueInput
-  disconnect: Boolean
-}
-
-input EventCategoryRelateToOneForUpdateInput {
-  create: EventCategoryCreateInput
-  connect: EventCategoryWhereUniqueInput
   disconnect: Boolean
 }
 
@@ -932,7 +928,7 @@ input EventCreateInput {
   eventNo: Int
   seller: SellerRelateToOneForCreateInput
   eventType: EventTypeRelateToManyForCreateInput
-  eventCategory: EventCategoryRelateToOneForCreateInput
+  eventCategory: String
   location: LocationRelateToOneForCreateInput
   vehicles: VehicleRelateToManyForCreateInput
   startDate: DateTime
@@ -954,11 +950,6 @@ input SellerRelateToOneForCreateInput {
   connect: SellerWhereUniqueInput
 }
 
-input EventCategoryRelateToOneForCreateInput {
-  create: EventCategoryCreateInput
-  connect: EventCategoryWhereUniqueInput
-}
-
 input LocationRelateToOneForCreateInput {
   create: LocationCreateInput
   connect: LocationWhereUniqueInput
@@ -974,6 +965,7 @@ type Vehicle {
   vehicleIndexNo: Int
   registrationNumber: String
   bidTimeExpire: DateTime
+  bidStartTime: DateTime
   bidAmountUpdate: Int
   currentBidAmount: Int
   myBidRank: Int
@@ -1070,6 +1062,7 @@ input VehicleWhereInput {
   vehicleIndexNo: IntFilter
   registrationNumber: StringFilter
   bidTimeExpire: DateTimeFilter
+  bidStartTime: DateTimeFilter
   bidAmountUpdate: IntNullableFilter
   currentBidAmount: IntNullableFilter
   startBidAmount: IntNullableFilter
@@ -1162,6 +1155,7 @@ input VehicleOrderByInput {
   vehicleIndexNo: OrderDirection
   registrationNumber: OrderDirection
   bidTimeExpire: OrderDirection
+  bidStartTime: OrderDirection
   bidAmountUpdate: OrderDirection
   currentBidAmount: OrderDirection
   startBidAmount: OrderDirection
@@ -1217,6 +1211,7 @@ input VehicleUpdateInput {
   vehicleIndexNo: Int
   registrationNumber: String
   bidTimeExpire: DateTime
+  bidStartTime: DateTime
   bidAmountUpdate: Int
   currentBidAmount: Int
   startBidAmount: Int
@@ -1293,6 +1288,7 @@ input VehicleCreateInput {
   vehicleIndexNo: Int
   registrationNumber: String
   bidTimeExpire: DateTime
+  bidStartTime: DateTime
   bidAmountUpdate: Int
   currentBidAmount: Int
   startBidAmount: Int
@@ -1650,57 +1646,6 @@ input LocationRelateToManyForCreateInput {
   connect: [LocationWhereUniqueInput!]
 }
 
-type EventCategory {
-  id: ID!
-  name: String
-  events(
-    where: EventWhereInput! = {}
-    orderBy: [EventOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [Event!]
-  eventsCount(where: EventWhereInput! = {}): Int
-  createdAt: DateTime
-  updatedAt: DateTime
-}
-
-input EventCategoryWhereUniqueInput {
-  id: ID
-}
-
-input EventCategoryWhereInput {
-  AND: [EventCategoryWhereInput!]
-  OR: [EventCategoryWhereInput!]
-  NOT: [EventCategoryWhereInput!]
-  id: IDFilter
-  name: StringFilter
-  events: EventManyRelationFilter
-  createdAt: DateTimeNullableFilter
-  updatedAt: DateTimeNullableFilter
-}
-
-input EventCategoryOrderByInput {
-  id: OrderDirection
-  name: OrderDirection
-  createdAt: OrderDirection
-  updatedAt: OrderDirection
-}
-
-input EventCategoryUpdateInput {
-  name: String
-  events: EventRelateToManyForUpdateInput
-}
-
-input EventCategoryUpdateArgs {
-  where: EventCategoryWhereUniqueInput!
-  data: EventCategoryUpdateInput!
-}
-
-input EventCategoryCreateInput {
-  name: String
-  events: EventRelateToManyForCreateInput
-}
-
 type ExcelUpload {
   id: ID!
   name: String
@@ -1898,17 +1843,6 @@ type Mutation {
   updateStates(data: [StateUpdateArgs!]!): [State]
   deleteState(where: StateWhereUniqueInput!): State
   deleteStates(where: [StateWhereUniqueInput!]!): [State]
-  createEventCategory(data: EventCategoryCreateInput!): EventCategory
-  createEventCategories(data: [EventCategoryCreateInput!]!): [EventCategory]
-  updateEventCategory(
-    where: EventCategoryWhereUniqueInput!
-    data: EventCategoryUpdateInput!
-  ): EventCategory
-  updateEventCategories(data: [EventCategoryUpdateArgs!]!): [EventCategory]
-  deleteEventCategory(where: EventCategoryWhereUniqueInput!): EventCategory
-  deleteEventCategories(
-    where: [EventCategoryWhereUniqueInput!]!
-  ): [EventCategory]
   createExcelUpload(data: ExcelUploadCreateInput!): ExcelUpload
   createExcelUploads(data: [ExcelUploadCreateInput!]!): [ExcelUpload]
   updateExcelUpload(
@@ -2052,14 +1986,6 @@ type Query {
   ): [State!]
   state(where: StateWhereUniqueInput!): State
   statesCount(where: StateWhereInput! = {}): Int
-  eventCategories(
-    where: EventCategoryWhereInput! = {}
-    orderBy: [EventCategoryOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [EventCategory!]
-  eventCategory(where: EventCategoryWhereUniqueInput!): EventCategory
-  eventCategoriesCount(where: EventCategoryWhereInput! = {}): Int
   excelUploads(
     where: ExcelUploadWhereInput! = {}
     orderBy: [ExcelUploadOrderByInput!]! = []
