@@ -22,6 +22,17 @@ export const extendGraphqlSchema = graphQLSchemaExtension<Context>({
         take: Int! = 10
         skip: Int! = 0
       ): [Event]
+
+      """
+      complied Events
+      """
+      compliedEvents(
+        where: EventWhereInput
+        orderBy: [EventOrderByInput] = [{ startDate: asc }]
+        take: Int! = 10
+        skip: Int! = 0
+      ): [Event]
+
       """
       Server Time
       """
