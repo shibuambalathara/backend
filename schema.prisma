@@ -59,7 +59,7 @@ model User {
   payments                  Payment[]            @relation("Payment_user")
   emdUpdatesByAdmin         EmdUpdate[]          @relation("EmdUpdate_createdBy")
   status                    UserStatusType?      @default(pending)
-  nativeState               String               @default("")
+  state                     String               @default("")
   states                    State[]              @relation("State_users")
   activeBids                Vehicle[]            @relation("Vehicle_currentBidUser")
   quotedBids                Bid[]                @relation("Bid_user")

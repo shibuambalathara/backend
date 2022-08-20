@@ -53,7 +53,7 @@ type User {
   ): [EmdUpdate!]
   emdUpdatesByAdminCount(where: EmdUpdateWhereInput! = {}): Int
   status: UserStatusType
-  nativeState: String
+  state: String
   states(
     where: StateWhereInput! = {}
     orderBy: [StateOrderByInput!]! = []
@@ -168,7 +168,7 @@ input UserWhereInput {
   payments: PaymentManyRelationFilter
   emdUpdatesByAdmin: EmdUpdateManyRelationFilter
   status: UserStatusTypeNullableFilter
-  nativeState: StringFilter
+  state: StringFilter
   states: StateManyRelationFilter
   activeBids: VehicleManyRelationFilter
   quotedBids: BidManyRelationFilter
@@ -325,7 +325,7 @@ input UserOrderByInput {
   city: OrderDirection
   role: OrderDirection
   status: OrderDirection
-  nativeState: OrderDirection
+  state: OrderDirection
   createdAt: OrderDirection
   updatedAt: OrderDirection
   magicAuthIssuedAt: OrderDirection
@@ -363,7 +363,7 @@ input UserUpdateInput {
   payments: PaymentRelateToManyForUpdateInput
   emdUpdatesByAdmin: EmdUpdateRelateToManyForUpdateInput
   status: UserStatusType
-  nativeState: String
+  state: String
   states: StateRelateToManyForUpdateInput
   activeBids: VehicleRelateToManyForUpdateInput
   quotedBids: BidRelateToManyForUpdateInput
@@ -455,7 +455,7 @@ input UserCreateInput {
   payments: PaymentRelateToManyForCreateInput
   emdUpdatesByAdmin: EmdUpdateRelateToManyForCreateInput
   status: UserStatusType
-  nativeState: String
+  state: String
   states: StateRelateToManyForCreateInput
   activeBids: VehicleRelateToManyForCreateInput
   quotedBids: BidRelateToManyForCreateInput

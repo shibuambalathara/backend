@@ -183,7 +183,7 @@ export const User = list({
         itemView: { fieldMode: isAdminEdit },
       },
     }),
-    nativeState: text({}),
+    state: text({}),
     states: relationship({
       ref: "State.users",
       many: true,
