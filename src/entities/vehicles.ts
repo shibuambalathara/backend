@@ -16,6 +16,7 @@ import {
   isSuperAdmin,
 } from "../application/access";
 import { bidRank } from "../lib/bid-rank.field";
+import { vehicleEventStatus } from "../lib/vehicle-event-status.field";
 
 const ownerFilter = ({ session, context, listKey, operation }) => {
   if (session?.data?.status === "active") {
@@ -132,6 +133,7 @@ export const Vehicle = list({
         itemView: { fieldMode: "read" },
       },
     }),
+    vehicleEventStatus: vehicleEventStatus,
 
     bidStatus: select({
       type: "enum",

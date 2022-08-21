@@ -972,6 +972,7 @@ type Vehicle {
   startBidAmount: Int
   currentBidUser: User
   event: Event
+  vehicleEventStatus: vehicleEventStatus
   bidStatus: VehicleBidStatusType
   userVehicleBids(
     where: BidWhereInput! = {}
@@ -1033,6 +1034,13 @@ type Vehicle {
   ExcelFile: ExcelUpload
   createdAt: DateTime
   updatedAt: DateTime
+}
+
+enum vehicleEventStatus {
+  completed
+  upcoming
+  live
+  abnormal
 }
 
 enum VehicleBidStatusType {

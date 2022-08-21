@@ -128,16 +128,28 @@ export const ExcelUpload = list({
                   image12: vehicleItem["image 12"],
                   ExcelFile: { connect: { id: item.id } },
                   event: resolvedData.event,
-                  bidTimeExpire: new Date(
-                    new Date(eventData.endDate).getTime() +
-                      eventData.vehicleExpireTimeIncrement * 60000 * i
-                  ),
-                  bidStartTime: new Date(
-                    new Date(eventData.startDate).getTime() +
-                      (eventData.duration * 60000 +
-                        eventData.addingBidTime * 1000) *
-                        i
-                  ),
+                  bidTimeExpire:
+                    eventData?.eventCategory === "open"
+                      ? new Date(
+                          new Date(eventData.startDate).getTime() +
+                            eventData.duration * 60000 +
+                            (eventData.duration * 60000 +
+                              eventData.addingBidTime * 1000) *
+                              i
+                        )
+                      : new Date(
+                          new Date(eventData.endDate).getTime() +
+                            eventData.vehicleExpireTimeIncrement * 60000 * i
+                        ),
+                  bidStartTime:
+                    eventData?.eventCategory === "open"
+                      ? new Date(
+                          new Date(eventData.startDate).getTime() +
+                            (eventData.duration * 60000 +
+                              eventData.addingBidTime * 1000) *
+                              i
+                        )
+                      : new Date(eventData.startDate),
                   currentBidAmount: 0,
                   startBidAmount: vehicleItem.Start_Price ?? 0,
                   bidStatus: "pending",
