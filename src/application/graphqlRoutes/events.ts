@@ -60,11 +60,19 @@ export const extendGraphqlSchema = graphQLSchemaExtension<Context>({
             status: {
               equals: "active",
             },
-            vehicles: {
-              some: {
-                bidTimeExpire: { gte: new Date().toISOString() },
+            OR: [
+              {
+                endDate: { gte: new Date().toISOString() },
+                eventCategory: "open",
               },
-            },
+              {
+                vehicles: {
+                  some: {
+                    bidTimeExpire: { gte: new Date().toISOString() },
+                  },
+                },
+              },
+            ],
           },
           orderBy,
           skip,
