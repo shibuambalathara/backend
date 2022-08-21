@@ -21,8 +21,8 @@ export const vehicleEventStatus = virtual({
         return "upcoming";
       }
       if (
-        new Date(item?.bidStartTime) >= new Date() &&
-        new Date(item?.bidEndTime) <= new Date()
+        new Date(item?.bidStartTime) <= new Date() &&
+        new Date(item?.bidEndTime) >= new Date()
       ) {
         return "live";
       }
