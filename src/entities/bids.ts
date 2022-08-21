@@ -122,8 +122,7 @@ export const Bid = list({
         
         if (
           bidVehicle.event.bidLock === "locked" &&
-          (!bidVehicle.currentBidAmount ||
-            bidVehicle.currentBidAmount >= amount)
+          bidVehicle.currentBidAmount >= amount
         ) {
           addValidationError(
             "Bid Amount smaller than current bid amount, Current Bid Amount: " +
