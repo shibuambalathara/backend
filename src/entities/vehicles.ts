@@ -30,7 +30,7 @@ export const Vehicle = list({
     operation: {
       query: isSignedIn,
       create: isSuperAdmin,
-      update: isSuperAdmin,
+      update: isSignedIn,
       delete: isSuperAdmin,
     },
     filter: {
@@ -38,7 +38,17 @@ export const Vehicle = list({
     },
   },
   hooks: {
-    resolveInput: async ({ resolvedData, context, operation }) => {
+    resolveInput: async ({ resolvedData, context, operation, item }) => {
+      if (operation === "update") {
+        if (context.session?.data?.role === "admin") {
+          return resolvedData;
+        } else {
+          console.log("resolvedData", resolvedData);
+          return {
+            bidAmountUpdate: resolvedData?.bidAmountUpdate,
+          };
+        }
+      }
       if (operation !== "create") {
         return resolvedData;
       }
