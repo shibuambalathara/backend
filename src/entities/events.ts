@@ -29,7 +29,7 @@ export const Event = list({
     operation: {
       query: () => true,
       create: isSuperAdmin,
-      update: () => false,
+      update: isSuperAdmin,
       delete: isSuperAdmin,
     },
   },
