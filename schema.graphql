@@ -969,6 +969,7 @@ type Vehicle {
   bidAmountUpdate: Int
   currentBidAmount: Int
   myBidRank: Int
+  totalBids: Int
   startBidAmount: Int
   currentBidUser: User
   event: Event

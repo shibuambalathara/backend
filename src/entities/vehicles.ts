@@ -17,6 +17,7 @@ import {
 } from "../application/access";
 import { bidRank } from "../lib/bid-rank.field";
 import { vehicleEventStatus } from "../lib/vehicle-event-status.field";
+import { totalBids } from "../lib/total-bids.field";
 
 const ownerFilter = ({ session, context, listKey, operation }) => {
   if (session?.data?.status === "active") {
@@ -120,6 +121,7 @@ export const Vehicle = list({
       defaultValue: 0,
     }),
     myBidRank: bidRank,
+    totalBids: totalBids,
     startBidAmount: integer({
       ui: {
         createView: { fieldMode: "hidden" },

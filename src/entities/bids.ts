@@ -86,7 +86,7 @@ export const Bid = list({
         if (bidVehicle.event.status !== "active") {
           addValidationError("Auction not active");
         }
-        if (!bidCount && bidCount >= bidVehicle.event.noOfBids) {
+        if (bidCount >= bidVehicle.event.noOfBids) {
           addValidationError("No Bids Left");
         }
         if (
