@@ -63,7 +63,7 @@ export const extendGraphqlSchema = graphQLSchemaExtension<Context>({
             OR: [
               {
                 endDate: { gte: new Date().toISOString() },
-                eventCategory: "open",
+                eventCategory: { equals: "open" },
               },
               {
                 vehicles: {
