@@ -47,7 +47,7 @@ export const Bid = list({
         const [bidVehicle, bidCount, user, myBidMaxAmount] = await Promise.all([
           context.query.Vehicle.findOne({
             where: { id: resolvedData?.bidVehicle?.connect?.id },
-            query: `id currentBidAmount startBidAmount bidTimeExpire event { startDate status noOfBids seller { id name } isSpecialEvent bidLock location { state { name } } }`,
+            query: `id currentBidAmount startBidAmount bidTimeExpire currentBidUser { id } event { startDate status noOfBids seller { id name } isSpecialEvent bidLock location { state { name } } }`,
           }),
           context.query.Bid.count({
             where: {
@@ -130,14 +130,14 @@ export const Bid = list({
           );
         }
         if (
-          // !bidCount &&
+          bidVehicle.currentBidUser.id !== userId &&
           bidVehicle.event.isSpecialEvent &&
           user?.currentVehicleBuyingLimit?.specialVehicleBuyingLimit <= 0
         ) {
           addValidationError("Insufficient Buying Limit for Special Event");
         }
         if (
-          // !bidCount &&
+          bidVehicle.currentBidUser.id !== userId &&
           !bidVehicle.event.isSpecialEvent &&
           user?.currentVehicleBuyingLimit?.vehicleBuyingLimit <= 0
         ) {
@@ -232,21 +232,20 @@ export const Bid = list({
          */
         const bidVehicle = await context.query.Vehicle.findOne({
           where: { id: resolvedData?.bidVehicle?.connect?.id },
-          query: `bidTimeExpire currentBidAmount event { duration isSpecialEvent addingBidTime eventCategory } `,
+          query: `bidTimeExpire currentBidAmount event { id extraTime isSpecialEvent extraTimeTrigerIn eventCategory } `,
         });
 
         if (bidVehicle.currentBidAmount < resolvedData.amount) {
-          const durationInMinutes = (bidVehicle?.event?.duration ?? 2) * 60000; // 2 minutes
-          const addBidTime = (bidVehicle?.event?.addingBidTime ?? 2) * 60000; // 2 minutes
+          const durationInMinutes = (bidVehicle?.event?.extraTimeTrigerIn ?? 2) * 60000; // 2 minutes
+          const addBidTime = (bidVehicle?.event?.extraTime ?? 2) * 60000; // 2 minutes
           const bidTimeExpire =
-            new Date(bidVehicle.bidTimeExpire).getTime() - durationInMinutes <=
-              new Date().getTime() && bidVehicle.event.eventCategory !== "open"
+            (new Date(bidVehicle.bidTimeExpire).getTime() - durationInMinutes <=
+              new Date().getTime() && bidVehicle.event.eventCategory !== "open")
               ? new Date(
                   new Date(bidVehicle.bidTimeExpire).getTime() + addBidTime
                 )
               : new Date(bidVehicle.bidTimeExpire);
-          console.log("bidTimeExpire:", bidTimeExpire);
-          console.log("bidTimeExpire Old :", bidVehicle.bidTimeExpire);
+          
           await context.prisma.vehicle.update({
             where: { id: resolvedData?.bidVehicle?.connect?.id },
             data: {
@@ -257,6 +256,13 @@ export const Bid = list({
               },
             },
           });
+          if(new Date(bidVehicle.bidTimeExpire).getTime() - durationInMinutes <=
+          new Date().getTime() && bidVehicle.event.eventCategory === "open"){
+            await Promise.all([
+              context.prisma.executeRaw`UPDATE "Vehicle" set "bidTimeExpire" = "bidTimeExpire" + ${bidVehicle?.event?.extraTime} * INTERVAL '1 MINUTE' WHERE event = '${bidVehicle.event.id}' AND AND "bidTimeExpire" > NOW()`,
+              context.prisma.executeRaw`UPDATE "Event" set "endDate" = "endDate" + ${bidVehicle?.event?.extraTime} * INTERVAL '1 MINUTE' WHERE id = '${bidVehicle.event.id}'`
+            ]) 
+          }
         }
       }
     },

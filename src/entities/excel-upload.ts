@@ -75,7 +75,7 @@ export const ExcelUpload = list({
             ),
             context.query.Event.findOne({
               where: { id: event.connect.id },
-              query: `endDate vehicleExpireTimeIncrement startDate eventCategory duration addingBidTime `,
+              query: `endDate startDate eventCategory vehicleLiveTimeIn gapInBetweenVehicles`,
             }),
           ]);
           // console.log("data", data);
@@ -132,21 +132,21 @@ export const ExcelUpload = list({
                     eventData?.eventCategory === "open"
                       ? new Date(
                           new Date(eventData.startDate).getTime() +
-                            eventData.duration * 60000 +
-                            (eventData.duration * 60000 +
-                              eventData.addingBidTime * 1000) *
+                            eventData.vehicleLiveTimeIn * 60000 +
+                            (eventData.vehicleLiveTimeIn * 60000 +
+                              eventData.gapInBetweenVehicles * 1000) *
                               i
                         )
                       : new Date(
                           new Date(eventData.endDate).getTime() +
-                            eventData.vehicleExpireTimeIncrement * 60000 * i
+                            eventData.gapInBetweenVehicles * 60000 * i
                         ),
                   bidStartTime:
                     eventData?.eventCategory === "open"
                       ? new Date(
                           new Date(eventData.startDate).getTime() +
-                            (eventData.duration * 60000 +
-                              eventData.addingBidTime * 1000) *
+                            (eventData.vehicleLiveTimeIn * 60000 +
+                              eventData.gapInBetweenVehicles * 1000) *
                               i
                         )
                       : new Date(eventData.startDate),

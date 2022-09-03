@@ -772,9 +772,10 @@ type Event {
   updatedAt: DateTime
   bidLock: EventBidLockType
   isSpecialEvent: Boolean
-  duration: Int
-  addingBidTime: Int
-  vehicleExpireTimeIncrement: Int
+  extraTimeTrigerIn: Int
+  extraTime: Int
+  vehicleLiveTimeIn: Int
+  gapInBetweenVehicles: Int
 }
 
 enum EventStatusType {
@@ -824,9 +825,10 @@ input EventWhereInput {
   updatedAt: DateTimeNullableFilter
   bidLock: EventBidLockTypeNullableFilter
   isSpecialEvent: BooleanFilter
-  duration: IntNullableFilter
-  addingBidTime: IntNullableFilter
-  vehicleExpireTimeIncrement: IntNullableFilter
+  extraTimeTrigerIn: IntNullableFilter
+  extraTime: IntNullableFilter
+  vehicleLiveTimeIn: IntNullableFilter
+  gapInBetweenVehicles: IntNullableFilter
 }
 
 input DateTimeFilter {
@@ -871,9 +873,10 @@ input EventOrderByInput {
   updatedAt: OrderDirection
   bidLock: OrderDirection
   isSpecialEvent: OrderDirection
-  duration: OrderDirection
-  addingBidTime: OrderDirection
-  vehicleExpireTimeIncrement: OrderDirection
+  extraTimeTrigerIn: OrderDirection
+  extraTime: OrderDirection
+  vehicleLiveTimeIn: OrderDirection
+  gapInBetweenVehicles: OrderDirection
 }
 
 input EventUpdateInput {
@@ -892,9 +895,10 @@ input EventUpdateInput {
   termsAndConditions: JSON
   bidLock: EventBidLockType
   isSpecialEvent: Boolean
-  duration: Int
-  addingBidTime: Int
-  vehicleExpireTimeIncrement: Int
+  extraTimeTrigerIn: Int
+  extraTime: Int
+  vehicleLiveTimeIn: Int
+  gapInBetweenVehicles: Int
 }
 
 input SellerRelateToOneForUpdateInput {
@@ -940,9 +944,10 @@ input EventCreateInput {
   termsAndConditions: JSON
   bidLock: EventBidLockType
   isSpecialEvent: Boolean
-  duration: Int
-  addingBidTime: Int
-  vehicleExpireTimeIncrement: Int
+  extraTimeTrigerIn: Int
+  extraTime: Int
+  vehicleLiveTimeIn: Int
+  gapInBetweenVehicles: Int
 }
 
 input SellerRelateToOneForCreateInput {

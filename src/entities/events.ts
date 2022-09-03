@@ -49,18 +49,25 @@ export const Event = list({
         resolvedData.bidLock = "locked";
       return resolvedData;
     },
-    afterOperation: async ({ context, operation, resolvedData }) => {
+    afterOperation: async ({ context, operation, resolvedData, originalItem }) => {
       if (operation !== "update") {
         return;
       }
-      // await context.prisma.vehicle.updateMany({
-      //   where: {
-      //     event: { id: resolvedData?.id },
-      //   },
-      //   data: {
-      //     bidTimeExpire: resolvedData?.endDate,
-      //   },
-      // });
+      if(originalItem.eventCategory !== "open"){
+        return;
+      }
+      const event = await context.query.Event.findOne({
+        where: { id: originalItem.id.toString() },
+        query: `startDate vehiclesCount eventCategory vehicleLiveTimeIn gapInBetweenVehicles` 
+      });
+      const endDate = new Date(new Date(event.startDate).getTime()+ 
+          event.vehiclesCount *  (event.vehicleLiveTimeIn + event.gapInBetweenVehicles) * 60000)
+      await context.prisma.event.update({
+        where: {id: originalItem.id.toString()},
+        data: {
+          endDate: endDate,
+        },
+      });
     },
   },
 
@@ -183,19 +190,24 @@ export const Event = list({
       label: "Is this a special event?",
     }),
 
-    duration: integer({
-      label: "Time extending before Duration in minutes",
+    extraTimeTrigerIn: integer({
+      label: "Extra time triger in minutes",
       defaultValue: 2,
     }),
 
-    addingBidTime: integer({
-      label: "Adding bid time in minutes / gap for opening bids in seconds",
+    extraTime: integer({
+      label: "Extra time triger in minutes",
       defaultValue: 2,
     }),
 
-    vehicleExpireTimeIncrement: integer({
-      label: "Vehicle Expire Time Increment in minutes",
+    vehicleLiveTimeIn: integer({
+      label: "Open Auction Vehicle Live Time in minutes",
       defaultValue: 0,
+    }),
+
+    gapInBetweenVehicles: integer({
+      label: "Open Auction Gap in between vehicles in seconds / Online End Time Increase",
+      defaultValue: 0
     }),
 
     // specialEventBuyingLimitReducer: integer({
