@@ -257,6 +257,7 @@ export const Bid = list({
             },
           });
           const eventId = `'${bidVehicle.event.id}'`;
+          console.log("extraTime: ",bidVehicle?.event?.extraTime, eventId)
           if(new Date(bidVehicle.bidTimeExpire).getTime() - durationInMinutes <=
           new Date().getTime() && bidVehicle.event.eventCategory === "open"){
             await Promise.all([
