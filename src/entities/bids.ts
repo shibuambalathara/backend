@@ -165,7 +165,7 @@ export const Bid = list({
         }),
       ]);
       resolvedData.name = `${user?.username} : ${bidVehicle?.registrationNumber}`;
-      if (context?.session?.data?.role !== "admin") {
+      if (context?.session?.data?.role !== "admin" || ! resolvedData?.user?.connect?.id) {
         resolvedData.user = { connect: { id: context?.session?.itemId } };
       }
       return resolvedData;
