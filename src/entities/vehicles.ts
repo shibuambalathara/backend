@@ -44,7 +44,6 @@ export const Vehicle = list({
         if (context.session?.data?.role === "admin") {
           return resolvedData;
         } else {
-          console.log("resolvedData", resolvedData);
           return {
             bidAmountUpdate: resolvedData?.bidAmountUpdate,
           };

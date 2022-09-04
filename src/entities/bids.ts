@@ -185,9 +185,6 @@ export const Bid = list({
          * replace the current bid user and amount with the
          * previous bid user and amount
          */
-        console.log("originalItem: ", originalItem);
-        console.log("item: ", item);
-        console.log("resolvedData: ", resolvedData);
         const bid = await context.prisma.bid.findFirst({
           where: {
             user: {
@@ -257,14 +254,12 @@ export const Bid = list({
             },
           });
           const eventId = `'${bidVehicle.event.id}'`;
-          console.log("extraTime: ",bidVehicle?.event?.extraTime, eventId)
           if(new Date(bidVehicle.bidTimeExpire).getTime() - durationInMinutes <=
           new Date().getTime() && bidVehicle.event.eventCategory === "open"){
            const result = await Promise.all([
               context.prisma.$executeRawUnsafe(`UPDATE "Vehicle" set "bidTimeExpire" = "bidTimeExpire" + ${bidVehicle?.event?.extraTime} * INTERVAL '1 MINUTE' WHERE event = ${eventId} AND "bidTimeExpire" > NOW()`),
               context.prisma.$executeRawUnsafe(`UPDATE "Event" set "endDate" = "endDate" + ${bidVehicle?.event?.extraTime} * INTERVAL '1 MINUTE' WHERE id =${eventId}`)
             ]) 
-            console.log("res: ", JSON.stringify(result))
           }
         }
       }
