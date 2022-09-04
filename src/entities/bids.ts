@@ -41,7 +41,7 @@ export const Bid = list({
       try {
         const { amount } = resolvedData;
         const userId =
-          context?.session?.data?.role === "admin"
+          context?.session?.data?.role === "admin" && !! resolvedData?.user?.connect?.id
             ? resolvedData.user.connect.id
             : context?.session?.itemId;
         const [bidVehicle, bidCount, user, myBidMaxAmount] = await Promise.all([
