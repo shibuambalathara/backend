@@ -196,7 +196,7 @@ export const Event = list({
     }),
 
     extraTime: integer({
-      label: "Extra time triger in minutes",
+      label: "Extra time in minutes",
       defaultValue: 2,
     }),
 
@@ -206,7 +206,7 @@ export const Event = list({
     }),
 
     gapInBetweenVehicles: integer({
-      label: "Open Auction Gap in between vehicles in seconds / Online End Time Increase",
+      label: "Open Auction Gap in between vehicles in seconds / Online End Time Increase in Minuts",
       defaultValue: 0
     }),
 
