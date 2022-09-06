@@ -57,7 +57,8 @@ export const extendGraphqlSchema = graphQLSchemaExtension<Context>({
     }
     """ A custom Bid History for Vehicle """
     type BidHistory {
-      id: ID!
+      id: ID
+      name: String
       amount: Int
       userId: Int
       createdAt: DateTime
@@ -147,12 +148,19 @@ export const extendGraphqlSchema = graphQLSchemaExtension<Context>({
         const bids = await sudoContext.query.Bid.findMany({
           where: {
             ...where,
-            eventCategory: { equals: "open" },
+            bidVehicle: {
+              event: {
+                eventCategory: {
+                  equals: "open"
+                }
+              }
+            }
           },
           orderBy,
           skip,
           take,
           query : `id 
+          name
           amount
           createdAt
           id
@@ -164,6 +172,7 @@ export const extendGraphqlSchema = graphQLSchemaExtension<Context>({
         return bids.map(bid => ({
           id: bid.id,
           amount: bid.amount,
+          name: bid.name,
           userId: bid.user.dealerId ?? bid.user.username,
           createdAt: bid.createdAt 
         }))

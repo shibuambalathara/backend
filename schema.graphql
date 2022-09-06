@@ -2159,7 +2159,8 @@ enum KeystoneAdminUISortDirection {
 A custom Bid History for Vehicle
 """
 type BidHistory {
-  id: ID!
+  id: ID
+  name: String
   amount: Int
   userId: Int
   createdAt: DateTime
