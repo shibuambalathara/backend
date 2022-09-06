@@ -173,7 +173,7 @@ export const extendGraphqlSchema = graphQLSchemaExtension<Context>({
           amount: bid.amount,
           name: bid.name,
           userId: bid.user.dealerId ?? bid.user.username,
-          createdAt: bid.createdAt 
+          createdAt: new Date(bid.createdAt) 
         }))
       },
       sudoUsersCount: (root, params, context) => {
