@@ -57,10 +57,10 @@ export const extendGraphqlSchema = graphQLSchemaExtension<Context>({
     }
     """ A custom Bid History for Vehicle """
     type BidHistory {
-      id: ID
+      id: ID!
       name: String
       amount: Int
-      userId: Int
+      userId: String
       createdAt: DateTime
     }
     type Subscription {
@@ -163,7 +163,6 @@ export const extendGraphqlSchema = graphQLSchemaExtension<Context>({
           name
           amount
           createdAt
-          id
           user {
             dealerId
             username
