@@ -257,7 +257,7 @@ export const Bid = list({
           if(new Date(bidVehicle.bidTimeExpire).getTime() - durationInMinutes <=
           new Date().getTime() && bidVehicle.event.eventCategory === "open"){
            const result = await Promise.all([
-              context.prisma.$executeRawUnsafe(`UPDATE "Vehicle" set "bidTimeExpire" = "bidTimeExpire" + ${bidVehicle?.event?.extraTime} * INTERVAL '1 MINUTE' WHERE event = ${eventId} AND "bidTimeExpire" > NOW()`),
+              context.prisma.$executeRawUnsafe(`UPDATE "Vehicle" set "bidTimeExpire" = "bidTimeExpire" + ${bidVehicle?.event?.extraTime} * INTERVAL '1 MINUTE', "bidStartTime" = "bidStartTime" + ${bidVehicle?.event?.extraTime} * INTERVAL '1 MINUTE' WHERE event = ${eventId} AND "bidTimeExpire" > NOW()`),
               context.prisma.$executeRawUnsafe(`UPDATE "Event" set "endDate" = "endDate" + ${bidVehicle?.event?.extraTime} * INTERVAL '1 MINUTE' WHERE id =${eventId}`)
             ]) 
           }

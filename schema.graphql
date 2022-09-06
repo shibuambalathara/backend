@@ -2053,6 +2053,11 @@ type Query {
   Server Time
   """
   time: String
+
+  """
+  User Pan Cards Count
+  """
+  sudoUsersCount(where: UserWhereInput): Int
 }
 
 union AuthenticatedItem = User

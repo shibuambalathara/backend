@@ -37,6 +37,13 @@ export const extendGraphqlSchema = graphQLSchemaExtension<Context>({
       Server Time
       """
       time: String
+
+      """
+      User Pan Cards Count
+      """
+      sudoUsersCount(
+        where: UserWhereInput
+      ): Int
     }
     type Subscription {
       """
@@ -117,6 +124,10 @@ export const extendGraphqlSchema = graphQLSchemaExtension<Context>({
       },
       time: () => {
         return new Date().toISOString();
+      },
+      sudoUsersCount: (root, { where }, context) => {
+        const sudoContext = context.sudo();
+        return sudoContext.db.User.count({where});
       },
     },
     Subscription: {
