@@ -149,7 +149,9 @@ export const extendGraphqlSchema = graphQLSchemaExtension<Context>({
           where: {
             ...where,
             bidVehicle: {
+              ...where?.bidVehicle,
               event: {
+                ...where?.bidVehicle?.event,
                 eventCategory: {
                   equals: "open"
                 }
