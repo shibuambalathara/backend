@@ -169,6 +169,9 @@ export const Vehicle = list({
       },
     }),
     registeredOwnerName: text({}),
+    quoteIncreament: integer({
+      defaultValue: 1000
+    }),
     make: text(),
     model: text(),
     varient: text(),
