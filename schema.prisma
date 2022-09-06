@@ -169,6 +169,7 @@ model Vehicle {
   userVehicleBids     Bid[]                 @relation("Bid_bidVehicle")
   loanAgreementNo     String                @default("")
   registeredOwnerName String                @default("")
+  quoteIncreament     Int?                  @default(1000)
   make                String                @default("")
   model               String                @default("")
   varient             String                @default("")

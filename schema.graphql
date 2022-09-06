@@ -989,6 +989,7 @@ type Vehicle {
   userVehicleBidsCount(where: BidWhereInput! = {}): Int
   loanAgreementNo: String
   registeredOwnerName: String
+  quoteIncreament: Int
   make: String
   model: String
   varient: String
@@ -1086,6 +1087,7 @@ input VehicleWhereInput {
   userVehicleBids: BidManyRelationFilter
   loanAgreementNo: StringFilter
   registeredOwnerName: StringFilter
+  quoteIncreament: IntNullableFilter
   make: StringFilter
   model: StringFilter
   varient: StringFilter
@@ -1176,6 +1178,7 @@ input VehicleOrderByInput {
   bidStatus: OrderDirection
   loanAgreementNo: OrderDirection
   registeredOwnerName: OrderDirection
+  quoteIncreament: OrderDirection
   make: OrderDirection
   model: OrderDirection
   varient: OrderDirection
@@ -1235,6 +1238,7 @@ input VehicleUpdateInput {
   userVehicleBids: BidRelateToManyForUpdateInput
   loanAgreementNo: String
   registeredOwnerName: String
+  quoteIncreament: Int
   make: String
   model: String
   varient: String
@@ -1312,6 +1316,7 @@ input VehicleCreateInput {
   userVehicleBids: BidRelateToManyForCreateInput
   loanAgreementNo: String
   registeredOwnerName: String
+  quoteIncreament: Int
   make: String
   model: String
   varient: String
@@ -2159,10 +2164,10 @@ enum KeystoneAdminUISortDirection {
 A custom Bid History for Vehicle
 """
 type BidHistory {
-  id: ID
+  id: ID!
   name: String
   amount: Int
-  userId: Int
+  userId: String
   createdAt: DateTime
 }
 
