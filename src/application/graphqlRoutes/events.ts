@@ -44,6 +44,23 @@ export const extendGraphqlSchema = graphQLSchemaExtension<Context>({
       sudoUsersCount(
         where: UserWhereInput
       ): Int
+
+      """
+      Bid History for open auction
+      """
+      sudoBids(
+        where: BidWhereInput
+        orderBy: [BidOrderByInput] = [{ createdAt: desc }]
+        take: Int! = 10
+        skip: Int! = 0
+      ): [BidHistory]
+    }
+    """ A custom Bid History for Vehicle """
+    type BidHistory {
+      id: ID!
+      amount: Int
+      userId: Int
+      createdAt: DateTime
     }
     type Subscription {
       """
@@ -125,9 +142,35 @@ export const extendGraphqlSchema = graphQLSchemaExtension<Context>({
       time: () => {
         return new Date().toISOString();
       },
-      sudoUsersCount: (root, { where }, context) => {
+      sudoBids: async (root, { where, orderBy, skip, take }, context) => {
         const sudoContext = context.sudo();
-        return sudoContext.db.User.count({where});
+        const bids = await sudoContext.query.Bid.findMany({
+          where: {
+            ...where,
+            eventCategory: { equals: "open" },
+          },
+          orderBy,
+          skip,
+          take,
+          query : `id 
+          amount
+          createdAt
+          id
+          user {
+            dealerId
+            username
+          }`
+        });
+        return bids.map(bid => ({
+          id: bid.id,
+          amount: bid.amount,
+          userId: bid.user.dealerId ?? bid.user.username,
+          createdAt: bid.createdAt 
+        }))
+      },
+      sudoUsersCount: (root, params, context) => {
+        const sudoContext = context.sudo();
+        return sudoContext.db.User.count(params);
       },
     },
     Subscription: {

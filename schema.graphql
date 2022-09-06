@@ -2058,6 +2058,16 @@ type Query {
   User Pan Cards Count
   """
   sudoUsersCount(where: UserWhereInput): Int
+
+  """
+  Bid History for open auction
+  """
+  sudoBids(
+    where: BidWhereInput
+    orderBy: [BidOrderByInput] = [{ createdAt: desc }]
+    take: Int! = 10
+    skip: Int! = 0
+  ): [BidHistory]
 }
 
 union AuthenticatedItem = User
@@ -2143,6 +2153,16 @@ type KeystoneAdminUISort {
 enum KeystoneAdminUISortDirection {
   ASC
   DESC
+}
+
+"""
+A custom Bid History for Vehicle
+"""
+type BidHistory {
+  id: ID!
+  amount: Int
+  userId: Int
+  createdAt: DateTime
 }
 
 type Subscription {
