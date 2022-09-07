@@ -767,7 +767,7 @@ type Event {
   status: EventStatusType
   ExcelFile: ExcelUpload
   downloadableFile: FileFieldOutput
-  termsAndConditions: Event_termsAndConditions_Document
+  termsAndConditions: String
   createdAt: DateTime
   updatedAt: DateTime
   bidLock: EventBidLockType
@@ -790,10 +790,6 @@ type FileFieldOutput {
   filename: String!
   filesize: Int!
   url: String!
-}
-
-type Event_termsAndConditions_Document {
-  document(hydrateRelationships: Boolean! = false): JSON!
 }
 
 enum EventBidLockType {
@@ -821,6 +817,7 @@ input EventWhereInput {
   noOfBids: IntFilter
   status: EventStatusTypeNullableFilter
   ExcelFile: ExcelUploadWhereInput
+  termsAndConditions: StringFilter
   createdAt: DateTimeNullableFilter
   updatedAt: DateTimeNullableFilter
   bidLock: EventBidLockTypeNullableFilter
@@ -869,6 +866,7 @@ input EventOrderByInput {
   endDate: OrderDirection
   noOfBids: OrderDirection
   status: OrderDirection
+  termsAndConditions: OrderDirection
   createdAt: OrderDirection
   updatedAt: OrderDirection
   bidLock: OrderDirection
@@ -892,7 +890,7 @@ input EventUpdateInput {
   status: EventStatusType
   ExcelFile: ExcelUploadRelateToOneForUpdateInput
   downloadableFile: FileFieldInput
-  termsAndConditions: JSON
+  termsAndConditions: String
   bidLock: EventBidLockType
   isSpecialEvent: Boolean
   extraTimeTrigerIn: Int
@@ -941,7 +939,7 @@ input EventCreateInput {
   status: EventStatusType
   ExcelFile: ExcelUploadRelateToOneForCreateInput
   downloadableFile: FileFieldInput
-  termsAndConditions: JSON
+  termsAndConditions: String
   bidLock: EventBidLockType
   isSpecialEvent: Boolean
   extraTimeTrigerIn: Int

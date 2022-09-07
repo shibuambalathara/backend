@@ -7,7 +7,6 @@ import {
   text,
   timestamp,
 } from "@keystone-6/core/fields";
-import { document } from "@keystone-6/fields-document";
 import { list } from "@keystone-6/core";
 import {
   fieldOptions,
@@ -167,11 +166,10 @@ export const Event = list({
         itemView: { fieldMode: isAdminEdit },
       },
     }),
-    termsAndConditions: document({
-      links: true,
-      dividers: true,
+    termsAndConditions: text({
       ui: {
         itemView: { fieldMode: isAdminEdit },
+        displayMode:"textarea"
       },
     }),
     createdAt: timestamp({ ...fieldOptions, defaultValue: { kind: "now" } }),

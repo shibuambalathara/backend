@@ -137,7 +137,7 @@ model Event {
   ExcelFileId               String?           @unique @map("ExcelFile")
   downloadableFile_filesize Int?
   downloadableFile_filename String?
-  termsAndConditions        Json              @default("[{\"type\":\"paragraph\",\"children\":[{\"text\":\"\"}]}]")
+  termsAndConditions        String            @default("")
   createdAt                 DateTime?         @default(now())
   updatedAt                 DateTime?         @updatedAt
   bidLock                   EventBidLockType? @default(unlocked)
