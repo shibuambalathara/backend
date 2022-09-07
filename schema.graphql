@@ -1009,12 +1009,11 @@ type Vehicle {
   veicleLocation: String
   vehicleRemarks: String
   auctionManager: String
-  actionManager: String
-  sellerName: String
   parkingCharges: String
   insurance: String
-  insuranceValidTill: String
+  insuranceValidTill: DateTime
   tax: String
+  taxValidityDate: DateTime
   fitness: String
   permit: String
   fitnessPermit: String
@@ -1027,6 +1026,28 @@ type Vehicle {
   image5: String
   image6: String
   inspectionLink: String
+  autobseContact: String
+  autobse_contact_person: String
+  vehicleCondition: String
+  powerSteering: String
+  shape: String
+  color: String
+  state: String
+  city: String
+  area: String
+  paymentTerms: String
+  dateOfRegistration: DateTime
+  hypothication: String
+  climateControl: String
+  doorCount: Int
+  gearBox: String
+  buyerFees: String
+  rtoFine: String
+  parkingRate: String
+  approxParkingCharges: String
+  clientContactPerson: String
+  clientContactNo: String
+  additionalRemarks: String
   watchedBy(
     where: UserWhereInput! = {}
     orderBy: [UserOrderByInput!]! = []
@@ -1095,12 +1116,11 @@ input VehicleWhereInput {
   veicleLocation: StringFilter
   vehicleRemarks: StringFilter
   auctionManager: StringFilter
-  actionManager: StringFilter
-  sellerName: StringFilter
   parkingCharges: StringFilter
   insurance: StringFilter
-  insuranceValidTill: StringFilter
+  insuranceValidTill: DateTimeNullableFilter
   tax: StringFilter
+  taxValidityDate: DateTimeNullableFilter
   fitness: StringFilter
   permit: StringFilter
   fitnessPermit: StringFilter
@@ -1113,6 +1133,28 @@ input VehicleWhereInput {
   image5: StringFilter
   image6: StringFilter
   inspectionLink: StringFilter
+  autobseContact: StringFilter
+  autobse_contact_person: StringFilter
+  vehicleCondition: StringFilter
+  powerSteering: StringFilter
+  shape: StringFilter
+  color: StringFilter
+  state: StringFilter
+  city: StringFilter
+  area: StringFilter
+  paymentTerms: StringFilter
+  dateOfRegistration: DateTimeNullableFilter
+  hypothication: StringFilter
+  climateControl: StringFilter
+  doorCount: IntNullableFilter
+  gearBox: StringFilter
+  buyerFees: StringFilter
+  rtoFine: StringFilter
+  parkingRate: StringFilter
+  approxParkingCharges: StringFilter
+  clientContactPerson: StringFilter
+  clientContactNo: StringFilter
+  additionalRemarks: StringFilter
   watchedBy: UserManyRelationFilter
   ExcelFile: ExcelUploadWhereInput
   createdAt: DateTimeNullableFilter
@@ -1175,12 +1217,11 @@ input VehicleOrderByInput {
   veicleLocation: OrderDirection
   vehicleRemarks: OrderDirection
   auctionManager: OrderDirection
-  actionManager: OrderDirection
-  sellerName: OrderDirection
   parkingCharges: OrderDirection
   insurance: OrderDirection
   insuranceValidTill: OrderDirection
   tax: OrderDirection
+  taxValidityDate: OrderDirection
   fitness: OrderDirection
   permit: OrderDirection
   fitnessPermit: OrderDirection
@@ -1193,6 +1234,28 @@ input VehicleOrderByInput {
   image5: OrderDirection
   image6: OrderDirection
   inspectionLink: OrderDirection
+  autobseContact: OrderDirection
+  autobse_contact_person: OrderDirection
+  vehicleCondition: OrderDirection
+  powerSteering: OrderDirection
+  shape: OrderDirection
+  color: OrderDirection
+  state: OrderDirection
+  city: OrderDirection
+  area: OrderDirection
+  paymentTerms: OrderDirection
+  dateOfRegistration: OrderDirection
+  hypothication: OrderDirection
+  climateControl: OrderDirection
+  doorCount: OrderDirection
+  gearBox: OrderDirection
+  buyerFees: OrderDirection
+  rtoFine: OrderDirection
+  parkingRate: OrderDirection
+  approxParkingCharges: OrderDirection
+  clientContactPerson: OrderDirection
+  clientContactNo: OrderDirection
+  additionalRemarks: OrderDirection
   createdAt: OrderDirection
   updatedAt: OrderDirection
 }
@@ -1231,12 +1294,11 @@ input VehicleUpdateInput {
   veicleLocation: String
   vehicleRemarks: String
   auctionManager: String
-  actionManager: String
-  sellerName: String
   parkingCharges: String
   insurance: String
-  insuranceValidTill: String
+  insuranceValidTill: DateTime
   tax: String
+  taxValidityDate: DateTime
   fitness: String
   permit: String
   fitnessPermit: String
@@ -1249,6 +1311,28 @@ input VehicleUpdateInput {
   image5: String
   image6: String
   inspectionLink: String
+  autobseContact: String
+  autobse_contact_person: String
+  vehicleCondition: String
+  powerSteering: String
+  shape: String
+  color: String
+  state: String
+  city: String
+  area: String
+  paymentTerms: String
+  dateOfRegistration: DateTime
+  hypothication: String
+  climateControl: String
+  doorCount: Int
+  gearBox: String
+  buyerFees: String
+  rtoFine: String
+  parkingRate: String
+  approxParkingCharges: String
+  clientContactPerson: String
+  clientContactNo: String
+  additionalRemarks: String
   watchedBy: UserRelateToManyForUpdateInput
   ExcelFile: ExcelUploadRelateToOneForUpdateInput
 }
@@ -1305,12 +1389,11 @@ input VehicleCreateInput {
   veicleLocation: String
   vehicleRemarks: String
   auctionManager: String
-  actionManager: String
-  sellerName: String
   parkingCharges: String
   insurance: String
-  insuranceValidTill: String
+  insuranceValidTill: DateTime
   tax: String
+  taxValidityDate: DateTime
   fitness: String
   permit: String
   fitnessPermit: String
@@ -1323,6 +1406,28 @@ input VehicleCreateInput {
   image5: String
   image6: String
   inspectionLink: String
+  autobseContact: String
+  autobse_contact_person: String
+  vehicleCondition: String
+  powerSteering: String
+  shape: String
+  color: String
+  state: String
+  city: String
+  area: String
+  paymentTerms: String
+  dateOfRegistration: DateTime
+  hypothication: String
+  climateControl: String
+  doorCount: Int
+  gearBox: String
+  buyerFees: String
+  rtoFine: String
+  parkingRate: String
+  approxParkingCharges: String
+  clientContactPerson: String
+  clientContactNo: String
+  additionalRemarks: String
   watchedBy: UserRelateToManyForCreateInput
   ExcelFile: ExcelUploadRelateToOneForCreateInput
 }

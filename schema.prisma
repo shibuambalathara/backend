@@ -153,65 +153,86 @@ model Event {
 }
 
 model Vehicle {
-  id                  String                @id @default(cuid())
-  vehicleIndexNo      Int                   @default(autoincrement())
-  registrationNumber  String                @default("")
-  bidTimeExpire       DateTime
-  bidStartTime        DateTime
-  bidAmountUpdate     Int?
-  currentBidAmount    Int?                  @default(0)
-  startBidAmount      Int?                  @default(0)
-  currentBidUser      User?                 @relation("Vehicle_currentBidUser", fields: [currentBidUserId], references: [id])
-  currentBidUserId    String?               @map("currentBidUser")
-  event               Event?                @relation("Vehicle_event", fields: [eventId], references: [id])
-  eventId             String?               @map("event")
-  bidStatus           VehicleBidStatusType? @default(pending)
-  userVehicleBids     Bid[]                 @relation("Bid_bidVehicle")
-  loanAgreementNo     String                @default("")
-  registeredOwnerName String                @default("")
-  quoteIncreament     Int?                  @default(1000)
-  make                String                @default("")
-  model               String                @default("")
-  varient             String                @default("")
-  categoty            String                @default("")
-  fuel                String                @default("")
-  type                String                @default("")
-  rcStatus            String                @default("")
-  yearOfManufacture   Int?
-  ownership           Int?
-  mileage             Int?
-  kmReading           Int?
-  insuranceStatus     String                @default("")
-  yardLocation        String                @default("")
-  startPrice          Float?
-  reservePrice        Float?
-  repoDt              DateTime?
-  veicleLocation      String                @default("")
-  vehicleRemarks      String                @default("")
-  auctionManager      String                @default("")
-  actionManager       String                @default("")
-  sellerName          String                @default("")
-  parkingCharges      String                @default("")
-  insurance           String                @default("")
-  insuranceValidTill  String                @default("")
-  tax                 String                @default("")
-  fitness             String                @default("")
-  permit              String                @default("")
-  fitnessPermit       String                @default("")
-  engineNo            String                @default("")
-  chassisNo           String                @default("")
-  frontImage          String                @default("")
-  backImage           String                @default("")
-  leftImage           String                @default("")
-  rightImage          String                @default("")
-  image5              String                @default("")
-  image6              String                @default("")
-  inspectionLink      String                @default("")
-  watchedBy           User[]                @relation("User_watchList")
-  ExcelFile           ExcelUpload?          @relation("Vehicle_ExcelFile", fields: [ExcelFileId], references: [id])
-  ExcelFileId         String?               @map("ExcelFile")
-  createdAt           DateTime?             @default(now())
-  updatedAt           DateTime?             @updatedAt
+  id                     String                @id @default(cuid())
+  vehicleIndexNo         Int                   @default(autoincrement())
+  registrationNumber     String                @default("")
+  bidTimeExpire          DateTime
+  bidStartTime           DateTime
+  bidAmountUpdate        Int?
+  currentBidAmount       Int?                  @default(0)
+  startBidAmount         Int?                  @default(0)
+  currentBidUser         User?                 @relation("Vehicle_currentBidUser", fields: [currentBidUserId], references: [id])
+  currentBidUserId       String?               @map("currentBidUser")
+  event                  Event?                @relation("Vehicle_event", fields: [eventId], references: [id])
+  eventId                String?               @map("event")
+  bidStatus              VehicleBidStatusType? @default(pending)
+  userVehicleBids        Bid[]                 @relation("Bid_bidVehicle")
+  loanAgreementNo        String                @default("")
+  registeredOwnerName    String                @default("")
+  quoteIncreament        Int?                  @default(1000)
+  make                   String                @default("")
+  model                  String                @default("")
+  varient                String                @default("")
+  categoty               String                @default("")
+  fuel                   String                @default("")
+  type                   String                @default("")
+  rcStatus               String                @default("")
+  yearOfManufacture      Int?
+  ownership              Int?
+  mileage                Int?
+  kmReading              Int?
+  insuranceStatus        String                @default("")
+  yardLocation           String                @default("")
+  startPrice             Float?
+  reservePrice           Float?
+  repoDt                 DateTime?
+  veicleLocation         String                @default("")
+  vehicleRemarks         String                @default("")
+  auctionManager         String                @default("")
+  parkingCharges         String                @default("")
+  insurance              String                @default("")
+  insuranceValidTill     DateTime?
+  tax                    String                @default("")
+  taxValidityDate        DateTime?
+  fitness                String                @default("")
+  permit                 String                @default("")
+  fitnessPermit          String                @default("")
+  engineNo               String                @default("")
+  chassisNo              String                @default("")
+  frontImage             String                @default("")
+  backImage              String                @default("")
+  leftImage              String                @default("")
+  rightImage             String                @default("")
+  image5                 String                @default("")
+  image6                 String                @default("")
+  inspectionLink         String                @default("")
+  autobseContact         String                @default("")
+  autobse_contact_person String                @default("")
+  vehicleCondition       String                @default("")
+  powerSteering          String                @default("")
+  shape                  String                @default("")
+  color                  String                @default("")
+  state                  String                @default("")
+  city                   String                @default("")
+  area                   String                @default("")
+  paymentTerms           String                @default("")
+  dateOfRegistration     DateTime?
+  hypothication          String                @default("")
+  climateControl         String                @default("")
+  doorCount              Int?
+  gearBox                String                @default("")
+  buyerFees              String                @default("")
+  rtoFine                String                @default("")
+  parkingRate            String                @default("")
+  approxParkingCharges   String                @default("")
+  clientContactPerson    String                @default("")
+  clientContactNo        String                @default("")
+  additionalRemarks      String                @default("")
+  watchedBy              User[]                @relation("User_watchList")
+  ExcelFile              ExcelUpload?          @relation("Vehicle_ExcelFile", fields: [ExcelFileId], references: [id])
+  ExcelFileId            String?               @map("ExcelFile")
+  createdAt              DateTime?             @default(now())
+  updatedAt              DateTime?             @updatedAt
 
   @@index([vehicleIndexNo])
   @@index([registrationNumber])
