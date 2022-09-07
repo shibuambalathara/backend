@@ -994,17 +994,18 @@ type Vehicle {
   model: String
   varient: String
   categoty: String
-  fuel: VehicleFuelType
+  fuel: String
   type: String
   rcStatus: String
   yearOfManufacture: Int
   ownership: Int
+  mileage: Int
   kmReading: Int
   insuranceStatus: String
   yardLocation: String
   startPrice: Float
   reservePrice: Float
-  repoDt: Int
+  repoDt: DateTime
   veicleLocation: String
   vehicleRemarks: String
   auctionManager: String
@@ -1025,12 +1026,7 @@ type Vehicle {
   rightImage: String
   image5: String
   image6: String
-  image7: String
-  image8: String
-  image9: String
-  image10: String
-  image11: String
-  image12: String
+  inspectionLink: String
   watchedBy(
     where: UserWhereInput! = {}
     orderBy: [UserOrderByInput!]! = []
@@ -1055,14 +1051,6 @@ enum VehicleBidStatusType {
   approved
   fulfilled
   declined
-}
-
-enum VehicleFuelType {
-  diesel
-  petrol
-  cng
-  lpg
-  electric
 }
 
 input VehicleWhereUniqueInput {
@@ -1092,17 +1080,18 @@ input VehicleWhereInput {
   model: StringFilter
   varient: StringFilter
   categoty: StringFilter
-  fuel: VehicleFuelTypeNullableFilter
+  fuel: StringFilter
   type: StringFilter
   rcStatus: StringFilter
   yearOfManufacture: IntNullableFilter
   ownership: IntNullableFilter
+  mileage: IntNullableFilter
   kmReading: IntNullableFilter
   insuranceStatus: StringFilter
   yardLocation: StringFilter
   startPrice: FloatNullableFilter
   reservePrice: FloatNullableFilter
-  repoDt: IntNullableFilter
+  repoDt: DateTimeNullableFilter
   veicleLocation: StringFilter
   vehicleRemarks: StringFilter
   auctionManager: StringFilter
@@ -1123,12 +1112,7 @@ input VehicleWhereInput {
   rightImage: StringFilter
   image5: StringFilter
   image6: StringFilter
-  image7: StringFilter
-  image8: StringFilter
-  image9: StringFilter
-  image10: StringFilter
-  image11: StringFilter
-  image12: StringFilter
+  inspectionLink: StringFilter
   watchedBy: UserManyRelationFilter
   ExcelFile: ExcelUploadWhereInput
   createdAt: DateTimeNullableFilter
@@ -1140,13 +1124,6 @@ input VehicleBidStatusTypeNullableFilter {
   in: [VehicleBidStatusType!]
   notIn: [VehicleBidStatusType!]
   not: VehicleBidStatusTypeNullableFilter
-}
-
-input VehicleFuelTypeNullableFilter {
-  equals: VehicleFuelType
-  in: [VehicleFuelType!]
-  notIn: [VehicleFuelType!]
-  not: VehicleFuelTypeNullableFilter
 }
 
 input FloatNullableFilter {
@@ -1188,6 +1165,7 @@ input VehicleOrderByInput {
   rcStatus: OrderDirection
   yearOfManufacture: OrderDirection
   ownership: OrderDirection
+  mileage: OrderDirection
   kmReading: OrderDirection
   insuranceStatus: OrderDirection
   yardLocation: OrderDirection
@@ -1214,12 +1192,7 @@ input VehicleOrderByInput {
   rightImage: OrderDirection
   image5: OrderDirection
   image6: OrderDirection
-  image7: OrderDirection
-  image8: OrderDirection
-  image9: OrderDirection
-  image10: OrderDirection
-  image11: OrderDirection
-  image12: OrderDirection
+  inspectionLink: OrderDirection
   createdAt: OrderDirection
   updatedAt: OrderDirection
 }
@@ -1243,17 +1216,18 @@ input VehicleUpdateInput {
   model: String
   varient: String
   categoty: String
-  fuel: VehicleFuelType
+  fuel: String
   type: String
   rcStatus: String
   yearOfManufacture: Int
   ownership: Int
+  mileage: Int
   kmReading: Int
   insuranceStatus: String
   yardLocation: String
   startPrice: Float
   reservePrice: Float
-  repoDt: Int
+  repoDt: DateTime
   veicleLocation: String
   vehicleRemarks: String
   auctionManager: String
@@ -1274,12 +1248,7 @@ input VehicleUpdateInput {
   rightImage: String
   image5: String
   image6: String
-  image7: String
-  image8: String
-  image9: String
-  image10: String
-  image11: String
-  image12: String
+  inspectionLink: String
   watchedBy: UserRelateToManyForUpdateInput
   ExcelFile: ExcelUploadRelateToOneForUpdateInput
 }
@@ -1321,17 +1290,18 @@ input VehicleCreateInput {
   model: String
   varient: String
   categoty: String
-  fuel: VehicleFuelType
+  fuel: String
   type: String
   rcStatus: String
   yearOfManufacture: Int
   ownership: Int
+  mileage: Int
   kmReading: Int
   insuranceStatus: String
   yardLocation: String
   startPrice: Float
   reservePrice: Float
-  repoDt: Int
+  repoDt: DateTime
   veicleLocation: String
   vehicleRemarks: String
   auctionManager: String
@@ -1352,12 +1322,7 @@ input VehicleCreateInput {
   rightImage: String
   image5: String
   image6: String
-  image7: String
-  image8: String
-  image9: String
-  image10: String
-  image11: String
-  image12: String
+  inspectionLink: String
   watchedBy: UserRelateToManyForCreateInput
   ExcelFile: ExcelUploadRelateToOneForCreateInput
 }

@@ -5,48 +5,49 @@ import excelFileToJson from "../services/excelFileToJson";
 import { Vehicle } from "@prisma/client";
 
 interface VehicleDTO {
-  Loan_Agreement_No: String;
-  "Registered Owner Name": String;
-  Make: String;
-  Model: String;
-  Varient: String;
-  Categoty: String;
-  "Fuel Type": String;
-  RC_Status: String;
-  Registration_Number: String;
-  Year_of_Manufacture: String;
-  Ownership: Number;
-  "KM Reading": Number;
-  Insurance_Status: String;
-  Yard_Location: String;
-  Start_Price: Number;
-  Reserve_Price: Number;
-  Repo_Dt: Number;
-  Veicle_Location: String;
-  Vehicle_Remarks: String;
-  "Auction Manager": String;
-  "Action Manager": String;
-  "Seller Name": String;
-  "Parking Charges": Number;
-  Insurance: String;
-  "Insurance Valid Till": String;
-  Tax: String;
-  Fitness: String;
-  Permit: String;
-  "Engine No": String;
-  "Chassis NO": String;
-  front_image: String;
-  back_image: String;
-  left_image: String;
-  right_image: String;
-  "image 5": String;
-  "image 6": String;
-  "image 7": String;
-  "image 8": String;
-  "image 9": String;
-  "image 10": String;
-  "image 11": String;
-  "image 12": String;
+  Loan_Agreement_No: string;
+  Customer_Name: string;
+  Make_Model: string;
+  Variant: string;
+  Categoty: string;
+  "Fuel Type": string;
+  RC_Status: string;
+  Registration_Number: string;
+  Year_of_Manufacture: string;
+  Ownership: number;
+  Mileage: string;
+  km : number;
+  Quote_increament: number;
+  Insurance_Status: string;
+  Yard_Location: string;
+  Start_Price: number;
+  Reserve_Price: number;
+  Repo_Dt: string;
+  Veicle_Location: string;
+  Vehicle_Remarks: string;
+  "Auction Manager": string;
+  "Action Manager": string;
+  "Seller Name": string;
+  "Parking Charges": number;
+  Insurance: string;
+  "Insurance Valid Till": string;
+  Tax: string;
+  Fitness: string;
+  Permit: string;
+  "Engine No": string;
+  "Chassis NO": string;
+  front_image: string;
+  back_image: string;
+  left_image: string;
+  right_image: string;
+  "INSPECTION LINK": string;
+  "image 6": string;
+  "image 7": string;
+  "image 8": string;
+  "image 9": string;
+  "image 10": string;
+  "image 11": string;
+  "image 12": string;
 }
 
 export const ExcelUpload = list({
@@ -87,21 +88,24 @@ export const ExcelUpload = list({
                     vehicleItem.Registration_Number.toUpperCase().trim(),
                   loanAgreementNo:
                     vehicleItem.Loan_Agreement_No?.toUpperCase()?.trim(),
-                  make: vehicleItem.Make?.toLowerCase()?.trim(),
-                  model: vehicleItem.Model?.toLowerCase()?.trim(),
-                  varient: vehicleItem.Varient?.toLowerCase()?.trim(),
+                  registeredOwnerName:vehicleItem.Customer_Name?.trim(),
+                  make: vehicleItem.Make_Model?.toLowerCase()?.trim(),
+                  model: vehicleItem.Make_Model?.toLowerCase()?.trim(),
+                  varient: vehicleItem.Variant?.toLowerCase()?.trim(),
                   categoty: vehicleItem.Categoty?.toLowerCase()?.trim(),
                   fuel: vehicleItem["Fuel Type"]?.toLowerCase()?.trim(),
                   rcStatus: vehicleItem.RC_Status?.toLowerCase()?.trim(),
-                  yearOfManufacture: vehicleItem.Year_of_Manufacture,
-                  ownership: vehicleItem.Ownership,
-                  kmReading: vehicleItem["KM Reading"],
-                  insuranceStatus: vehicleItem.Insurance_Status,
-                  yardLocation: vehicleItem.Yard_Location,
-                  startPrice: vehicleItem.Start_Price,
-                  reservePrice: vehicleItem.Reserve_Price,
-                  repoDt: vehicleItem.Repo_Dt,
-                  veicleLocation: vehicleItem.Veicle_Location,
+                  yearOfManufacture: Number(vehicleItem.Year_of_Manufacture)||0,
+                  ownership: Number(vehicleItem.Ownership)||0,
+                  mileage: Number(vehicleItem.Mileage)||0,
+                  kmReading: Number(vehicleItem.km)||0,
+                  quoteIncreament: Number(vehicleItem.Quote_increament)||1000,
+                  insuranceStatus: vehicleItem.Insurance_Status?.toUpperCase()?.trim(),
+                  yardLocation: vehicleItem.Yard_Location?.toUpperCase()?.trim(),
+                  startPrice: Number(vehicleItem.Start_Price)||0,
+                  reservePrice: Number(vehicleItem.Reserve_Price)||0,
+                  repoDt: new Date(Date.parse(vehicleItem.Repo_Dt)||0),
+                  veicleLocation: vehicleItem.Veicle_Location?.toUpperCase()?.trim(),
                   vehicleRemarks: vehicleItem.Vehicle_Remarks,
                   auctionManager: vehicleItem["Auction Manager"]?.toString(),
                   actionManager: vehicleItem["Action Manager"],
@@ -114,18 +118,13 @@ export const ExcelUpload = list({
                   permit: vehicleItem.Permit,
                   engineNo: vehicleItem["Engine No"],
                   chassisNo: vehicleItem["Chassis NO"],
-                  frontImage: vehicleItem.front_image,
-                  backImage: vehicleItem.back_image,
-                  leftImage: vehicleItem.left_image,
-                  rightImage: vehicleItem.right_image,
-                  image5: vehicleItem["image 5"],
-                  image6: vehicleItem["image 6"],
-                  image7: vehicleItem["image 7"],
-                  image8: vehicleItem["image 8"],
-                  image9: vehicleItem["image 9"],
-                  image10: vehicleItem["image 10"],
-                  image11: vehicleItem["image 11"],
-                  image12: vehicleItem["image 12"],
+                  frontImage: vehicleItem.front_image?.trim(),
+                  backImage: vehicleItem.back_image?.trim(),
+                  leftImage: vehicleItem.left_image?.trim(),
+                  rightImage: vehicleItem.right_image?.trim(),
+                  image5: vehicleItem["image 5"].trim(),
+                  image6: vehicleItem["image 6"].trim(),
+                  inspectionLink: vehicleItem["INSPECTION LINK"]?.trim(),
                   ExcelFile: { connect: { id: item.id } },
                   event: resolvedData.event,
                   bidTimeExpire:
@@ -151,7 +150,7 @@ export const ExcelUpload = list({
                         )
                       : new Date(eventData.startDate),
                   currentBidAmount: 0,
-                  startBidAmount: vehicleItem.Start_Price ?? 0,
+                  startBidAmount: Number(vehicleItem.Start_Price) || 0,
                   bidStatus: "pending",
                 };
               }

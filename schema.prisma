@@ -174,17 +174,18 @@ model Vehicle {
   model               String                @default("")
   varient             String                @default("")
   categoty            String                @default("")
-  fuel                VehicleFuelType?
+  fuel                String                @default("")
   type                String                @default("")
   rcStatus            String                @default("")
   yearOfManufacture   Int?
   ownership           Int?
+  mileage             Int?
   kmReading           Int?
   insuranceStatus     String                @default("")
   yardLocation        String                @default("")
   startPrice          Float?
   reservePrice        Float?
-  repoDt              Int?
+  repoDt              DateTime?
   veicleLocation      String                @default("")
   vehicleRemarks      String                @default("")
   auctionManager      String                @default("")
@@ -205,12 +206,7 @@ model Vehicle {
   rightImage          String                @default("")
   image5              String                @default("")
   image6              String                @default("")
-  image7              String                @default("")
-  image8              String                @default("")
-  image9              String                @default("")
-  image10             String                @default("")
-  image11             String                @default("")
-  image12             String                @default("")
+  inspectionLink      String                @default("")
   watchedBy           User[]                @relation("User_watchList")
   ExcelFile           ExcelUpload?          @relation("Vehicle_ExcelFile", fields: [ExcelFileId], references: [id])
   ExcelFileId         String?               @map("ExcelFile")
@@ -332,12 +328,4 @@ enum VehicleBidStatusType {
   approved
   fulfilled
   declined
-}
-
-enum VehicleFuelType {
-  diesel
-  petrol
-  cng
-  lpg
-  electric
 }
