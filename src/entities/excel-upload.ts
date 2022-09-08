@@ -108,7 +108,7 @@ export const ExcelUpload = list({
                   // @ts-ignore
                   {vehicleItem[`${key?.trim()?.toString()?.toLowerCase()?.replaceAll(' ', '_').replaceAll('.', '')}`] = vehicle[key]
                 });
-                console.log("vehicleItem: ", vehicleItem);
+                // console.log("vehicleItem: ", vehicleItem);
                 return {
                   registrationNumber:
                     vehicleItem.registration_number?.toString()?.toUpperCase()?.trim(),
@@ -202,7 +202,7 @@ export const ExcelUpload = list({
                 };
               }
             );
-            console.log("vehicles: ", vehicles)
+            // console.log("vehicles: ", vehicles)
             await context.query.Vehicle.createMany({
               data: vehicles,
             });
