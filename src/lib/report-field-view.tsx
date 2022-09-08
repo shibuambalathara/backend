@@ -3,6 +3,7 @@
 
 import { jsx } from '@keystone-ui/core';
 import { FieldContainer, FieldDescription, FieldLabel } from '@keystone-ui/fields';
+import SheetJSReactAoO from '../services/SheetJSReactAoO';
 
 // import { PrettyData } from './PrettyData';
 
@@ -12,19 +13,21 @@ export const Field = ({ field, value }: any ) =>
       <FieldLabel>{field.label}</FieldLabel>
       <FieldDescription id={`${field.path}-description`}>{field.description}</FieldDescription>
       {/* <PrettyData data={value} /> */}
-      {JSON.stringify(value)}
+      {/* <h1>{JSON.stringify(value)}</h1> */}
+      <SheetJSReactAoO />
     </FieldContainer>
   );
 
 export const Cell = ({ item, field }) => {
-  return <p>{JSON.stringify(item[field.path])}</p>;
+  return <h1>{JSON.stringify(item[field.path])}</h1>;
 };
 
 export const CardValue = ({ item, field }) => {
   return (
     <FieldContainer>
       <FieldLabel>{field.label}</FieldLabel>
-      <p>{JSON.stringify(item[field.path])}</p>
+      <h1>{JSON.stringify(item[field.path])}</h1>
+      <SheetJSReactAoO />
     </FieldContainer>
   );
 };

@@ -1,30 +1,20 @@
 import { graphql } from "@keystone-6/core";
 import { virtual } from "@keystone-6/core/fields";
 
-export const bidRank = virtual({
+export const vvv = virtual({
   field: graphql.field({
-    type: graphql.Int,
+    type: graphql.JSON,
     async resolve(item: any, args, context) {
-      const rank = await context.prisma.bid.findMany({
-        distinct: ["userId"],
-        where: { bidVehicle: { id: { equals: item.id } } },
-        orderBy: [
-          {
-            amount: "desc",
-          },
-          {
-            createdAt: "asc",
-          },
-        ],
-        skip: 0,
-        take: 10,
+      const vehicle = await context.query.Vehicle.findOne({
+        where: { id:  item.id },
+        query: ''
       });
-      // console.log(rank);
+      // console.log(Vehicle);
       // console.log(context?.session?.itemId);
-      return rank.findIndex((x) => x?.userId === context?.session?.itemId) + 1;
+      return vehicle;
     },
   }),
   ui: {
-     views: './lib/rereport-field-view.tsx'
+     views: require.resolve('./report-field-view.tsx')
   },
 });
