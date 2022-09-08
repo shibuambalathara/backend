@@ -1,5 +1,6 @@
 import { gql, graphQLSchemaExtension } from "@keystone-6/core";
 import { Context } from ".keystone/types";
+import { pubSub } from './websocket';
 const graphql = String.raw;
 export const extendGraphqlSchema = graphQLSchemaExtension<Context>({
   typeDefs: graphql`
@@ -63,7 +64,11 @@ export const extendGraphqlSchema = graphQLSchemaExtension<Context>({
       userId: String
       createdAt: DateTime
     }
+    type Time {
+      iso: String!
+    }
     type Subscription {
+      time: Time
       """
       New Live Bids
       """
@@ -190,6 +195,10 @@ export const extendGraphqlSchema = graphQLSchemaExtension<Context>({
             id: id,
           },
         });
+      },
+      time: {
+        // @ts-ignore
+        subscribe: () => pubSub.asyncIterator(['TIME']),
       },
     },
   },

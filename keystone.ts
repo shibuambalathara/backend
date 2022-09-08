@@ -2,6 +2,7 @@ import "dotenv/config";
 import { config } from "@keystone-6/core";
 import { withAuth, session } from "./src/application/auth";
 import { extendGraphqlSchema, lists, router } from "./src/application/schema";
+import { extendHttpServer } from './src/application/graphqlRoutes/websocket';
 
 // const baseUrl = process.env.BASE_URL || "http://localhost:3000";
 
@@ -37,6 +38,7 @@ export default config(
       maxFileSize: 200 * 1024 * 1024,
       healthCheck: true,
       extendExpressApp: router,
+      extendHttpServer: extendHttpServer,
     },
     extendGraphqlSchema,
     graphql: {

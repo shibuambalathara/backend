@@ -86,7 +86,22 @@ export const Event = list({
         listView: { fieldMode: "read" },
       },
     }),
-    Report : excelReportEDownload,
+    eventCategory: select({
+      options: [
+        { value: "online", label: "Online Auction" },
+        { value: "open", label: "Open Auction" },
+      ],
+    }),
+    startDate: timestamp({
+      validation: {
+        isRequired: true,
+      },
+    }),
+    endDate: timestamp({
+      validation: {
+        isRequired: true,
+      },
+    }),
     seller: relationship({
       ref: "Seller.events",
       many: false,
@@ -102,13 +117,8 @@ export const Event = list({
         itemView: { fieldMode: isAdminEdit },
       },
     }),
-    eventCategory: select({
-      options: [
-        { value: "online", label: "Online Auction" },
-        { value: "open", label: "Open Auction" },
-      ],
-    }),
-
+    
+    Report : excelReportEDownload,
     location: relationship({
       ref: "Location.events",
       ui: {
@@ -123,16 +133,7 @@ export const Event = list({
         itemView: { fieldMode: "read" },
       },
     }),
-    startDate: timestamp({
-      validation: {
-        isRequired: true,
-      },
-    }),
-    endDate: timestamp({
-      validation: {
-        isRequired: true,
-      },
-    }),
+    
     noOfBids: integer({
       validation: {
         isRequired: true,

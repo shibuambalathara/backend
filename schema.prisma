@@ -122,15 +122,15 @@ model EmdUpdate {
 model Event {
   id                        String            @id @default(cuid())
   eventNo                   Int               @default(autoincrement())
+  eventCategory             String?
+  startDate                 DateTime
+  endDate                   DateTime
   seller                    Seller?           @relation("Event_seller", fields: [sellerId], references: [id])
   sellerId                  String?           @map("seller")
   eventType                 EventType[]       @relation("Event_eventType")
-  eventCategory             String?
   location                  Location?         @relation("Event_location", fields: [locationId], references: [id])
   locationId                String?           @map("location")
   vehicles                  Vehicle[]         @relation("Vehicle_event")
-  startDate                 DateTime
-  endDate                   DateTime
   noOfBids                  Int
   status                    EventStatusType?  @default(active)
   ExcelFile                 ExcelUpload?      @relation("Event_ExcelFile", fields: [ExcelFileId], references: [id])
