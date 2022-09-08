@@ -8,7 +8,7 @@ import {
   timestamp,
 } from "@keystone-6/core/fields";
 import { list } from "@keystone-6/core";
-import { vvv } from "../lib/report-field";
+import { excelReportEDownload } from "../lib/report-field";
 import {
   fieldOptions,
   isAdminCreate,
@@ -86,7 +86,7 @@ export const Event = list({
         listView: { fieldMode: "read" },
       },
     }),
-    Report : vvv,
+    Report : excelReportEDownload,
     seller: relationship({
       ref: "Seller.events",
       many: false,

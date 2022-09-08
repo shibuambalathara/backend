@@ -974,7 +974,7 @@ type Vehicle {
   currentBidAmount: Int
   myBidRank: Int
   totalBids: Int
-  startBidAmount: Int
+  startBidAmount: Float
   currentBidUser: User
   event: Event
   vehicleEventStatus: vehicleEventStatus
@@ -1088,7 +1088,7 @@ input VehicleWhereInput {
   bidStartTime: DateTimeFilter
   bidAmountUpdate: IntNullableFilter
   currentBidAmount: IntNullableFilter
-  startBidAmount: IntNullableFilter
+  startBidAmount: FloatNullableFilter
   currentBidUser: UserWhereInput
   event: EventWhereInput
   bidStatus: VehicleBidStatusTypeNullableFilter
@@ -1160,13 +1160,6 @@ input VehicleWhereInput {
   updatedAt: DateTimeNullableFilter
 }
 
-input VehicleBidStatusTypeNullableFilter {
-  equals: VehicleBidStatusType
-  in: [VehicleBidStatusType!]
-  notIn: [VehicleBidStatusType!]
-  not: VehicleBidStatusTypeNullableFilter
-}
-
 input FloatNullableFilter {
   equals: Float
   in: [Float!]
@@ -1176,6 +1169,13 @@ input FloatNullableFilter {
   gt: Float
   gte: Float
   not: FloatNullableFilter
+}
+
+input VehicleBidStatusTypeNullableFilter {
+  equals: VehicleBidStatusType
+  in: [VehicleBidStatusType!]
+  notIn: [VehicleBidStatusType!]
+  not: VehicleBidStatusTypeNullableFilter
 }
 
 input UserManyRelationFilter {
@@ -1266,7 +1266,7 @@ input VehicleUpdateInput {
   bidStartTime: DateTime
   bidAmountUpdate: Int
   currentBidAmount: Int
-  startBidAmount: Int
+  startBidAmount: Float
   currentBidUser: UserRelateToOneForUpdateInput
   event: EventRelateToOneForUpdateInput
   bidStatus: VehicleBidStatusType
@@ -1361,7 +1361,7 @@ input VehicleCreateInput {
   bidStartTime: DateTime
   bidAmountUpdate: Int
   currentBidAmount: Int
-  startBidAmount: Int
+  startBidAmount: Float
   currentBidUser: UserRelateToOneForCreateInput
   event: EventRelateToOneForCreateInput
   bidStatus: VehicleBidStatusType

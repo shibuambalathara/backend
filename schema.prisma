@@ -160,7 +160,7 @@ model Vehicle {
   bidStartTime           DateTime
   bidAmountUpdate        Int?
   currentBidAmount       Int?                  @default(0)
-  startBidAmount         Int?                  @default(0)
+  startBidAmount         Float?                @default(0)
   currentBidUser         User?                 @relation("Vehicle_currentBidUser", fields: [currentBidUserId], references: [id])
   currentBidUserId       String?               @map("currentBidUser")
   event                  Event?                @relation("Vehicle_event", fields: [eventId], references: [id])

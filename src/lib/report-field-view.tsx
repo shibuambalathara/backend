@@ -12,14 +12,12 @@ export const Field = ({ field, value }: any ) =>
     <FieldContainer>
       <FieldLabel>{field.label}</FieldLabel>
       <FieldDescription id={`${field.path}-description`}>{field.description}</FieldDescription>
-      {/* <PrettyData data={value} /> */}
-      {/* <h1>{JSON.stringify(value)}</h1> */}
-      <SheetJSReactAoO />
+      <SheetJSReactAoO data={value}/>
     </FieldContainer>
   );
 
 export const Cell = ({ item, field }) => {
-  return <h1>{JSON.stringify(item[field.path])}</h1>;
+  return <SheetJSReactAoO data={item[field.path]}/>;
 };
 
 export const CardValue = ({ item, field }) => {
@@ -27,7 +25,7 @@ export const CardValue = ({ item, field }) => {
     <FieldContainer>
       <FieldLabel>{field.label}</FieldLabel>
       <h1>{JSON.stringify(item[field.path])}</h1>
-      <SheetJSReactAoO />
+      <SheetJSReactAoO data={item[field.path]}/>
     </FieldContainer>
   );
 };

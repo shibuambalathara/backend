@@ -121,7 +121,7 @@ export const Vehicle = list({
     }),
     myBidRank: bidRank,
     totalBids: totalBids,
-    startBidAmount: integer({
+    startBidAmount: float({
       ui: {
         createView: { fieldMode: "hidden" },
         itemView: { fieldMode: "read" },
