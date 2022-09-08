@@ -106,32 +106,32 @@ export const ExcelUpload = list({
                 const vehicleItem = {} as VehicleDTO;
                 Object.keys(vehicle).forEach(key => 
                   // @ts-ignore
-                  {vehicleItem[`${key?.trim()?.toLowerCase()?.replaceAll(' ', '_').replaceAll('.', '')}`] = vehicle[key]
+                  {vehicleItem[`${key?.trim()?.toString()?.toLowerCase()?.replaceAll(' ', '_').replaceAll('.', '')}`] = vehicle[key]
                 });
-                // console.log("vehicleItem: ", vehicleItem);
+                console.log("vehicleItem: ", vehicleItem);
                 return {
                   registrationNumber:
-                    vehicleItem.registration_number?.toUpperCase()?.trim(),
+                    vehicleItem.registration_number?.toString()?.toUpperCase()?.trim(),
                   loanAgreementNo:
-                    vehicleItem.loan_agreement_no?.toUpperCase()?.trim(),
+                    vehicleItem.loan_agreement_no?.toString()?.toUpperCase()?.trim(),
                   registeredOwnerName:vehicleItem.customer_name?.trim(),
-                  make: vehicleItem.make_model?.toLowerCase()?.trim(),
-                  model: vehicleItem.make_model?.toLowerCase()?.trim(),
-                  varient: vehicleItem.variant?.toLowerCase()?.trim(),
-                  categoty: vehicleItem.categoty?.toLowerCase()?.trim(),
-                  fuel: vehicleItem.fuel_type?.toLowerCase()?.trim(),
-                  rcStatus: vehicleItem.rc_status?.toLowerCase()?.trim(),
+                  make: vehicleItem.make_model?.toString()?.toLowerCase()?.trim(),
+                  model: vehicleItem.make_model?.toString()?.toLowerCase()?.trim(),
+                  varient: vehicleItem.variant?.toString()?.toLowerCase()?.trim(),
+                  categoty: vehicleItem.categoty?.toString()?.toLowerCase()?.trim(),
+                  fuel: vehicleItem.fuel_type?.toString()?.toLowerCase()?.trim(),
+                  rcStatus: vehicleItem.rc_status?.toString()?.toLowerCase()?.trim(),
                   yearOfManufacture: Number(vehicleItem.year_of_manufacture)||0,
                   ownership: Number(vehicleItem.ownership)||0,
                   mileage: Number(vehicleItem.mileage)||0,
                   kmReading: Number(vehicleItem.km)||0,
                   quoteIncreament: Number(vehicleItem.quote_increament)||1000,
-                  insuranceStatus: vehicleItem.insurance_status?.toUpperCase()?.trim(),
+                  insuranceStatus: vehicleItem.insurance_status?.toString()?.toUpperCase()?.trim(),
                   yardLocation: vehicleItem.yard_name?.trim()?? vehicleItem.yard_location?.trim(),
                   startPrice: Number(vehicleItem.start_price)||0,
                   reservePrice: Number(vehicleItem.reserve_price)||0,
                   repoDt: new Date(vehicleItem.repo_dt),
-                  veicleLocation: vehicleItem.veicle_location?.toUpperCase()?.trim(),
+                  veicleLocation: vehicleItem.veicle_location?.toString()?.toUpperCase()?.trim(),
                   vehicleRemarks: vehicleItem.additional_remarks ?? vehicleItem.vehicle_remarks,
                   auctionManager: vehicleItem.auction_manager?.toString(),
                   parkingCharges: vehicleItem.parking_charges?.toString(),
@@ -143,22 +143,22 @@ export const ExcelUpload = list({
                   permit: vehicleItem.permit,
                   engineNo: vehicleItem.engine_no,
                   chassisNo: vehicleItem.chassis_no,
-                  frontImage: vehicleItem.front_image?.trim(),
-                  backImage: vehicleItem.back_image?.trim(),
-                  leftImage: vehicleItem.left_image?.trim(),
-                  rightImage: vehicleItem.right_image?.trim(),
-                  image5: vehicleItem.image_5?.trim(),
-                  image6: vehicleItem.image_6?.trim(),
-                  inspectionLink: vehicleItem.inspection_link?.trim(),
-                  autobseContact: vehicleItem.autobse_contact.toString(),
+                  frontImage: vehicleItem.front_image?.toString()?.trim(),
+                  backImage: vehicleItem.back_image?.toString()?.trim(),
+                  leftImage: vehicleItem.left_image?.toString()?.trim(),
+                  rightImage: vehicleItem.right_image?.toString()?.trim(),
+                  image5: vehicleItem.image_5?.toString()?.trim(),
+                  image6: vehicleItem.image_6?.toString()?.trim(),
+                  inspectionLink: vehicleItem.inspection_link?.toString()?.trim(),
+                  autobseContact: vehicleItem.autobse_contact?.toString(),
                   autobse_contact_person: vehicleItem.autobse_contact_person?.trim(),
                   vehicleCondition: vehicleItem.vehicle_condition?.trim(),
-                  powerSteering:vehicleItem.power_steering?.toUpperCase()?.trim(),
-                  shape:vehicleItem.shape?.toUpperCase()?.trim(),
-                  color: vehicleItem.color?.toUpperCase()?.trim(),
-                  state: vehicleItem.state?.toUpperCase()?.trim(),
-                  city: vehicleItem.city?.toUpperCase()?.trim(),
-                  area: vehicleItem.area?.toUpperCase()?.trim(),
+                  powerSteering:vehicleItem.power_steering?.toString()?.toUpperCase()?.trim(),
+                  shape:vehicleItem.shape?.toString()?.toUpperCase()?.trim(),
+                  color: vehicleItem.color?.toString()?.toUpperCase()?.trim(),
+                  state: vehicleItem.state?.toString()?.toUpperCase()?.trim(),
+                  city: vehicleItem.city?.toString()?.toUpperCase()?.trim(),
+                  area: vehicleItem.area?.toString()?.toUpperCase()?.trim(),
                   paymentTerms:vehicleItem.payment_terms,
                   dateOfRegistration: new Date(vehicleItem.date_of_registration),
                   hypothication: vehicleItem.hypothication,
@@ -202,7 +202,7 @@ export const ExcelUpload = list({
                 };
               }
             );
-            // console.log("vehicles: ", vehicles)
+            console.log("vehicles: ", vehicles)
             await context.query.Vehicle.createMany({
               data: vehicles,
             });
