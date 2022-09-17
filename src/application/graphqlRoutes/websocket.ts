@@ -53,12 +53,12 @@ export const extendHttpServer = (
   );
 
   // Send the time every second as an interval example of pub/sub
-  setInterval(() => {
-    console.log('TIME', Date.now());
-    pubSub.publish('TIME', {
-      time: {
-        iso: new Date().toISOString(),
-      },
-    });
-  }, 10000);
+  // setInterval(() => {
+  //   console.log('TIME', Date.now());
+  //   pubSub.publish('TIME', {
+  //     time: {
+  //       iso: new Date().toISOString(),
+  //     },
+  //   });
+  // }, 10000);
 };
