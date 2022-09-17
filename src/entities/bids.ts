@@ -99,7 +99,7 @@ export const Bid = list({
               bidVehicle?.event?.location?.state?.name
           );
         }
-        if (Number(bidVehicle.startBidAmount) >= amount) {
+        if (Number(bidVehicle.startBidAmount) > amount) {
           addValidationError(
             "Bid Amount smaller than start bid amount, Start Bid Amount: " +
               bidVehicle.startBidAmount
