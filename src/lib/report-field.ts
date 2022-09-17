@@ -122,6 +122,5 @@ export const excelReportEDownload = virtual({
   }),
   ui: {
     views: require.resolve("./report-field-view.tsx"),
-    query: `Report`
   },
 });
