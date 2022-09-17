@@ -24,7 +24,7 @@ export const bidRank = virtual({
       return rank.findIndex((x) => x?.userId === context?.session?.itemId) + 1;
     },
   }),
-  // ui: {
-  //   query: ` myBidRank `,
-  // },
+  ui: {
+    query: ` myBidRank `,
+  },
 });
