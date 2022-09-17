@@ -11,4 +11,7 @@ export const totalBids = virtual({
       return count;
     },
   }),
+  ui: {
+    query: ` totalBids `,
+  },
 });
