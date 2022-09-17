@@ -29,7 +29,7 @@ export const vehicleEventStatus = virtual({
       return "abnormal";
     },
   }),
-  // ui: {
-  //   query: ` myBidRank `,
-  // },
+  ui: {
+    query: ` vehicleEventStatus `,
+  },
 });
