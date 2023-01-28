@@ -9,14 +9,14 @@ export const vehicleEventStatus = virtual({
     }),
     async resolve(item: any) {
       if (
-        new Date(item?.bidStartTime).getTime() > new Date().getTime() &&
-        new Date(item?.bidTimeExpire).getTime() > new Date().getTime()
+        new Date(item?.bidStartTime).getTime() < new Date().getTime() &&
+        new Date(item?.bidTimeExpire).getTime() < new Date().getTime()
       ) {
         return "completed";
       }
       if (
-        new Date(item?.bidStartTime).getTime() < new Date().getTime() &&
-        new Date(item?.bidTimeExpire).getTime() < new Date().getTime()
+        new Date(item?.bidStartTime).getTime() > new Date().getTime() &&
+        new Date(item?.bidTimeExpire).getTime() > new Date().getTime()
       ) {
         return "upcoming";
       }
