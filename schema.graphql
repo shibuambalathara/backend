@@ -11,12 +11,7 @@ type User {
   username: String
   phone: String
   businessName: String
-  category(
-    where: EventTypeWhereInput! = {}
-    orderBy: [EventTypeOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [EventType!]
+  category(where: EventTypeWhereInput! = {}, orderBy: [EventTypeOrderByInput!]! = [], take: Int, skip: Int! = 0): [EventType!]
   categoryCount(where: EventTypeWhereInput! = {}): Int
   mobile: String
   password: PasswordState
@@ -34,63 +29,23 @@ type User {
   country: String
   city: String
   role: UserRoleType
-  watchList(
-    where: VehicleWhereInput! = {}
-    orderBy: [VehicleOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [Vehicle!]
+  watchList(where: VehicleWhereInput! = {}, orderBy: [VehicleOrderByInput!]! = [], take: Int, skip: Int! = 0): [Vehicle!]
   watchListCount(where: VehicleWhereInput! = {}): Int
-  emdUpdates(
-    where: EmdUpdateWhereInput! = {}
-    orderBy: [EmdUpdateOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [EmdUpdate!]
+  emdUpdates(where: EmdUpdateWhereInput! = {}, orderBy: [EmdUpdateOrderByInput!]! = [], take: Int, skip: Int! = 0): [EmdUpdate!]
   emdUpdatesCount(where: EmdUpdateWhereInput! = {}): Int
-  payments(
-    where: PaymentWhereInput! = {}
-    orderBy: [PaymentOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [Payment!]
+  payments(where: PaymentWhereInput! = {}, orderBy: [PaymentOrderByInput!]! = [], take: Int, skip: Int! = 0): [Payment!]
   paymentsCount(where: PaymentWhereInput! = {}): Int
-  emdUpdatesByAdmin(
-    where: EmdUpdateWhereInput! = {}
-    orderBy: [EmdUpdateOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [EmdUpdate!]
+  emdUpdatesByAdmin(where: EmdUpdateWhereInput! = {}, orderBy: [EmdUpdateOrderByInput!]! = [], take: Int, skip: Int! = 0): [EmdUpdate!]
   emdUpdatesByAdminCount(where: EmdUpdateWhereInput! = {}): Int
   status: UserStatusType
   state: String
-  states(
-    where: StateWhereInput! = {}
-    orderBy: [StateOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [State!]
+  states(where: StateWhereInput! = {}, orderBy: [StateOrderByInput!]! = [], take: Int, skip: Int! = 0): [State!]
   statesCount(where: StateWhereInput! = {}): Int
-  activeBids(
-    where: VehicleWhereInput! = {}
-    orderBy: [VehicleOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [Vehicle!]
+  activeBids(where: VehicleWhereInput! = {}, orderBy: [VehicleOrderByInput!]! = [], take: Int, skip: Int! = 0): [Vehicle!]
   activeBidsCount(where: VehicleWhereInput! = {}): Int
-  quotedBids(
-    where: BidWhereInput! = {}
-    orderBy: [BidOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [Bid!]
+  quotedBids(where: BidWhereInput! = {}, orderBy: [BidOrderByInput!]! = [], take: Int, skip: Int! = 0): [Bid!]
   quotedBidsCount(where: BidWhereInput! = {}): Int
-  bannedSellers(
-    where: SellerWhereInput! = {}
-    orderBy: [SellerOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [Seller!]
+  bannedSellers(where: SellerWhereInput! = {}, orderBy: [SellerOrderByInput!]! = [], take: Int, skip: Int! = 0): [Seller!]
   bannedSellersCount(where: SellerWhereInput! = {}): Int
   createdAt: DateTime
   updatedAt: DateTime
@@ -144,7 +99,7 @@ enum UserStatusType {
   inactive
 }
 
-scalar DateTime
+scalar DateTime @specifiedBy(url: "https://datatracker.ietf.org/doc/html/rfc3339#section-5.6")
 
 input UserWhereUniqueInput {
   id: ID
@@ -421,9 +376,7 @@ input ImageFieldInput {
   upload: Upload!
 }
 
-"""
-The `Upload` scalar type represents a file upload.
-"""
+"""The `Upload` scalar type represents a file upload."""
 scalar Upload
 
 input VehicleRelateToManyForUpdateInput {
@@ -557,12 +510,7 @@ type Payment {
   status: String
   user: User
   image: ImageFieldOutput
-  emdUpdate(
-    where: EmdUpdateWhereInput! = {}
-    orderBy: [EmdUpdateOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [EmdUpdate!]
+  emdUpdate(where: EmdUpdateWhereInput! = {}, orderBy: [EmdUpdateOrderByInput!]! = [], take: Int, skip: Int! = 0): [EmdUpdate!]
   emdUpdateCount(where: EmdUpdateWhereInput! = {}): Int
   createdAt: DateTime
   updatedAt: DateTime
@@ -747,21 +695,11 @@ type Event {
   startDate: DateTime
   endDate: DateTime
   seller: Seller
-  eventType(
-    where: EventTypeWhereInput! = {}
-    orderBy: [EventTypeOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [EventType!]
+  eventType(where: EventTypeWhereInput! = {}, orderBy: [EventTypeOrderByInput!]! = [], take: Int, skip: Int! = 0): [EventType!]
   eventTypeCount(where: EventTypeWhereInput! = {}): Int
   Report: JSON
   location: Location
-  vehicles(
-    where: VehicleWhereInput! = {}
-    orderBy: [VehicleOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [Vehicle!]
+  vehicles(where: VehicleWhereInput! = {}, orderBy: [VehicleOrderByInput!]! = [], take: Int, skip: Int! = 0): [Vehicle!]
   vehiclesCount(where: VehicleWhereInput! = {}): Int
   noOfBids: Int
   status: EventStatusType
@@ -978,12 +916,7 @@ type Vehicle {
   event: Event
   vehicleEventStatus: vehicleEventStatus
   bidStatus: VehicleBidStatusType
-  userVehicleBids(
-    where: BidWhereInput! = {}
-    orderBy: [BidOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [Bid!]
+  userVehicleBids(where: BidWhereInput! = {}, orderBy: [BidOrderByInput!]! = [], take: Int, skip: Int! = 0): [Bid!]
   userVehicleBidsCount(where: BidWhereInput! = {}): Int
   loanAgreementNo: String
   registeredOwnerName: String
@@ -1046,12 +979,7 @@ type Vehicle {
   clientContactPerson: String
   clientContactNo: String
   additionalRemarks: String
-  watchedBy(
-    where: UserWhereInput! = {}
-    orderBy: [UserOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [User!]
+  watchedBy(where: UserWhereInput! = {}, orderBy: [UserOrderByInput!]! = [], take: Int, skip: Int! = 0): [User!]
   watchedByCount(where: UserWhereInput! = {}): Int
   ExcelFile: ExcelUpload
   createdAt: DateTime
@@ -1508,12 +1436,7 @@ input VehicleRelateToOneForCreateInput {
 type EventType {
   id: ID!
   name: String
-  events(
-    where: EventWhereInput! = {}
-    orderBy: [EventOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [Event!]
+  events(where: EventWhereInput! = {}, orderBy: [EventOrderByInput!]! = [], take: Int, skip: Int! = 0): [Event!]
   eventsCount(where: EventWhereInput! = {}): Int
   users: User
   createdAt: DateTime
@@ -1584,12 +1507,7 @@ type Location {
   country: String
   state: State
   city: String
-  events(
-    where: EventWhereInput! = {}
-    orderBy: [EventOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [Event!]
+  events(where: EventWhereInput! = {}, orderBy: [EventOrderByInput!]! = [], take: Int, skip: Int! = 0): [Event!]
   eventsCount(where: EventWhereInput! = {}): Int
   createdAt: DateTime
   updatedAt: DateTime
@@ -1657,19 +1575,9 @@ input StateRelateToOneForCreateInput {
 type State {
   id: ID!
   name: String
-  users(
-    where: UserWhereInput! = {}
-    orderBy: [UserOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [User!]
+  users(where: UserWhereInput! = {}, orderBy: [UserOrderByInput!]! = [], take: Int, skip: Int! = 0): [User!]
   usersCount(where: UserWhereInput! = {}): Int
-  locations(
-    where: LocationWhereInput! = {}
-    orderBy: [LocationOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [Location!]
+  locations(where: LocationWhereInput! = {}, orderBy: [LocationOrderByInput!]! = [], take: Int, skip: Int! = 0): [Location!]
   locationsCount(where: LocationWhereInput! = {}): Int
   createdAt: DateTime
   updatedAt: DateTime
@@ -1738,12 +1646,7 @@ type ExcelUpload {
   name: String
   file: FileFieldOutput
   event: Event
-  vehicles(
-    where: VehicleWhereInput! = {}
-    orderBy: [VehicleOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [Vehicle!]
+  vehicles(where: VehicleWhereInput! = {}, orderBy: [VehicleOrderByInput!]! = [], take: Int, skip: Int! = 0): [Vehicle!]
   vehiclesCount(where: VehicleWhereInput! = {}): Int
   createdAt: DateTime
   updatedAt: DateTime
@@ -1794,19 +1697,9 @@ input ExcelUploadCreateInput {
 type Seller {
   id: ID!
   name: String
-  events(
-    where: EventWhereInput! = {}
-    orderBy: [EventOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [Event!]
+  events(where: EventWhereInput! = {}, orderBy: [EventOrderByInput!]! = [], take: Int, skip: Int! = 0): [Event!]
   eventsCount(where: EventWhereInput! = {}): Int
-  bannedUsers(
-    where: UserWhereInput! = {}
-    orderBy: [UserOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [User!]
+  bannedUsers(where: UserWhereInput! = {}, orderBy: [UserOrderByInput!]! = [], take: Int, skip: Int! = 0): [User!]
   bannedUsersCount(where: UserWhereInput! = {}): Int
   createdAt: DateTime
   updatedAt: DateTime
@@ -1855,7 +1748,7 @@ input SellerCreateInput {
 """
 The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
-scalar JSON
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
 type Mutation {
   createUser(data: UserCreateInput!): User
@@ -1866,19 +1759,13 @@ type Mutation {
   deleteUsers(where: [UserWhereUniqueInput!]!): [User]
   createPayment(data: PaymentCreateInput!): Payment
   createPayments(data: [PaymentCreateInput!]!): [Payment]
-  updatePayment(
-    where: PaymentWhereUniqueInput!
-    data: PaymentUpdateInput!
-  ): Payment
+  updatePayment(where: PaymentWhereUniqueInput!, data: PaymentUpdateInput!): Payment
   updatePayments(data: [PaymentUpdateArgs!]!): [Payment]
   deletePayment(where: PaymentWhereUniqueInput!): Payment
   deletePayments(where: [PaymentWhereUniqueInput!]!): [Payment]
   createEmdUpdate(data: EmdUpdateCreateInput!): EmdUpdate
   createEmdUpdates(data: [EmdUpdateCreateInput!]!): [EmdUpdate]
-  updateEmdUpdate(
-    where: EmdUpdateWhereUniqueInput!
-    data: EmdUpdateUpdateInput!
-  ): EmdUpdate
+  updateEmdUpdate(where: EmdUpdateWhereUniqueInput!, data: EmdUpdateUpdateInput!): EmdUpdate
   updateEmdUpdates(data: [EmdUpdateUpdateArgs!]!): [EmdUpdate]
   deleteEmdUpdate(where: EmdUpdateWhereUniqueInput!): EmdUpdate
   deleteEmdUpdates(where: [EmdUpdateWhereUniqueInput!]!): [EmdUpdate]
@@ -1890,10 +1777,7 @@ type Mutation {
   deleteEvents(where: [EventWhereUniqueInput!]!): [Event]
   createVehicle(data: VehicleCreateInput!): Vehicle
   createVehicles(data: [VehicleCreateInput!]!): [Vehicle]
-  updateVehicle(
-    where: VehicleWhereUniqueInput!
-    data: VehicleUpdateInput!
-  ): Vehicle
+  updateVehicle(where: VehicleWhereUniqueInput!, data: VehicleUpdateInput!): Vehicle
   updateVehicles(data: [VehicleUpdateArgs!]!): [Vehicle]
   deleteVehicle(where: VehicleWhereUniqueInput!): Vehicle
   deleteVehicles(where: [VehicleWhereUniqueInput!]!): [Vehicle]
@@ -1905,19 +1789,13 @@ type Mutation {
   deleteBids(where: [BidWhereUniqueInput!]!): [Bid]
   createEventType(data: EventTypeCreateInput!): EventType
   createEventTypes(data: [EventTypeCreateInput!]!): [EventType]
-  updateEventType(
-    where: EventTypeWhereUniqueInput!
-    data: EventTypeUpdateInput!
-  ): EventType
+  updateEventType(where: EventTypeWhereUniqueInput!, data: EventTypeUpdateInput!): EventType
   updateEventTypes(data: [EventTypeUpdateArgs!]!): [EventType]
   deleteEventType(where: EventTypeWhereUniqueInput!): EventType
   deleteEventTypes(where: [EventTypeWhereUniqueInput!]!): [EventType]
   createLocation(data: LocationCreateInput!): Location
   createLocations(data: [LocationCreateInput!]!): [Location]
-  updateLocation(
-    where: LocationWhereUniqueInput!
-    data: LocationUpdateInput!
-  ): Location
+  updateLocation(where: LocationWhereUniqueInput!, data: LocationUpdateInput!): Location
   updateLocations(data: [LocationUpdateArgs!]!): [Location]
   deleteLocation(where: LocationWhereUniqueInput!): Location
   deleteLocations(where: [LocationWhereUniqueInput!]!): [Location]
@@ -1929,10 +1807,7 @@ type Mutation {
   deleteStates(where: [StateWhereUniqueInput!]!): [State]
   createExcelUpload(data: ExcelUploadCreateInput!): ExcelUpload
   createExcelUploads(data: [ExcelUploadCreateInput!]!): [ExcelUpload]
-  updateExcelUpload(
-    where: ExcelUploadWhereUniqueInput!
-    data: ExcelUploadUpdateInput!
-  ): ExcelUpload
+  updateExcelUpload(where: ExcelUploadWhereUniqueInput!, data: ExcelUploadUpdateInput!): ExcelUpload
   updateExcelUploads(data: [ExcelUploadUpdateArgs!]!): [ExcelUpload]
   deleteExcelUpload(where: ExcelUploadWhereUniqueInput!): ExcelUpload
   deleteExcelUploads(where: [ExcelUploadWhereUniqueInput!]!): [ExcelUpload]
@@ -1943,23 +1818,13 @@ type Mutation {
   deleteSeller(where: SellerWhereUniqueInput!): Seller
   deleteSellers(where: [SellerWhereUniqueInput!]!): [Seller]
   endSession: Boolean!
-  authenticateUserWithPassword(
-    mobile: String!
-    password: String!
-  ): UserAuthenticationWithPasswordResult
-  createInitialUser(
-    data: CreateInitialUserInput!
-  ): UserAuthenticationWithPasswordSuccess!
+  authenticateUserWithPassword(mobile: String!, password: String!): UserAuthenticationWithPasswordResult
+  createInitialUser(data: CreateInitialUserInput!): UserAuthenticationWithPasswordSuccess!
   sendUserMagicAuthLink(mobile: String!): Boolean!
-  redeemUserMagicAuthToken(
-    mobile: String!
-    token: String!
-  ): RedeemUserMagicAuthTokenResult!
+  redeemUserMagicAuthToken(mobile: String!, token: String!): RedeemUserMagicAuthTokenResult!
 }
 
-union UserAuthenticationWithPasswordResult =
-    UserAuthenticationWithPasswordSuccess
-  | UserAuthenticationWithPasswordFailure
+union UserAuthenticationWithPasswordResult = UserAuthenticationWithPasswordSuccess | UserAuthenticationWithPasswordFailure
 
 type UserAuthenticationWithPasswordSuccess {
   sessionToken: String!
@@ -1977,9 +1842,7 @@ input CreateInitialUserInput {
   password: String
 }
 
-union RedeemUserMagicAuthTokenResult =
-    RedeemUserMagicAuthTokenSuccess
-  | RedeemUserMagicAuthTokenFailure
+union RedeemUserMagicAuthTokenResult = RedeemUserMagicAuthTokenSuccess | RedeemUserMagicAuthTokenFailure
 
 type RedeemUserMagicAuthTokenSuccess {
   token: String!
@@ -1998,146 +1861,59 @@ enum MagicLinkRedemptionErrorCode {
 }
 
 type Query {
-  users(
-    where: UserWhereInput! = {}
-    orderBy: [UserOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [User!]
+  users(where: UserWhereInput! = {}, orderBy: [UserOrderByInput!]! = [], take: Int, skip: Int! = 0): [User!]
   user(where: UserWhereUniqueInput!): User
   usersCount(where: UserWhereInput! = {}): Int
-  payments(
-    where: PaymentWhereInput! = {}
-    orderBy: [PaymentOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [Payment!]
+  payments(where: PaymentWhereInput! = {}, orderBy: [PaymentOrderByInput!]! = [], take: Int, skip: Int! = 0): [Payment!]
   payment(where: PaymentWhereUniqueInput!): Payment
   paymentsCount(where: PaymentWhereInput! = {}): Int
-  emdUpdates(
-    where: EmdUpdateWhereInput! = {}
-    orderBy: [EmdUpdateOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [EmdUpdate!]
+  emdUpdates(where: EmdUpdateWhereInput! = {}, orderBy: [EmdUpdateOrderByInput!]! = [], take: Int, skip: Int! = 0): [EmdUpdate!]
   emdUpdate(where: EmdUpdateWhereUniqueInput!): EmdUpdate
   emdUpdatesCount(where: EmdUpdateWhereInput! = {}): Int
-  events(
-    where: EventWhereInput! = {}
-    orderBy: [EventOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [Event!]
+  events(where: EventWhereInput! = {}, orderBy: [EventOrderByInput!]! = [], take: Int, skip: Int! = 0): [Event!]
   event(where: EventWhereUniqueInput!): Event
   eventsCount(where: EventWhereInput! = {}): Int
-  vehicles(
-    where: VehicleWhereInput! = {}
-    orderBy: [VehicleOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [Vehicle!]
+  vehicles(where: VehicleWhereInput! = {}, orderBy: [VehicleOrderByInput!]! = [], take: Int, skip: Int! = 0): [Vehicle!]
   vehicle(where: VehicleWhereUniqueInput!): Vehicle
   vehiclesCount(where: VehicleWhereInput! = {}): Int
-  bids(
-    where: BidWhereInput! = {}
-    orderBy: [BidOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [Bid!]
+  bids(where: BidWhereInput! = {}, orderBy: [BidOrderByInput!]! = [], take: Int, skip: Int! = 0): [Bid!]
   bid(where: BidWhereUniqueInput!): Bid
   bidsCount(where: BidWhereInput! = {}): Int
-  eventTypes(
-    where: EventTypeWhereInput! = {}
-    orderBy: [EventTypeOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [EventType!]
+  eventTypes(where: EventTypeWhereInput! = {}, orderBy: [EventTypeOrderByInput!]! = [], take: Int, skip: Int! = 0): [EventType!]
   eventType(where: EventTypeWhereUniqueInput!): EventType
   eventTypesCount(where: EventTypeWhereInput! = {}): Int
-  locations(
-    where: LocationWhereInput! = {}
-    orderBy: [LocationOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [Location!]
+  locations(where: LocationWhereInput! = {}, orderBy: [LocationOrderByInput!]! = [], take: Int, skip: Int! = 0): [Location!]
   location(where: LocationWhereUniqueInput!): Location
   locationsCount(where: LocationWhereInput! = {}): Int
-  states(
-    where: StateWhereInput! = {}
-    orderBy: [StateOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [State!]
+  states(where: StateWhereInput! = {}, orderBy: [StateOrderByInput!]! = [], take: Int, skip: Int! = 0): [State!]
   state(where: StateWhereUniqueInput!): State
   statesCount(where: StateWhereInput! = {}): Int
-  excelUploads(
-    where: ExcelUploadWhereInput! = {}
-    orderBy: [ExcelUploadOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [ExcelUpload!]
+  excelUploads(where: ExcelUploadWhereInput! = {}, orderBy: [ExcelUploadOrderByInput!]! = [], take: Int, skip: Int! = 0): [ExcelUpload!]
   excelUpload(where: ExcelUploadWhereUniqueInput!): ExcelUpload
   excelUploadsCount(where: ExcelUploadWhereInput! = {}): Int
-  sellers(
-    where: SellerWhereInput! = {}
-    orderBy: [SellerOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [Seller!]
+  sellers(where: SellerWhereInput! = {}, orderBy: [SellerOrderByInput!]! = [], take: Int, skip: Int! = 0): [Seller!]
   seller(where: SellerWhereUniqueInput!): Seller
   sellersCount(where: SellerWhereInput! = {}): Int
   keystone: KeystoneMeta!
   authenticatedItem: AuthenticatedItem
 
-  """
-  Live Events
-  """
-  liveEvents(
-    where: EventWhereInput
-    orderBy: [EventOrderByInput] = [{ createdAt: desc }]
-    take: Int! = 10
-    skip: Int! = 0
-  ): [Event]
+  """Live Events"""
+  liveEvents(where: EventWhereInput, orderBy: [EventOrderByInput] = [{createdAt: desc}], take: Int! = 10, skip: Int! = 0): [Event]
 
-  """
-  Upcoming Events
-  """
-  upcomingEvents(
-    where: EventWhereInput
-    orderBy: [EventOrderByInput] = [{ startDate: asc }]
-    take: Int! = 10
-    skip: Int! = 0
-  ): [Event]
+  """Upcoming Events"""
+  upcomingEvents(where: EventWhereInput, orderBy: [EventOrderByInput] = [{startDate: asc}], take: Int! = 10, skip: Int! = 0): [Event]
 
-  """
-  complied Events
-  """
-  compliedEvents(
-    where: EventWhereInput
-    orderBy: [EventOrderByInput] = [{ startDate: asc }]
-    take: Int! = 10
-    skip: Int! = 0
-  ): [Event]
+  """complied Events"""
+  compliedEvents(where: EventWhereInput, orderBy: [EventOrderByInput] = [{startDate: asc}], take: Int! = 10, skip: Int! = 0): [Event]
 
-  """
-  Server Time
-  """
+  """Server Time"""
   time: String
 
-  """
-  User Pan Cards Count
-  """
+  """User Pan Cards Count"""
   sudoUsersCount(where: UserWhereInput): Int
 
-  """
-  Bid History for open auction
-  """
-  sudoBids(
-    where: BidWhereInput
-    orderBy: [BidOrderByInput] = [{ createdAt: desc }]
-    take: Int! = 10
-    skip: Int! = 0
-  ): [BidHistory]
+  """Bid History for open auction"""
+  sudoBids(where: BidWhereInput, orderBy: [BidOrderByInput] = [{createdAt: desc}], take: Int! = 10, skip: Int! = 0): [BidHistory]
 }
 
 union AuthenticatedItem = User
@@ -2147,8 +1923,6 @@ type KeystoneMeta {
 }
 
 type KeystoneAdminMeta {
-  enableSignout: Boolean!
-  enableSessionItem: Boolean!
   lists: [KeystoneAdminUIListMeta!]!
   list(key: String!): KeystoneAdminUIListMeta
 }
@@ -2168,8 +1942,10 @@ type KeystoneAdminUIListMeta {
   pageSize: Int!
   labelField: String!
   fields: [KeystoneAdminUIFieldMeta!]!
+  groups: [KeystoneAdminUIFieldGroupMeta!]!
   initialSort: KeystoneAdminUISort
   isHidden: Boolean!
+  isSingleton: Boolean!
 }
 
 type KeystoneAdminUIFieldMeta {
@@ -2207,12 +1983,24 @@ enum KeystoneAdminUIFieldMetaListViewFieldMode {
 
 type KeystoneAdminUIFieldMetaItemView {
   fieldMode: KeystoneAdminUIFieldMetaItemViewFieldMode
+  fieldPosition: KeystoneAdminUIFieldMetaItemViewFieldPosition
 }
 
 enum KeystoneAdminUIFieldMetaItemViewFieldMode {
   edit
   read
   hidden
+}
+
+enum KeystoneAdminUIFieldMetaItemViewFieldPosition {
+  form
+  sidebar
+}
+
+type KeystoneAdminUIFieldGroupMeta {
+  label: String!
+  description: String
+  fields: [KeystoneAdminUIFieldMeta!]!
 }
 
 type KeystoneAdminUISort {
@@ -2225,9 +2013,7 @@ enum KeystoneAdminUISortDirection {
   DESC
 }
 
-"""
-A custom Bid History for Vehicle
-"""
+""" A custom Bid History for Vehicle """
 type BidHistory {
   id: ID!
   name: String
@@ -2243,8 +2029,6 @@ type Time {
 type Subscription {
   time: Time
 
-  """
-  New Live Bids
-  """
+  """New Live Bids"""
   liveBid(id: ID!): Bid
 }

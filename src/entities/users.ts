@@ -13,7 +13,6 @@ import {
   isAdminCreate,
   isAdminEdit,
   isNotAdmin,
-  isSuperAdmin,
 } from "../application/access";
 import { vehicleBuyingLimitField } from "../lib/vehicle-buying-limit.field";
 
@@ -30,11 +29,12 @@ export const User = list({
       query: ({ session }) => !!session,
       create: () => true, //!session?.itemId || isSuperAdmin({ session }),
       update: ({ session }) => !!session,
-      delete: isSuperAdmin,
+      delete: ({ session }) => !!session,
     },
     filter: {
       query: ownerFilter,
       update: ownerFilter,
+      delete: ownerFilter,
     },
   },
   ui: {

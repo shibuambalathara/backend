@@ -1,8 +1,9 @@
-import { gql, graphQLSchemaExtension } from "@keystone-6/core";
-import { Context } from ".keystone/types";
+import type { GraphQLSchema } from 'graphql';
+import { mergeSchemas } from '@graphql-tools/schema';
 import { pubSub } from './websocket';
 const graphql = String.raw;
-export const extendGraphqlSchema = graphQLSchemaExtension<Context>({
+export const extendGraphqlSchema = (schema: GraphQLSchema) => mergeSchemas({
+  schemas: [schema],
   typeDefs: graphql`
     type Query {
       """

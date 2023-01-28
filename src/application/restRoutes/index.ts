@@ -1,6 +1,5 @@
 import {
   BaseKeystoneTypeInfo,
-  CreateRequestContext,
 } from "@keystone-6/core/types";
 import { uploadImages } from "./imageUploads";
 import multer from "multer";
@@ -19,10 +18,10 @@ const upload = multer({ storage: storage });
 
 export const router = (
   app: any,
-  createContext: CreateRequestContext<BaseKeystoneTypeInfo>
+  commonContext
 ) => {
   app.use("/api/rest", async (req: any, res: any, next: any) => {
-    req.context = await createContext(req, res);
+    req.context = await commonContext.withRequest(req, res);
     next();
   });
 

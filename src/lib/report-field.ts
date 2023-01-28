@@ -1,6 +1,10 @@
 import { graphql } from "@keystone-6/core";
 import { virtual } from "@keystone-6/core/fields";
+import path from 'path';
 
+function resolveViewPath(viewPath) {
+  return path.join(path.dirname(__dirname),'src/lib', viewPath);
+}
 export const excelReportEDownload = virtual({
   field: graphql.field({
     type: graphql.JSON,
@@ -121,6 +125,6 @@ export const excelReportEDownload = virtual({
     },
   }),
   ui: {
-    views: require.resolve("./report-field-view.tsx"),
+    views: resolveViewPath("./report-field-view.tsx"),
   },
 });
