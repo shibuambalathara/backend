@@ -1,4 +1,5 @@
 import type { Request, Response } from "express";
+import sizeOf from 'image-size'
 import type { KeystoneContext } from "@keystone-6/core/types";
 import path from "path";
 
@@ -9,17 +10,18 @@ export async function uploadImages(req: Request, res: Response) {
     const data = {} as any;
     // @ts-ignore
     req.files?.forEach((file) => {
+      const dimensions = sizeOf(file.path)
       const fn = file.fieldname;
       data[`${fn}_id`] = path.parse(file?.filename || "").name;
       // data[`${fn}_mode`] = "local";
-      data[`${fn}_width`] = 200;
-      data[`${fn}_height`] = 250;
+      data[`${fn}_width`] = dimensions.width||200;
+      data[`${fn}_height`] = dimensions.height||250;
       data[`${fn}_filesize`] = file?.size;
       data[`${fn}_extension`] = file?.filename.split(".").pop();
     });
-
-    await context.prisma.user.update({
-      where: { id: req.body?.id },
+    const { schema, id } = req.body;
+    await context.prisma[schema].update({
+      where: { id: id },
       data: data,
     });
 

@@ -1,6 +1,3 @@
-import {
-  BaseKeystoneTypeInfo,
-} from "@keystone-6/core/types";
 import { uploadImages } from "./imageUploads";
 import multer from "multer";
 
