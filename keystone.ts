@@ -11,8 +11,9 @@ export default config(
     db: {
       provider: "postgresql",
       url:
-        process.env.DATABASE_URL ||
-        "postgres://postgres:postgrespw@localhost:49153/bidding2",
+        // process.env.DATABASE_URL ||
+        // "postgres://postgres:postgrespw@localhost:49153/bidding2",
+        "postgresql://postgres:123@localhost:5432/automax1"
     },
     lists: lists,
     ui: {
@@ -22,8 +23,11 @@ export default config(
     server: {
       cors: {
         origin: [
-          "http://localhost:3000",
-          "https://autobse.com",
+          "http://localhost:4000",
+          "https://autobse-live-production-server.vercel.app",
+        
+          // "https://autobse-live-production-server-j35f8dqoi.vercel.app",
+          
           "https://*.autobse.com",
           "https://www.autobse.com",
           "https://api-dev.autobse.com",
@@ -38,7 +42,7 @@ export default config(
       maxFileSize: 200 * 1024 * 1024,
       healthCheck: true,
       extendExpressApp: router,
-      extendHttpServer: extendHttpServer,
+       extendHttpServer: extendHttpServer,
     },
     extendGraphqlSchema,
     graphql: {

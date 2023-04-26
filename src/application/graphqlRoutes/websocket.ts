@@ -5,7 +5,7 @@ import { PubSub } from 'graphql-subscriptions';
 import { parse } from 'graphql';
 
 import {
-  CreateRequestContext,
+ //  CreateRequestContext,
   KeystoneGraphQLAPI,
   BaseKeystoneTypeInfo,
 } from '@keystone-6/core/types';
@@ -22,7 +22,7 @@ globalThis.graphqlSubscriptionPubSub = pubSub;
 
 export const extendHttpServer = (
   httpServer: http.Server,
-  createRequestContext: CreateRequestContext<BaseKeystoneTypeInfo>,
+  // createRequestContext: CreateRequestContex<BaseKeystoneTypeInfo>,
   graphqlSchema: KeystoneGraphQLAPI['schema']
 ): void => {
   // Setup WebSocket server using 'ws'

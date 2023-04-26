@@ -25,7 +25,7 @@ export const fieldOptions: TimestampFieldConfig<BaseListTypeInfo> = {
       fieldMode: "read",
     },
   },
-  graphql: { omit: ["update", "create"] },
+   graphql: { omit: ["update", "create"] },
 };
 
 /*

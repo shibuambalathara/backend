@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@graphql-tools/schema": "^9.0.14",
+    "@keystone-6/auth": "^7.0.0",
     "@keystone-6/core": "4.0.1",
     "@types/ws": "^8.5.4",
     "graphql": "^16.6.0",

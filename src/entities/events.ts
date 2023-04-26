@@ -16,6 +16,7 @@ import {
   isNotAdmin,
   isSuperAdmin,
 } from "../application/access";
+import { PdfReportEDownload } from "../lib/reportForUser";
 
 export const Event = list({
   ui: {
@@ -119,6 +120,7 @@ export const Event = list({
     }),
     
     Report : excelReportEDownload,
+    PdfReport:PdfReportEDownload,
     location: relationship({
       ref: "Location.events",
       ui: {

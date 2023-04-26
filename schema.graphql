@@ -698,6 +698,7 @@ type Event {
   eventType(where: EventTypeWhereInput! = {}, orderBy: [EventTypeOrderByInput!]! = [], take: Int, skip: Int! = 0): [EventType!]
   eventTypeCount(where: EventTypeWhereInput! = {}): Int
   Report: JSON
+  PdfReport: JSON
   location: Location
   vehicles(where: VehicleWhereInput! = {}, orderBy: [VehicleOrderByInput!]! = [], take: Int, skip: Int! = 0): [Vehicle!]
   vehiclesCount(where: VehicleWhereInput! = {}): Int
