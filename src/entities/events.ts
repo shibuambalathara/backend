@@ -16,7 +16,7 @@ import {
   isNotAdmin,
   isSuperAdmin,
 } from "../application/access";
-import { PdfReportEDownload } from "../lib/reportForUser";
+
 
 export const Event = list({
   ui: {
@@ -45,30 +45,76 @@ export const Event = list({
         addValidationError("End date must be in the future");
       }
     },
-    resolveInput: async ({ resolvedData, context, operation }) => {
+    resolveInput: async ({
+      resolvedData,
+      context,
+      operation,
+      item,
+      inputData,
+    }) => {
       if (operation === "create" && resolvedData.eventCategory === "open")
         resolvedData.bidLock = "locked";
+      // for saving the pause time
+      // console.log({D: new Date(item.pauseDate as Date).getTime()})
+      if (
+        operation === "update" &&
+        item.status === "pause" &&
+        resolvedData.status !== "pause"
+      ) {
+        const t = item.pauseDate
+          ? new Date().getTime() - new Date(item.pauseDate as Date).getTime()
+          : new Date().getTime();
+        resolvedData.pausedTotalTime = (item.pausedTotalTime as number) + t;
+      }
+      // when the statuse setting to the pause set cuurent time to the pauseDate
+      if (operation === "update" && resolvedData.status === "pause") {
+        resolvedData.pauseDate = new Date();
+      }
       return resolvedData;
     },
-    afterOperation: async ({ context, operation, resolvedData, originalItem }) => {
+    afterOperation: async ({
+      context,
+      operation,
+      resolvedData,
+      originalItem,
+    }) => {
       if (operation !== "update") {
         return;
       }
-      if(originalItem.eventCategory !== "open"){
+      if (originalItem.eventCategory !== "open") {
         return;
       }
       const event = await context.query.Event.findOne({
         where: { id: originalItem.id.toString() },
-        query: `startDate vehiclesCount eventCategory vehicleLiveTimeIn gapInBetweenVehicles` 
+        query: `startDate pausedTotalTime vehiclesCount eventCategory vehicleLiveTimeIn gapInBetweenVehicles`,
       });
-      const endDate = new Date(new Date(event.startDate).getTime()+ 
-          event.vehiclesCount *  (event.vehicleLiveTimeIn + event.gapInBetweenVehicles) * 60000)
+      const endDate = new Date(
+        new Date(event.startDate).getTime() +
+          event.pausedTotalTime +
+          event.vehiclesCount * event.vehicleLiveTimeIn * 60000 +
+          (event.vehiclesCount - 1) * event.gapInBetweenVehicles * 1000
+      );
       await context.prisma.event.update({
-        where: {id: originalItem.id.toString()},
+        where: { id: originalItem.id.toString() },
         data: {
           endDate: endDate,
         },
       });
+      if (
+        operation === "update" &&
+        originalItem.status === "pause" &&
+        resolvedData.status !== "pause"
+      ) {
+        console.log({
+          resolvedData,
+          originalItem
+        });
+        const t = (originalItem.pauseDate
+          ? new Date().getTime() - new Date(originalItem.pauseDate as Date).getTime()
+          : new Date().getTime()) ;
+          // update the vehicle end time
+        await context.prisma.$executeRawUnsafe(`UPDATE "Vehicle" set "bidTimeExpire" = "bidTimeExpire" + ${t} * INTERVAL '1 MICROSECOND', "bidStartTime" = "bidStartTime" + ${t} * INTERVAL '1 MICROSECOND' WHERE "event" = '${originalItem.id}' `);
+      }
     },
   },
 
@@ -103,6 +149,29 @@ export const Event = list({
         isRequired: true,
       },
     }),
+    pauseDate: timestamp({
+      validation: {},
+      ui: {
+        itemView: {
+          fieldMode: "read",
+        },
+        listView: {
+          fieldMode: "read",
+        },
+      },
+    }),
+    pausedTotalTime: integer({
+      defaultValue: 0,
+      ui: {
+        itemView: {
+          fieldMode: "read",
+        },
+        listView: {
+          fieldMode: "read",
+        },
+      },
+    }),
+
     seller: relationship({
       ref: "Seller.events",
       many: false,
@@ -118,9 +187,9 @@ export const Event = list({
         itemView: { fieldMode: isAdminEdit },
       },
     }),
-    
-    Report : excelReportEDownload,
-    PdfReport:PdfReportEDownload,
+
+    Report: excelReportEDownload,
+  
     location: relationship({
       ref: "Location.events",
       ui: {
@@ -135,7 +204,7 @@ export const Event = list({
         itemView: { fieldMode: "read" },
       },
     }),
-    
+
     noOfBids: integer({
       validation: {
         isRequired: true,
@@ -150,6 +219,7 @@ export const Event = list({
         { label: "Active", value: "active" },
         { label: "Inactive", value: "inactive" },
         { label: "Stop", value: "stop" },
+        { label: "Pause", value: "pause" },
       ],
       defaultValue: "active",
       ui: {
@@ -174,7 +244,7 @@ export const Event = list({
     termsAndConditions: text({
       ui: {
         itemView: { fieldMode: isAdminEdit },
-        displayMode:"textarea"
+        displayMode: "textarea",
       },
     }),
     createdAt: timestamp({ ...fieldOptions, defaultValue: { kind: "now" } }),
@@ -209,8 +279,9 @@ export const Event = list({
     }),
 
     gapInBetweenVehicles: integer({
-      label: "Open Auction Gap in between vehicles in seconds / Online End Time Increase in Minuts",
-      defaultValue: 0
+      label:
+        "Open Auction Gap in between vehicles in seconds / Online End Time Increase in Minuts",
+      defaultValue: 0,
     }),
 
     // specialEventBuyingLimitReducer: integer({

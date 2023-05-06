@@ -125,6 +125,8 @@ model Event {
   eventCategory             String?
   startDate                 DateTime
   endDate                   DateTime
+  pauseDate                 DateTime?
+  pausedTotalTime           Int?              @default(0)
   seller                    Seller?           @relation("Event_seller", fields: [sellerId], references: [id])
   sellerId                  String?           @map("seller")
   eventType                 EventType[]       @relation("Event_eventType")
@@ -262,6 +264,7 @@ model EventType {
   events    Event[]   @relation("Event_eventType")
   users     User?     @relation("EventType_users", fields: [usersId], references: [id])
   usersId   String?   @map("users")
+  seller    Seller[]  @relation("EventType_seller")
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
 
@@ -303,12 +306,18 @@ model ExcelUpload {
 }
 
 model Seller {
-  id          String    @id @default(cuid())
-  name        String    @default("")
-  events      Event[]   @relation("Event_seller")
-  bannedUsers User[]    @relation("Seller_bannedUsers")
-  createdAt   DateTime? @default(now())
-  updatedAt   DateTime? @updatedAt
+  id                   String      @id @default(cuid())
+  name                 String      @default("")
+  contactPerson        String      @default("")
+  GSTNumbber           String      @default("")
+  billingContactPerson String      @default("")
+  mobile               String      @default("")
+  nationalHead         String      @default("")
+  vehicleCategory      EventType[] @relation("EventType_seller")
+  events               Event[]     @relation("Event_seller")
+  bannedUsers          User[]      @relation("Seller_bannedUsers")
+  createdAt            DateTime?   @default(now())
+  updatedAt            DateTime?   @updatedAt
 }
 
 enum UserIdProofTypeType {
@@ -337,6 +346,7 @@ enum EventStatusType {
   active
   inactive
   stop
+  pause
 }
 
 enum EventBidLockType {

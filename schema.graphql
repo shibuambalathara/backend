@@ -694,11 +694,12 @@ type Event {
   eventCategory: String
   startDate: DateTime
   endDate: DateTime
+  pauseDate: DateTime
+  pausedTotalTime: Int
   seller: Seller
   eventType(where: EventTypeWhereInput! = {}, orderBy: [EventTypeOrderByInput!]! = [], take: Int, skip: Int! = 0): [EventType!]
   eventTypeCount(where: EventTypeWhereInput! = {}): Int
   Report: JSON
-  PdfReport: JSON
   location: Location
   vehicles(where: VehicleWhereInput! = {}, orderBy: [VehicleOrderByInput!]! = [], take: Int, skip: Int! = 0): [Vehicle!]
   vehiclesCount(where: VehicleWhereInput! = {}): Int
@@ -723,6 +724,7 @@ enum EventStatusType {
   active
   inactive
   stop
+  pause
 }
 
 type FileFieldOutput {
@@ -749,6 +751,8 @@ input EventWhereInput {
   eventCategory: StringNullableFilter
   startDate: DateTimeFilter
   endDate: DateTimeFilter
+  pauseDate: DateTimeNullableFilter
+  pausedTotalTime: IntNullableFilter
   seller: SellerWhereInput
   eventType: EventTypeManyRelationFilter
   location: LocationWhereInput
@@ -803,6 +807,8 @@ input EventOrderByInput {
   eventCategory: OrderDirection
   startDate: OrderDirection
   endDate: OrderDirection
+  pauseDate: OrderDirection
+  pausedTotalTime: OrderDirection
   noOfBids: OrderDirection
   status: OrderDirection
   termsAndConditions: OrderDirection
@@ -821,6 +827,8 @@ input EventUpdateInput {
   eventCategory: String
   startDate: DateTime
   endDate: DateTime
+  pauseDate: DateTime
+  pausedTotalTime: Int
   seller: SellerRelateToOneForUpdateInput
   eventType: EventTypeRelateToManyForUpdateInput
   location: LocationRelateToOneForUpdateInput
@@ -870,6 +878,8 @@ input EventCreateInput {
   eventCategory: String
   startDate: DateTime
   endDate: DateTime
+  pauseDate: DateTime
+  pausedTotalTime: Int
   seller: SellerRelateToOneForCreateInput
   eventType: EventTypeRelateToManyForCreateInput
   location: LocationRelateToOneForCreateInput
@@ -1440,6 +1450,8 @@ type EventType {
   events(where: EventWhereInput! = {}, orderBy: [EventOrderByInput!]! = [], take: Int, skip: Int! = 0): [Event!]
   eventsCount(where: EventWhereInput! = {}): Int
   users: User
+  seller(where: SellerWhereInput! = {}, orderBy: [SellerOrderByInput!]! = [], take: Int, skip: Int! = 0): [Seller!]
+  sellerCount(where: SellerWhereInput! = {}): Int
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -1456,6 +1468,7 @@ input EventTypeWhereInput {
   name: StringFilter
   events: EventManyRelationFilter
   users: UserWhereInput
+  seller: SellerManyRelationFilter
   createdAt: DateTimeNullableFilter
   updatedAt: DateTimeNullableFilter
 }
@@ -1477,6 +1490,7 @@ input EventTypeUpdateInput {
   name: String
   events: EventRelateToManyForUpdateInput
   users: UserRelateToOneForUpdateInput
+  seller: SellerRelateToManyForUpdateInput
 }
 
 input EventRelateToManyForUpdateInput {
@@ -1495,6 +1509,7 @@ input EventTypeCreateInput {
   name: String
   events: EventRelateToManyForCreateInput
   users: UserRelateToOneForCreateInput
+  seller: SellerRelateToManyForCreateInput
 }
 
 input EventRelateToManyForCreateInput {
@@ -1698,6 +1713,13 @@ input ExcelUploadCreateInput {
 type Seller {
   id: ID!
   name: String
+  contactPerson: String
+  GSTNumbber: String
+  billingContactPerson: String
+  mobile: String
+  nationalHead: String
+  vehicleCategory(where: EventTypeWhereInput! = {}, orderBy: [EventTypeOrderByInput!]! = [], take: Int, skip: Int! = 0): [EventType!]
+  vehicleCategoryCount(where: EventTypeWhereInput! = {}): Int
   events(where: EventWhereInput! = {}, orderBy: [EventOrderByInput!]! = [], take: Int, skip: Int! = 0): [Event!]
   eventsCount(where: EventWhereInput! = {}): Int
   bannedUsers(where: UserWhereInput! = {}, orderBy: [UserOrderByInput!]! = [], take: Int, skip: Int! = 0): [User!]
@@ -1716,6 +1738,12 @@ input SellerWhereInput {
   NOT: [SellerWhereInput!]
   id: IDFilter
   name: StringFilter
+  contactPerson: StringFilter
+  GSTNumbber: StringFilter
+  billingContactPerson: StringFilter
+  mobile: StringFilter
+  nationalHead: StringFilter
+  vehicleCategory: EventTypeManyRelationFilter
   events: EventManyRelationFilter
   bannedUsers: UserManyRelationFilter
   createdAt: DateTimeNullableFilter
@@ -1725,12 +1753,23 @@ input SellerWhereInput {
 input SellerOrderByInput {
   id: OrderDirection
   name: OrderDirection
+  contactPerson: OrderDirection
+  GSTNumbber: OrderDirection
+  billingContactPerson: OrderDirection
+  mobile: OrderDirection
+  nationalHead: OrderDirection
   createdAt: OrderDirection
   updatedAt: OrderDirection
 }
 
 input SellerUpdateInput {
   name: String
+  contactPerson: String
+  GSTNumbber: String
+  billingContactPerson: String
+  mobile: String
+  nationalHead: String
+  vehicleCategory: EventTypeRelateToManyForUpdateInput
   events: EventRelateToManyForUpdateInput
   bannedUsers: UserRelateToManyForUpdateInput
 }
@@ -1742,6 +1781,12 @@ input SellerUpdateArgs {
 
 input SellerCreateInput {
   name: String
+  contactPerson: String
+  GSTNumbber: String
+  billingContactPerson: String
+  mobile: String
+  nationalHead: String
+  vehicleCategory: EventTypeRelateToManyForCreateInput
   events: EventRelateToManyForCreateInput
   bannedUsers: UserRelateToManyForCreateInput
 }

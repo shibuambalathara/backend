@@ -24,6 +24,41 @@ import {
             isRequired: true,
           },
         }),
+        contactPerson: text({
+          validation: {
+           
+          },
+
+        }),
+        GSTNumbber: text({
+          validation: {
+           
+          },
+          
+        }),
+       billingContactPerson: text({
+          validation: {
+           
+          },
+          
+        }),
+       mobile : text({
+          validation: {
+          
+          },
+          
+        }),
+        nationalHead: text({
+          validation: {
+           
+          },
+          
+        }),
+        vehicleCategory:relationship({
+          ref:"EventType.seller",
+          many:true
+        }),
+        
         events: relationship({
           ref: "Event.seller",
           many: true,

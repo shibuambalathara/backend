@@ -23,6 +23,7 @@ export default config(
     server: {
       cors: {
         origin: [
+          "http://localhost:3001",
           "http://localhost:4000",
           "https://autobse-live-production-server.vercel.app",
         
@@ -36,6 +37,8 @@ export default config(
           "https://*.vercel.app",
           "https://autobse.vercel.app",
           "https://autobse-braineo.vercel.app",
+          "https://admin-dashboard-theta-three.vercel.app"
+
         ],
         credentials: true,
       },

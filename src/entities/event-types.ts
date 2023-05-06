@@ -41,6 +41,10 @@ import {
         users: relationship({
           ref: "User.category",
         }),
+        seller:relationship({
+          ref:"Seller.vehicleCategory",
+          many:true
+        }),
         createdAt: timestamp({
           ...fieldOptions,
           defaultValue: { kind: "now" },

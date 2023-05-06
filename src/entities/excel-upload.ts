@@ -202,12 +202,12 @@ export const ExcelUpload = list({
                 };
               }
             );
-            // console.log("vehicles: ", vehicles)
-            await context.query.Vehicle.createMany({
+            console.log("vehicles: ", vehicles)
+           const result = await context.query.Vehicle.createMany({
               data: vehicles,
             });
 
-            // console.log("result", result);
+            console.log("result", result);
           }
         } catch (e) {
           console.log("e", e);
